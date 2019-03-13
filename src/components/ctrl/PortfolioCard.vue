@@ -1,0 +1,147 @@
+<template>
+  <div>
+    <div class="portfolio-card">
+      <div class="card-top">
+        <div class="card-left">
+          <div class="pad-top3"><div class="context">08.03.2019</div></div>
+          <div><div class="memo">Seller</div></div>
+        </div>
+        <div class="card-center">
+          <div><div class="tip">RECEIVED</div></div>
+          <div class="pad-top1"><div class="context">5</div></div>
+          <div><div class="memo">Bitcoin</div></div>
+        </div>
+        <div class="card-center">
+          <div><div class="tip">PAID</div></div>
+          <div class="pad-top1"><div class="context">287</div></div>
+          <div><div class="memo">DAI</div></div>
+        </div>
+        <div class="card-right">
+          <div><div class="tip">ESTIMATE NET GAIN</div></div>
+          <div class="pad-top2"><div class="price">-1.40%</div></div>
+        </div>
+        <div class="card-tool">
+          <div><i class="material-icons">monetization_on</i></div>
+        </div>
+      </div>
+    </div>
+  </div>
+</template>
+
+<script>
+
+export default {
+  name: 'PortfolioCard',
+  data() {
+    return {
+      portfolio: null
+    };
+  }
+}
+</script>
+
+<style lang="scss">
+.portfolio-card {
+  width: 448px;
+  background: #455A64;
+  border-radius: 4px;
+  font-size: 14px;
+  margin: 8px;
+  .card-top {
+    padding: 8px;
+    display: flex;
+    .card-left {
+      width: 180px;
+    }
+    .card-center {
+      width: 100px;
+    }
+    .card-right {
+      width: 140px;
+      div {
+        text-align: right;
+      }
+    }
+    .card-tool {
+      width: 40px;
+      padding: 23px 8px;
+      text-align: center;
+    }
+  }
+  .material-icons {
+    line-height: 24px;
+    font-size: 18px;
+    text-align: center;
+    letter-spacing: 0.0015em;
+    color: #263238;
+  }
+  .tip {
+    line-height: 20px;
+    font-size: 10px;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    color: #CFD8DC;
+  }
+  .pad-top1 {
+    padding-top: 8px;
+  }
+  .pad-top2 {
+    padding-top: 16px;
+  }
+  .pad-top3 {
+    padding-top: 28px;
+  }
+  .context {
+    line-height: 24px;
+    font-size: 16px;
+    letter-spacing: 0.005em;
+    color: #CFD8DC;
+  }
+  .memo {
+    line-height: 24px;
+    font-size: 12px;
+    letter-spacing: 0.004em;
+    color: #78909C;
+  }
+  .price {
+    font-family: Eczar;
+    line-height: 28px;
+    font-size: 24px;
+    text-align: right;
+    font-feature-settings: 'tnum' on, 'lnum' on;
+    color: #EEF9F5;
+  }
+  .spacer {
+    width: 100%;
+    border-bottom: 0.5px solid #37474F;
+  }
+  .card-bottom {
+    padding: 8px;
+    display: flex;
+  }
+  .shares {
+    line-height: 20px;
+    font-size: 10px;
+    text-align: center;
+    letter-spacing: 0.015em;
+    text-transform: uppercase;
+    font-variant: small-caps;
+    color: #78909C;
+  }
+  .process {
+    background: #37474F;
+    border-radius: 2px;
+    width: 256px;
+    height: 3px;
+    margin: 8px 16px;
+  }
+  .bar {
+    background: #78909C;
+    border-radius: 2px;
+    width: 100px;
+    height: 1px;
+    margin: 1px;
+  }
+}
+</style>
