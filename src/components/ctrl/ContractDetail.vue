@@ -40,8 +40,22 @@
       </div>
       <div class="spacer"></div>
       <div class="detail-footer">
+        <div class="tip">DIFFICULTY %</div>
+        <vue-slider :min="-10" :max="10"
+          :railStyle="{backgroundColor: '#263238'}"
+          :processStyle="{backgroundColor: '#78909C'}"
+          v-model="diff" />
+      </div>
+      <div class="detail-footer">
+        <div class="tip">EXCHANGE RATE %</div>
+        <vue-slider :min="-10" :max="10" 
+          :railStyle="{backgroundColor: '#263238'}"
+          :processStyle="{backgroundColor: '#78909C'}"
+          v-model="exRate" />
+      </div>
+      <div class="detail-footer">
           <div class="tip">EXPECTED OUTPUT CALCULATOR</div>
-          <div class="large-price">$360.00</div>
+          <div class="large-price">${{0.3212 * (100 + exRate) * (100 + diff) | usd}}</div>
           <div class="memo">BTC 0.2451 OR ETH 6.287</div> 
       </div>
     </div>
@@ -50,6 +64,8 @@
 <script>
 
 import Vue from 'vue'
+import VueSlider from 'vue-slider-component'
+import 'vue-slider-component/theme/antd.css'
 
 Vue.filter('usd', function (value) {
   return value.toFixed(4);
@@ -61,12 +77,15 @@ Vue.filter('btc', function (value) {
 
 export default {
   name: 'ContractDetail',
+  components: { VueSlider },
   props: {
     contract: Object
   },
   data() {
     return {
-      quantity: null
+      quantity: null,
+      diff: 0,
+      exRate: 0
     };
   }
 }
