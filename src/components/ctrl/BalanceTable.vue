@@ -15,7 +15,7 @@
   </div>
   <div>
     <div class="balance" v-for="balance of balances" v-bind:key="balance.name" v-bind:class="balance.hashType">
-      <BalanceCard balance="balance" />
+      <BalanceCard :balance="balance" />
     </div>
   </div>
   <WithdrawDialog />
@@ -39,15 +39,6 @@ Vue.filter('formatDate', function(value, format) {
   }
 });
 
-Vue.filter('eth', function (value, opt) {
-  opt = opt || {};
-  return (!opt.hideEth && 'Ξ ' || '') + web3.fromWei(value).toNumber().toFixed(opt.decimals || 5);
-});
-
-Vue.filter('bn', function (value) {
-  return value.toNumber();
-});
-
 export default {
   name: 'BalanceTable',
   props: ['title', 'data'],
@@ -61,12 +52,16 @@ export default {
     return {
       tab: 1,
       balances: [{
-        name: 'Bitcoin',
-        hashType: 'POW'
+        name: 'wBTC',
+        available: 0.8,
+        onOrder: 1.5,
+        price: 4500
       },
       {
         name: 'ETH',
-        hashType: 'POW'
+        available: 20,
+        onOrder: 14,
+        price: 200
       }]
     };
   }

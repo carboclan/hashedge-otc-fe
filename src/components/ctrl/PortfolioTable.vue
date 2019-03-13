@@ -15,13 +15,13 @@
     </div>
   </div>
   <div>
-    <div class="portfolio" v-for="portfolio of portfolios" v-bind:key="portfolio.name" v-bind:class="portfolio.hashType">
+    <div class="portfolio" v-for="portfolio of portfolios" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
       <div v-on:click="selectPortfolio(portfolio)">
-        <PortfolioCard portfolio="portfolio" />
+        <PortfolioCard :portfolio="portfolio" />
       </div>
     </div>
   </div>
-  <PortfolioDetail portfolio="portfolio" v-show="selectedPortfolio != null" />
+  <PortfolioDetail :portfolio="selectedPortfolio" v-show="selectedPortfolio != null" />
 </div>
 </template>
 
@@ -74,12 +74,68 @@ export default {
       tab: 1,
       selectedPortfolio: null,
       portfolios: [{
+        id: 1,
         name: 'Bitcoin',
-        hashType: 'POW'
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 43.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 100,
+        total: 90,
+        processed: 13,
+        estimateGain: '1.30%',
+        type: 'Seller',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
       },
       {
+        id: 2,
         name: 'ETH',
-        hashType: 'POW'
+        code: 'ETH',
+        hashType: 'POW',
+        paid: 13.1602,
+        pUnit: 'DAI',
+        received: 1.12301231,
+        rUnit: 'ETH',
+        amount: 10,
+        total: 30,
+        processed: 7,
+        estimateGain: '2.73%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 3,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 4563.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 1000,
+        total: 180,
+        processed: 20,
+        estimateGain: '1.91%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 4,
+        name: 'Ether',
+        code: 'ETH',
+        hashType: 'POW',
+        paid: 143.1602,
+        pUnit: 'DAI',
+        received: 7.12301231,
+        rUnit: 'ETH',
+        amount: 50,
+        total: 180,
+        processed: 27,
+        estimateGain: '6.30%',
+        type: 'Seller',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
       }]
     };
   }

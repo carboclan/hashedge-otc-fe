@@ -12,8 +12,8 @@
     </div>
   </div>
   <div>
-    <div class="contract" v-for="token of tokens" v-bind:key="token.name">
-      <TokenCard contract="contract" />
+    <div class="token" v-for="token of tokens" v-bind:key="token.name">
+      <TokenCard :token="token" />
     </div>
   </div>
 </div>
@@ -50,20 +50,27 @@ export default {
   methods: {
     showCreatDialog() {
       DialogEventBus.$emit('show-create-dialog');
-    },
-    showTradeDialog(token) {
-      DialogEventBus.$emit('show-trade-dialog', token);
     }
   },
   data() {
     return {
       tokens: [{
         name: 'Bitcoin',
-        hashType: 'POW'
+        code: 'BTC',
+        hashType: 'POW',
+        priceUSD: 0.1602,
+        unit: 'TH',
+        priceBTC: 0.00004101,
+        profitRate: "+21.99%"
       },
       {
         name: 'Ether',
-        hashType: 'POW'
+        code: 'ETH',
+        hashType: 'POW',
+        priceUSD: 0.0302,
+        unit: 'GH',
+        priceBTC: 0.00001281,
+        profitRate: "+11.03%"
       }]
     };
   }

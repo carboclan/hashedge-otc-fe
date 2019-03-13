@@ -3,19 +3,19 @@
     <div class="balance-card">
       <div class="card-top">
         <div class="card-left">
-          <div class="pad-top3"><div class="context">wBTC</div></div>
+          <div class="pad-top3"><div class="context">{{balance.name}}</div></div>
         </div>
         <div class="card-center">
-          <div><div class="tip">AVAILABE</div></div>
-          <div class="pad-top1"><div class="context">5</div></div>
+          <div><div class="tip">AVAILABLE</div></div>
+          <div class="pad-top1"><div class="context">{{balance.available}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">ON ORDERS</div></div>
-          <div class="pad-top1"><div class="context">287</div></div>
+          <div class="pad-top1"><div class="context">{{balance.onOrder}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE VALUE</div></div>
-          <div class="pad-top1"><div class="price">-1.40%</div></div>
+          <div class="pad-top1"><div class="price">{{(balance.onOrder + balance.available) * balance.price | usd}}</div></div>
           <div><div class="memo">USD</div></div>
         </div>
         <div class="card-tool">
@@ -33,6 +33,9 @@ import { DialogEventBus } from './DialogContainer';
 
 export default {
   name: 'BalanceCard',
+  props: {
+    balance: Object
+  },
   methods: {
     showWithdrawDialog() {
       DialogEventBus.$emit('show-withdraw-dialog');
@@ -43,7 +46,6 @@ export default {
   },
   data() {
     return {
-      balance: null
     };
   }
 }

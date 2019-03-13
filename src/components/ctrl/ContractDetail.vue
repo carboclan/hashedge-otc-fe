@@ -5,36 +5,36 @@
       <div class="detail-header">
         <div class="quantity">
           <span>EnterQuantity</span>
-          <input placeholder="450" />
+          <input placeholder="Quantity" v-model="quantity"/>
         </div>
         <div class="tip">TOTAL PRICE</div>
-        <div class="large-price">$2092.50</div>
-        <div class="memo">BTC 0.54510002</div>
+        <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
+        <div class="memo">BTC {{contract.priceBTC * quantity | btc}}</div>
         <div class="tool"><button>BUY</button></div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
         <div>
           <div class="tip">QUANTITY AVALABLE</div>
-          <div class="small-price">1,100</div>
-          <div class="memo">of 2000 Units</div>
+          <div class="small-price">{{contract.shareTotal - contract.shareSold}}</div>
+          <div class="memo">of {{contract.shareTotal}} Units</div>
         </div>
         <div>
           <div class="tip">CONTRACT UNIT PRICE</div>
-          <div class="small-price">$4.65/TH</div>
-          <div class="memo">BTC 0.0012/TH</div>
+          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
+          <div class="memo">BTC {{contract.priceBTC}}/{{contract.unit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
         <div>
           <div class="tip">START PRICE</div>
-          <div class="small-price">$6.50/TH</div>
+          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
           <div class="memo">Today</div>
         </div>
         <div>
           <div class="tip">RESERVATION PRICE</div>
-          <div class="small-price">$4.50/TH</div>
+          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
           <div class="memo">02.15.2019</div>
         </div>
       </div>
@@ -49,11 +49,24 @@
 </template>
 <script>
 
+import Vue from 'vue'
+
+Vue.filter('usd', function (value) {
+  return value.toFixed(4);
+});
+
+Vue.filter('btc', function (value) {
+  return value.toFixed(8);
+});
+
 export default {
   name: 'ContractDetail',
+  props: {
+    contract: Object
+  },
   data() {
     return {
-      contract: null
+      quantity: null
     };
   }
 }

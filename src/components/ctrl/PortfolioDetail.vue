@@ -4,51 +4,51 @@
     <div class="portfolio-detail">
       <div class="detail-header">
         <div class="tip">PROGRESS</div>
-        <div class="large-price">5/30 days</div>
+        <div class="large-price">{{portfolio.processed}}/{{portfolio.total}} days</div>
         <div class="process-bar">
             <div><div class="shares">1.15.2019</div></div>
-            <div class="process"><div class="bar"></div></div>
+            <div class="process"><div class="bar" v-bind:style="{width: portfolio.processed/portfolio.total*256 + 'px'}"></div></div>
             <div><div class="shares">21.15.2019</div></div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="detail-header">
-        <div class="seller">Contract Seller</div>
+        <div class="seller">Contract {{portfolio.type}}</div>
       </div>
       <div class="spacer"></div>
       <div class="detail-header">
         <div class="tip">ESTIMATED NET GAIN</div>
-        <div class="large-price">5/30 days</div>
+        <div class="large-price">{{portfolio.estimateGain}}</div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
         <div>
           <div class="tip">TOTAL RECEIVED</div>
-          <div class="small-price">5</div>
-          <div class="memo">DAI</div>
+          <div class="small-price">{{portfolio.received}}</div>
+          <div class="memo">{{portfolio.rUnit}}</div>
         </div>
         <div>
           <div class="tip">TOTAL PAID</div>
-          <div class="small-price">287</div>
-          <div class="memo">DAI</div>
+          <div class="small-price">{{portfolio.paid}}</div>
+          <div class="memo">{{portfolio.pUnit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
         <div>
           <div class="tip">AMOUNT</div>
-          <div class="small-price">200</div>
-          <div class="memo">DAI</div>
+          <div class="small-price">{{portfolio.amount}}</div>
+          <div class="memo">{{portfolio.unit}}</div>
         </div>
         <div>
           <div class="tip">PRICE</div>
-          <div class="small-price">0.00005</div>
-          <div class="memo">DAI</div>
+          <div class="small-price">{{portfolio.paid}}</div>
+          <div class="memo">{{portfolio.pUnit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="detail-footer">
-          <div class="tip">TXID: Txid 0x0203d0d0f00340304f0d0030420423A</div>
+          <div class="tip">TXID: {{portfolio.tx}}</div>
           <div class="copy">COPY</div>
       </div>
     </div>
@@ -59,9 +59,11 @@
 
 export default {
   name: 'PortfolioDetail',
+  props: {
+    portfolio: Object
+  },
   data() {
     return {
-      portfolio: null
     };
   }
 }
@@ -200,7 +202,6 @@ export default {
   .bar {
     background: #78909C;
     border-radius: 2px;
-    width: 100px;
     height: 1px;
     margin: 1px;
   }

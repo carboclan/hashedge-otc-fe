@@ -15,13 +15,13 @@
     </div>
   </div>
   <div>
-    <div class="contract" v-for="contract of contracts" v-bind:key="contract.name" v-bind:class="contract.hashType">
+    <div class="contract" v-for="contract of contracts"  v-bind:key="contract.id" v-bind:class="contract.hashType">
       <div v-on:click="selectContract(contract)">
-        <ContractCard contract="contract"/>
+        <ContractCard :contract="contract"/>
       </div>
     </div>
   </div>
-  <ContractDetail contract="contract" v-show="selectedContract != null" />
+  <ContractDetail :contract="selectedContract" v-show="selectedContract != null" />
 </div>
 </template>
 
@@ -74,12 +74,60 @@ export default {
       tab: 1,
       selectedContract: null,
       contracts: [{
+        id: 1,
         name: 'Bitcoin',
-        hashType: 'POW'
+        code: 'BTC',
+        hashType: 'POW',
+        priceUSD: 0.1602,
+        unit: 'TH',
+        priceBTC: 0.00004101,
+        rating: '☆☆☆☆☆',
+        hoursLeft: '15:30',
+        shareSold: 1000,
+        shareTotal: 2500,
+        payoutType: 'Standard Payout'
       },
       {
+        id: 2,
         name: 'Ether',
-        hashType: 'POW'
+        code: 'ETH',
+        hashType: 'POW',
+        priceUSD: 0.0302,
+        unit: 'GH',
+        priceBTC: 0.00001281,
+        rating: '☆☆☆☆',
+        hoursLeft: '100:45',
+        shareSold: 450,
+        shareTotal: 500,
+        payoutType: 'Standard Payout'
+      },
+      {
+        id: 3,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        priceUSD: 0.1701,
+        unit: 'TH',
+        priceBTC: 0.00004322,
+        rating: '☆☆☆☆☆',
+        hoursLeft: '75:30',
+        shareSold: 1500,
+        shareTotal: 2500,
+        payoutType: 'Standard Payout'
+      },
+      {
+        id: 4,
+        name: 'Ether',
+        code: 'ETH',
+        hashType: 'POW',
+        priceUSD: 0.0411,
+        unit: 'GH',
+        priceBTC: 0.00002881,
+        rating: '☆☆☆',
+        hoursLeft: '100:45',
+        shareSold: 150,
+        shareTotal: 500,
+        payoutType: 'Standard Payout'
       }]
     };
   }

@@ -3,16 +3,16 @@
     <div class="token-card">
       <div class="card-top">
         <div class="card-left">
-          <div><div class="tip">POW</div></div>
-          <div><div class="context">Bitcoin</div></div>
-          <div><div class="memo">BTC</div></div>
+          <div><div class="tip">{{token.hashType}}</div></div>
+          <div><div class="context">{{token.name}}</div></div>
+          <div><div class="memo">{{token.code}}</div></div>
         </div>
         <div class="card-center">
-          <div class="pad-top3"><div class="context">0.16 USD/TH</div></div>
-          <div><div class="memo">BTC 0.000041/TH</div></div>
+          <div class="pad-top3"><div class="context">{{token.priceUSD}} USD/{{token.unit}}</div></div>
+          <div><div class="memo">BTC {{token.priceBTC}} /{{token.unit}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">+99.99%</div></div>
+          <div class="pad-top2"><div class="price">{{token.profitRate}}</div></div>
           <div><div class="memo">Up to</div></div>
         </div>
       </div>
@@ -24,9 +24,11 @@
 
 export default {
   name: 'TokenCard',
+  props: {
+    token: Object
+  },
   data() {
     return {
-      token: null
     };
   }
 }

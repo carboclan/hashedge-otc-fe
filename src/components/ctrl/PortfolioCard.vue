@@ -3,22 +3,22 @@
     <div class="portfolio-card">
       <div class="card-top">
         <div class="card-left">
-          <div class="pad-top3"><div class="context">08.03.2019</div></div>
-          <div><div class="memo">Seller</div></div>
+          <div class="pad-top3"><div class="context">{{portfolio.name}}</div></div>
+          <div><div class="memo">{{portfolio.type}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">RECEIVED</div></div>
-          <div class="pad-top1"><div class="context">5</div></div>
-          <div><div class="memo">Bitcoin</div></div>
+          <div class="pad-top1"><div class="context">{{portfolio.received}}</div></div>
+          <div><div class="memo">{{portfolio.rUnit}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">PAID</div></div>
-          <div class="pad-top1"><div class="context">287</div></div>
-          <div><div class="memo">DAI</div></div>
+          <div class="pad-top1"><div class="context">{{portfolio.paid}}</div></div>
+          <div><div class="memo">{{portfolio.pUnit}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE NET GAIN</div></div>
-          <div class="pad-top2"><div class="price">-1.40%</div></div>
+          <div class="pad-top2"><div class="price">{{portfolio.estimateGain}}</div></div>
         </div>
         <div class="card-tool">
           <div><i class="material-icons">monetization_on</i></div>
@@ -32,9 +32,11 @@
 
 export default {
   name: 'PortfolioCard',
+  props: {
+    portfolio: Object
+  },
   data() {
     return {
-      portfolio: null
     };
   }
 }

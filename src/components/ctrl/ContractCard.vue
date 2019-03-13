@@ -4,37 +4,38 @@
       <div class="card-top">
         <div class="card-left">
           <div><div class="tip">SECONDARY</div></div>
-          <div class="pad-top2"><div class="context">15:30</div></div>
+          <div class="pad-top2"><div class="context">{{contract.hoursLeft}}</div></div>
           <div><div class="memo">hours left</div></div>
         </div>
         <div class="card-center">
-          <div><div class="tip">POW</div></div>
-          <div class="pad-top2"><div class="context">Bitcoin</div></div>
-          <div><div class="memo">Standard Payout</div></div>
+          <div><div class="tip">{{contract.hashType}}</div></div>
+          <div class="pad-top2"><div class="context">{{contract.name}}</div></div>
+          <div><div class="memo">{{contract.payoutType}}</div></div>
         </div>
         <div class="card-right">
-          <div><div class="memo">☆☆☆☆☆</div></div>
-          <div class="pad-top1"><div class="price">$0.90/Th</div></div>
-          <div><div class="memo">BTC 0.0001</div></div>
+          <div><div class="memo">{{contract.rating}}</div></div>
+          <div class="pad-top1"><div class="price">${{contract.priceUSD}}/{{contract.unit}}</div></div>
+          <div><div class="memo">BTC {{contract.priceBTC}}</div></div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="card-bottom">
-          <div><div class="shares">999,999 SOLD</div></div>
-          <div class="process"><div class="bar"></div></div>
-          <div><div class="shares">999,999 SHARES</div></div>
+          <div><div class="shares">{{contract.shareSold}} SOLD</div></div>
+          <div class="process"><div class="bar" v-bind:style="{width: contract.shareSold/contract.shareTotal*256 + 'px'}"></div></div>
+          <div><div class="shares">{{contract.shareTotal}} SHARES</div></div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 
 export default {
   name: 'ContractCard',
+  props: {
+    contract: Object
+  },
   data() {
     return {
-      contract: null
     };
   }
 }
@@ -113,6 +114,7 @@ export default {
     text-transform: uppercase;
     font-variant: small-caps;
     color: #78909C;
+    width: 80px;
   }
   .process {
     background: #37474F;
@@ -124,7 +126,6 @@ export default {
   .bar {
     background: #78909C;
     border-radius: 2px;
-    width: 100px;
     height: 1px;
     margin: 1px;
   }
