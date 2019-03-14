@@ -41,16 +41,12 @@
       <div class="spacer"></div>
       <div class="detail-footer">
         <div class="tip">DIFFICULTY %</div>
-        <vue-slider :min="-10" :max="10"
-          :railStyle="{backgroundColor: '#263238'}"
-          :processStyle="{backgroundColor: '#78909C'}"
+        <el-slider :min="-10" :max="10"
           v-model="diff" />
       </div>
       <div class="detail-footer">
         <div class="tip">EXCHANGE RATE %</div>
-        <vue-slider :min="-10" :max="10" 
-          :railStyle="{backgroundColor: '#263238'}"
-          :processStyle="{backgroundColor: '#78909C'}"
+        <el-slider :min="-10" :max="10"
           v-model="exRate" />
       </div>
       <div class="detail-footer">
@@ -64,8 +60,6 @@
 <script>
 
 import Vue from 'vue'
-import VueSlider from 'vue-slider-component'
-import 'vue-slider-component/theme/antd.css'
 
 Vue.filter('usd', function (value) {
   return value.toFixed(4);
@@ -77,7 +71,6 @@ Vue.filter('btc', function (value) {
 
 export default {
   name: 'ContractDetail',
-  components: { VueSlider },
   props: {
     contract: Object
   },

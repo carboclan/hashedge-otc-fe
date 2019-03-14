@@ -9,7 +9,7 @@
         </div>
         <div class="card-center">
           <div class="pad-top3"><div class="context">{{token.priceUSD}} USD/{{token.unit}}</div></div>
-          <div><div class="memo">BTC {{token.priceBTC}} /{{token.unit}}</div></div>
+          <div><div class="memo">{{token.name}} {{token.priceCOIN}} /{{token.unit}}</div></div>
         </div>
         <div class="card-right">
           <div class="pad-top2"><div class="price">{{token.profitRate}}</div></div>

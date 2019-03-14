@@ -6,11 +6,13 @@
     </div>
     <div class="input-group">
       <div class="tip">payment</div>
-      <select v-model="currencyType">
+      <select v-model="contractCurrency">
+        <option value="" disabled selected>Contract Currency</option>
         <option value="BTC">BTC</option>
         <option value="ETH">ETH</option>
       </select>
       <select v-model="outputCurrency">
+        <option value="" disabled selected>Output Currency</option>
         <option value="BTC">BTC</option>
         <option value="ETH">ETH</option>
       </select>
@@ -18,14 +20,14 @@
     <div class="input-group">
       <div class="tip">contract type</div>
       <select v-model="contractType">
-        <option value="STD">STANDARD OUTPUT</option>
+        <option value="STD" selected>STANDARD OUTPUT</option>
         <option value="ACT">ACTURE OUTPUT</option>
       </select>
     </div>
     <div class="input-group">
       <div class="tip">contract duration</div>
       <select v-model="duration">
-        <option value="30">30 DAYS</option>
+        <option value="30" selected>30 DAYS</option>
         <option value="90">90 DAYS</option>
         <option value="180">180 DAYS</option>
       </select>
@@ -44,25 +46,37 @@
     </div>
     <div class="input-group">
       <div class="tip">pricing method</div>
-      <select v-model="hashType">
-        <option value="30">FIXED PRICE(BUY NOW)</option>
-        <option value="90">DUTCH AUCTION</option>
-        <option value="180">180 DAYS</option>
+      <select v-model="pricingMethod">
+        <option value="FIXED" selected>FIXED PRICE(BUY NOW)</option>
+        <option value="AUC">DUTCH AUCTION</option>
       </select>
       <div class="quantity">
         <span>Your Fixed Price</span>
-        <input placeholder="Price" v-model="strikePrice" />
+        <input placeholder="Price" v-model="price" />
       </div>
+    </div>
+    <div class="input-group text-right">
+        <div class="tip">Suggest Price</div>
+        <div class="large-price">{{0.2012*(100+diff)*(100+exRate)/10000 |usd}} USD</div>
+        <button v-on:click="applyPrice">Use Suggest Price</button>
+    </div>
+    <div class="input-group">
+        <div class="tip">DIFFICULTY %</div>
+        <el-slider :min="-10" :max="10"
+          v-model="diff" />
+        <div class="tip">EXCHANGE RATE %</div>
+        <el-slider :min="-10" :max="10"
+          v-model="exRate" />
     </div>
     <div class="input-group">
       <div class="tip">total offering</div>
       <div class="quantity">
         <span>Total Quantity Offering</span>
-        <input placeholder="450" v-model="totalSupply"/>
+        <input placeholder="Total Offering" v-model="totalSupply"/>
       </div>
       <div class="quantity">
         <span>Minimum Order Size</span>
-        <input placeholder="450" v-model="orderSize" />
+        <input placeholder="Minimum Order" v-model="orderSize" />
       </div>
     </div>
     <div class="footer">
@@ -75,18 +89,22 @@
     </div>
     <div class="input-group">
       <div class="tip">Mining Pool Name</div>
-      <select v-model="hashType">
-        <option value="30">FIXED PRICE(BUY NOW)</option>
-        <option value="90">DUTCH AUCTION</option>
-        <option value="180">180 DAYS</option>
+      <select>
+        <option value="FISH" selected>Fish Pool</option>
+        <option value="BTC">BTC.com</option>
+        <option value="ABC">ABC</option>
       </select>
       <div class="quantity">
-        <input placeholder="Pool Address" v-model="poolAddress" />
+        <input placeholder="Pool Address"/>
       </div>
       <div class="foot-note">Point your miner to this address.</div>
       <div class="quantity">
-        <span>Contract Address</span>
-        <input placeholder="Contract Address" v-model="contractAddress" />
+        <input placeholder="Contract Address"/>
+      </div>
+      <div class="foot-note">Contract Address</div>
+      <div class="status">
+        <div class="tip">Awaiting Configuration</div>
+        <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
       </div>
     </div>
     <div class="footer">
@@ -99,18 +117,22 @@
     </div>
     <div class="input-group">
       <div class="quantity">
-        <input placeholder="Your Validator Address" v-model="vAddress" />
+        <input placeholder="Your Validator Address"/>
       </div>
-      <div class="foot-note">Sign this message digest with the private key of your validator address. </div>
+      <div class="foot-note">We will automatically generate a message digest for you to sign.</div>
       <div class="quantity">
-        <input placeholder="Your Validator Address" v-model="sAddress" />
+        <input placeholder="Your Validator Address"/>
       </div>
       <div class="foot-note">Sign this message digest with the private key of your validator address. </div>
     </div>
     <div class="input-group">
       <div class="tip">enter your signed output</div>
-      <textarea v-model="signedOutput" />
-      <button v-on:click="nextStep">Submit</button>
+      <textarea/>
+      <button>Submit</button>
+    </div>
+    <div class="status">
+      <div class="tip">Awaiting Varification</div>
+      <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
     </div>
     <div class="footer">
       <button v-on:click="nextStep">NEXT</button>
@@ -122,8 +144,8 @@
     </div>
     <div class="input-group">
       <div class="tip">Choose Collateral Currency</div>
-      <select v-model="hashType">
-        <option value="30">FIXED PRICE(BUY NOW)</option>
+      <select v-model="collateralCurrency">
+        <option value="DAI" selected></option>
         <option value="90">DUTCH AUCTION</option>
         <option value="180">180 DAYS</option>
       </select>
@@ -135,6 +157,10 @@
         <input placeholder="Your Validator Address" v-model="cAddress" />
       </div>
       <div class="foot-note">Contract collateral address.</div>
+    </div>
+    <div class="status">
+      <div class="tip">Awaiting Collateral</div>
+      <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
     </div>
     <div class="footer">
       <button v-on:click="hide">SUBMIT</button>
@@ -166,6 +192,9 @@ export default {
     nextStep() {
       this.$data.step = this.$data.step + 1;
     },
+    applyPrice() {
+      this.$data.price = 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000;
+    },
     async submit() {
       const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
       const recpt = await hashedgeFactory.createExchange(
@@ -186,16 +215,21 @@ export default {
       symbol: null,
       show: false,
       hashType: 'POW',
-      outputCurrency: 'BTC',
-      currencyType: 'BTC',
-      contractType: null,
-      tokenSize: 1,
-      hashUnit: 'TH/s',
-      strikePrice: null,
-      duration: 30,
+      contractCurrency: '',
+      outputCurrency: '',
+      contractType: 'STD',
       expirationDate: null,
-      orderSize: 0,
-      totalSupply: null,
+      pricingMethod: 'FIXED',
+      price: 0,
+      diff: 1,
+      exRate: 1,
+      totalSupply: 0,
+      orderSize: 1,
+      collateralCurrency: 'DAI',
+      cAddress: '',
+      cAmount: 0,
+      hashUnit: 'TH/s',
+      duration: 30,
       target: null
     };
   }
@@ -258,6 +292,14 @@ export default {
     font-size: 12px;
     color: #B0BEC5;
     text-align: right;
+  }
+  .status {
+    width: 160px;
+    border-radius: 4px;
+    background-color: #263238;
+    margin: 8px auto;
+    padding: 8px;
+    text-align: center;
   }
   .quantity {
     background: #263238;

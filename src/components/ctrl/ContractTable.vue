@@ -21,7 +21,7 @@
       </div>
     </div>
   </div>
-  <ContractDetail :contract="selectedContract" v-show="selectedContract != null" />
+  <ContractDetail :contract="selectedContract" v-if="selectedContract != null" />
 </div>
 </template>
 

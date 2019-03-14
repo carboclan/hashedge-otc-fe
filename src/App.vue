@@ -110,6 +110,13 @@ ul {
   margin: 0;
   padding: 0;
 }
+
+.right {
+  float: right;
+}
+.text-right {
+  text-align: right;
+}
 </style>
 
 <style scoped lang="scss">

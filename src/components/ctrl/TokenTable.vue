@@ -2,8 +2,8 @@
 <div class="table-container">
   <div>
     <div class="header">
-      <div class="header-menu">
-        <select name="sortby" id="sortby">   
+      <div class="header-menu right">
+        <select name="sortby" v-model="sortby">   
           <option value="1">hash type</option>
           <option value="2">return</option>
           <option value="3">rating</option>
@@ -54,13 +54,14 @@ export default {
   },
   data() {
     return {
+      sortby: '1',
       tokens: [{
         name: 'Bitcoin',
         code: 'BTC',
         hashType: 'POW',
         priceUSD: 0.1602,
         unit: 'TH',
-        priceBTC: 0.00004101,
+        priceCOIN: 0.00004101,
         profitRate: "+21.99%"
       },
       {
@@ -69,8 +70,17 @@ export default {
         hashType: 'POW',
         priceUSD: 0.0302,
         unit: 'GH',
-        priceBTC: 0.00001281,
+        priceCOIN: 0.00001281,
         profitRate: "+11.03%"
+      },
+      {
+        name: 'EOS',
+        code: 'EOS',
+        hashType: 'DPOS',
+        priceUSD: 0.0602,
+        unit: 'EOS',
+        priceCOIN: 0.00000101,
+        profitRate: "+11.99%"
       }]
     };
   }
