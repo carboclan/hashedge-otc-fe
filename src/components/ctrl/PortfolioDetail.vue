@@ -48,11 +48,12 @@
       </div>
       <div class="spacer"></div>
       <div class="detail-footer">
-          <div class="tip">TXID: {{portfolio.tx}}</div>
+          <div class="tip">TXID: {{portfolio.tx | tx}}</div>
           <div class="copy">COPY</div>
       </div>
     </div>
-    <div class="tool"><button>TERMINATE</button></div>
+    <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div>
+    <div class="tool" v-if="portfolio.type == 'Seller'" v-on:click="terminate"><button>TERMINATE</button></div>
   </div>
 </template>
 <script>
@@ -61,6 +62,20 @@ export default {
   name: 'PortfolioDetail',
   props: {
     portfolio: Object
+  },
+  methods: {
+    async sell() {
+      // const { portfolio } = this.$props;
+      // recpt = await hashedgeFactory.sell(portfolio.address);
+      // await web3.eth.getTransactionReceipt(recpt);
+      alert('sell');
+    },
+    async terminate() {
+      // const { portfolio } = this.$props;
+      // recpt = await hashedgeFactory.terminate(portfolio.address);
+      // await web3.eth.getTransactionReceipt(recpt);
+      alert('terminate');
+    }
   },
   data() {
     return {
@@ -71,7 +86,7 @@ export default {
 
 <style lang="scss">
 .right-panel {
-  position: fixed;
+  position: absolute;
   top: 170px;
   left: 820px;
   padding: 8px;

@@ -6,11 +6,7 @@
   <div class="input-group">
     <div class="quantity">
       <span>amount to withdraw</span>
-      <input placeholder="Price" v-model="strikePrice" />
-    </div>
-    <div class="quantity">
-      <span>withdrawal address</span>
-      <input placeholder="Price" v-model="strikePrice" />
+      <input placeholder="amount" v-model="amount" />
     </div>
   </div>
   <div class="footer">
@@ -28,7 +24,8 @@ export default {
   name: 'WithdrawDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
-    DialogEventBus.$on('show-withdraw-dialog', () => {
+    DialogEventBus.$on('show-withdraw-dialog', (contractAddress) => {
+      this.$data.contractAddress = contractAddress;
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -41,11 +38,9 @@ export default {
       this.$data.step = 1;
     },
     async submit() {
-      const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
-      const recpt = await hashedgeFactory.createExchange(
-        web3.toWei(target, 'ether'), name, symbol,
-        totalSupply, hashType, currencyType, hashUnit, tokenSize,
-        Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
+      const { amount, address } = this.$data;
+      const recpt = await hashedgeFactory.withdraw(
+        web3.toWei(amount, 'ether')
       );
 
       await web3.eth.getTransactionReceipt(recpt);
@@ -55,22 +50,8 @@ export default {
   },
   data() {
     return {
-      step: 1,
-      name: null,
-      symbol: null,
       show: false,
-      hashType: 'POW',
-      outputCurrency: 'BTC',
-      currencyType: 'BTC',
-      contractType: null,
-      tokenSize: 1,
-      hashUnit: 'TH/s',
-      strikePrice: null,
-      duration: 30,
-      expirationDate: null,
-      orderSize: 0,
-      totalSupply: null,
-      target: null
+      amount: 0
     };
   }
 }
@@ -152,7 +133,7 @@ export default {
       font-size: 18px;
       text-align: right;
       color: white;
-      width: 150px;
+      width: 250px;
       float: right;
       background: none;
       border: none;

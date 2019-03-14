@@ -13,9 +13,34 @@
         </select>
       </div>
     </div>
+    <div class="table-header">
+        <select v-model="coinType">   
+          <option value="" selected disabled>COIN</option>
+          <option value="ALL">ALL</option>
+          <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
+          <option value="EOS">EOS</option>
+        </select>
+        <select name="sortby">   
+          <option value="" selected disabled>PAYOUT CURRENCY</option>
+          <option value="BTC">BTC</option>
+          <option value="ETH">ETH</option>
+          <option value="USD">USD</option>
+        </select>
+        <select name="sortby">   
+          <option value="" selected disabled>CONTRACT TYPE</option>
+          <option value="2">return</option>
+        </select>
+        <select name="sortby">   
+          <option value="" selected disabled>DURATION</option>
+          <option value="30">30 DAYS</option>
+          <option value="90">90 DAYS</option>
+          <option value="180">180 DAYS</option>
+        </select>
+    </div>
   </div>
   <div>
-    <div class="contract" v-for="contract of contracts"  v-bind:key="contract.id" v-bind:class="contract.hashType">
+    <div class="contract" v-for="contract of filterContractList"  v-bind:key="contract.id" v-bind:class="contract.hashType">
       <div v-on:click="selectContract(contract)">
         <ContractCard :contract="contract"/>
       </div>
@@ -73,6 +98,7 @@ export default {
     return {
       tab: 1,
       selectedContract: null,
+      coinType: 'ALL',
       contracts: [{
         id: 1,
         name: 'Bitcoin',
@@ -85,7 +111,10 @@ export default {
         hoursLeft: '15:30',
         shareSold: 1000,
         shareTotal: 2500,
-        payoutType: 'Standard Payout'
+        duration: 30,
+        payoutType: 'Standard Payout',
+        pricingMethod: 'FIXED',
+        address: '1231231212312313d2222302233322342'
       },
       {
         id: 2,
@@ -99,7 +128,10 @@ export default {
         hoursLeft: '100:45',
         shareSold: 450,
         shareTotal: 500,
-        payoutType: 'Standard Payout'
+        duration: 30,
+        payoutType: 'Standard Payout',
+        pricingMethod: 'FIXED',
+        address: '1231231212312313d2222302233322342'
       },
       {
         id: 3,
@@ -113,7 +145,10 @@ export default {
         hoursLeft: '75:30',
         shareSold: 1500,
         shareTotal: 2500,
-        payoutType: 'Standard Payout'
+        duration: 180,
+        payoutType: 'Standard Payout',
+        pricingMethod: 'FIXED',
+        address: '1231231212312313d2222302233322342'
       },
       {
         id: 4,
@@ -127,9 +162,24 @@ export default {
         hoursLeft: '100:45',
         shareSold: 150,
         shareTotal: 500,
-        payoutType: 'Standard Payout'
+        duration: 90,
+        payoutType: 'Standard Payout',
+        pricingMethod: 'FIXED',
+        address: '1231231212312313d2222302233322342'
       }]
     };
+  },
+  computed: {
+    filterContractList: function () {
+      var key = this.$data.coinType;
+      var contracts = this.$data.contracts;
+      if (key == 'ALL') {
+        return contracts;
+      }
+      return contracts.filter(function (item) {
+          return item.code == key
+      });
+    }
   }
 }
 </script>
@@ -160,6 +210,23 @@ export default {
         border-bottom: 1px solid white;
         color: white;
       }
+    }
+  }
+  .table-header {
+    background-color: #263238;
+    font-size: 12px;
+    padding: 0 8px;
+    color: #455A64;
+    border-top: 0.5px solid #455A64;
+    display: flex;
+    justify-content: flex-end;
+    >select {
+      border: none;
+      border-radius: 0;
+      border-right: 0.5px solid #455A64;
+    }
+    >select:last-child {
+      border-right: none;
     }
   }
 }

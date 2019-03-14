@@ -5,13 +5,13 @@
   </div>
   <div class="input-group">
     <div class="quantity">
-      <span>amount to withdraw</span>
-      <input placeholder="Price" v-model="strikePrice" />
+      <span>amount to deposit</span>
+      <input placeholder="Price" v-model="amount" />
     </div>
   </div>
   <div class="footer">
     <button v-on:click="hide">CANCEL</button>
-    <button v-on:click="hide">OK</button>
+    <button v-on:click="submit">OK</button>
   </div>
 </DialogContainer>
 </template>
@@ -24,7 +24,8 @@ export default {
   name: 'DepositDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
-    DialogEventBus.$on('show-deposit-dialog', () => {
+    DialogEventBus.$on('show-deposit-dialog', (tokenType) => {
+      this.$data.tokenType = tokenType;
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -37,13 +38,13 @@ export default {
       this.$data.step = 1;
     },
     async submit() {
-      const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
-      const recpt = await hashedgeFactory.createExchange(
-        web3.toWei(target, 'ether'), name, symbol,
-        totalSupply, hashType, currencyType, hashUnit, tokenSize,
-        Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
-      );
-
+      const { amount, tokenType } = this.$data;
+      var batch = web3.createBatch();
+      batch.add(tokenContract.approve(hashedgeFactory.address, web3.toWei(amount, 'ether')));
+      batch.add(hashedgeFactory.deposit(
+        web3.toWei(amount, 'ether')
+      ));
+      recpt = await batch.excute();
       await web3.eth.getTransactionReceipt(recpt);
       alert('success');
       DialogEventBus.$emit('hide', this.$el);
@@ -51,22 +52,8 @@ export default {
   },
   data() {
     return {
-      step: 1,
-      name: null,
-      symbol: null,
       show: false,
-      hashType: 'POW',
-      outputCurrency: 'BTC',
-      currencyType: 'BTC',
-      contractType: null,
-      tokenSize: 1,
-      hashUnit: 'TH/s',
-      strikePrice: null,
-      duration: 30,
-      expirationDate: null,
-      orderSize: 0,
-      totalSupply: null,
-      target: null
+      amount: 0
     };
   }
 }

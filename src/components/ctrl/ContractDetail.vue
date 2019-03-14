@@ -25,19 +25,21 @@
           <div class="memo">BTC {{contract.priceBTC}}/{{contract.unit}}</div>
         </div>
       </div>
-      <div class="spacer"></div>
-      <div class="detail-cell">
-        <div>
-          <div class="tip">START PRICE</div>
-          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
-          <div class="memo">Today</div>
+      <section v-if="contract.pricingMethod == 'AUCTION'">
+        <div class="spacer"></div>
+        <div class="detail-cell">
+          <div>
+            <div class="tip">START PRICE</div>
+            <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
+            <div class="memo">Today</div>
+          </div>
+          <div>
+            <div class="tip">RESERVATION PRICE</div>
+            <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
+            <div class="memo">02.15.2019</div>
+          </div>
         </div>
-        <div>
-          <div class="tip">RESERVATION PRICE</div>
-          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
-          <div class="memo">02.15.2019</div>
-        </div>
-      </div>
+      </section>
       <div class="spacer"></div>
       <div class="detail-footer">
         <div class="tip">DIFFICULTY %</div>
@@ -51,8 +53,8 @@
       </div>
       <div class="detail-footer">
           <div class="tip">EXPECTED OUTPUT CALCULATOR</div>
-          <div class="large-price">${{0.3212 * (100 + exRate) * (100 + diff) | usd}}</div>
-          <div class="memo">BTC 0.2451 OR ETH 6.287</div> 
+          <div class="large-price">${{0.3212 * (100 + exRate) * (100 - diff) * quantity/ 10000 | usd}}</div>
+          <div class="memo">BTC {{0.00013212 * (100 + exRate) * (100 - diff) * quantity /10000 | btc}} OR ETH {{0.002312 * (100 + exRate) * (100 - diff) * quantity / 10000 | btc}}</div> 
       </div>
     </div>
   </div>
@@ -74,6 +76,20 @@ export default {
   props: {
     contract: Object
   },
+  methods: {
+    async submit() {
+      // const { quantity } = this.$data;
+      // const { contract } = this.$props;
+      // var batch = web3.createBatch();
+      // batch.add(DaiContract.approve(hashedgeFactory.address, web3.toWei(contract.priceUSD*quantity, 'ether')));
+      // batch.add(hashedgeFactory.buy(contract.address,
+      //   quantity
+      // ));
+      // recpt = await batch.excute();
+      // await web3.eth.getTransactionReceipt(recpt);
+      alert('buy');
+    }
+  },
   data() {
     return {
       quantity: null,
@@ -86,8 +102,8 @@ export default {
 
 <style lang="scss">
 .right-panel {
-  position: fixed;
-  top: 170px;
+  position: absolute;
+  top: 200px;
   left: 820px;
   padding: 8px;
   .title {

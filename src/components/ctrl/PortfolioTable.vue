@@ -21,7 +21,7 @@
       </div>
     </div>
   </div>
-  <PortfolioDetail :portfolio="selectedPortfolio" v-show="selectedPortfolio != null" />
+  <PortfolioDetail :portfolio="selectedPortfolio" v-if="selectedPortfolio != null" />
 </div>
 </template>
 

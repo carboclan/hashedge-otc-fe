@@ -196,15 +196,15 @@ export default {
       this.$data.price = 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000;
     },
     async submit() {
-      const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
-      const recpt = await hashedgeFactory.createExchange(
-        web3.toWei(target, 'ether'), name, symbol,
-        totalSupply, hashType, currencyType, hashUnit, tokenSize,
-        Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
-      );
+      // const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
+      // const recpt = await hashedgeFactory.createExchange(
+      //   web3.toWei(target, 'ether'), name, symbol,
+      //   totalSupply, hashType, currencyType, hashUnit, tokenSize,
+      //   Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
+      // );
 
-      await web3.eth.getTransactionReceipt(recpt);
-      alert('success');
+      // await web3.eth.getTransactionReceipt(recpt);
+      alert('create');
       DialogEventBus.$emit('hide', this.$el);
     }
   },
@@ -218,7 +218,7 @@ export default {
       contractCurrency: '',
       outputCurrency: '',
       contractType: 'STD',
-      expirationDate: null,
+      expirationDate: '2019-03-14',
       pricingMethod: 'FIXED',
       price: 0,
       diff: 1,

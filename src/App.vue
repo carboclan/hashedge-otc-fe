@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="nav">
-      <div class="brand">Hashedge</div>
+      <div class="brand">Hashedge otc</div>
       <ul class="nav-list">
         <li v-bind:class="{ active: $route.name === 'home' }">
           <a href="#/home">

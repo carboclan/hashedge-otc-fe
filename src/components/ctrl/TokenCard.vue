@@ -8,11 +8,11 @@
           <div><div class="memo">{{token.code}}</div></div>
         </div>
         <div class="card-center">
-          <div class="pad-top3"><div class="context">{{token.priceUSD}} USD/{{token.unit}}</div></div>
+          <div class="pad-top3"><div class="context">{{token.priceUSD | usd}} USD/{{token.unit}}</div></div>
           <div><div class="memo">{{token.name}} {{token.priceCOIN}} /{{token.unit}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.profitRate}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
           <div><div class="memo">Up to</div></div>
         </div>
       </div>
@@ -45,10 +45,10 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 80px;
+      width: 140px;
     }
     .card-center {
-      width: 200px;
+      width: 140px;
     }
     .card-right {
       width: 160px;

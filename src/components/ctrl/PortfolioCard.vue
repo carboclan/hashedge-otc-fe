@@ -20,9 +20,6 @@
           <div><div class="tip">ESTIMATE NET GAIN</div></div>
           <div class="pad-top2"><div class="price">{{portfolio.estimateGain}}</div></div>
         </div>
-        <div class="card-tool">
-          <div><i class="material-icons">monetization_on</i></div>
-        </div>
       </div>
     </div>
   </div>
