@@ -197,11 +197,13 @@ export default {
     },
     async submit() {
       // const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
-      // const recpt = await hashedgeFactory.createExchange(
+      // batch.add(DaiContract.approve(hashedgeFactory.address, web3.toWei(contract.priceUSD*quantity, 'ether')));
+      // batch.add(hashedgeFactory.createExchange(
       //   web3.toWei(target, 'ether'), name, symbol,
       //   totalSupply, hashType, currencyType, hashUnit, tokenSize,
       //   Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
-      // );
+      // ));
+      // recpt = batch.excute();
 
       // await web3.eth.getTransactionReceipt(recpt);
       alert('create');
