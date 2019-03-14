@@ -5,16 +5,18 @@
       basics
     </div>
     <div class="input-group">
-      <div class="tip">payment</div>
+      <!--<div class="tip">payment</div>-->
       <select v-model="contractCurrency">
-        <option value="" disabled selected>Contract Currency</option>
-        <option value="BTC">BTC</option>
-        <option value="ETH">ETH</option>
+        <option value="" disabled selected>Contract</option>
+        <option value="BTC">BTC-POW</option>
+        <option value="ETH">ETH-POW</option>
+        <option value="XZT">XZT-POS</option>
       </select>
       <select v-model="outputCurrency">
-        <option value="" disabled selected>Output Currency</option>
+        <option value="" disabled selected>Payment Currency</option>
         <option value="BTC">BTC</option>
         <option value="ETH">ETH</option>
+        <option value="ETH">DAI</option>
       </select>
     </div>
     <div class="input-group">
@@ -89,17 +91,18 @@
     </div>
     <div class="input-group">
       <div class="tip">Mining Pool Name</div>
-      <select>
-        <option value="FISH" selected>Fish Pool</option>
+      <select v-model="pool.selected" v-on:change="setPoolInfo">
+        <option value="POOL.IN">pool.in</option>
+        <option value="FISH">Fish Pool</option>
         <option value="BTC">BTC.com</option>
         <option value="ABC">ABC</option>
       </select>
       <div class="quantity">
-        <input placeholder="Pool Address"/>
+        <input placeholder="Pool Address" style="width: 100%;" v-model="pool.url"/>
       </div>
       <div class="foot-note">Point your miner to this address.</div>
       <div class="quantity">
-        <input placeholder="Contract Address"/>
+        <input placeholder="Contract Address" style="width: 100%" v-model="pool.address" />
       </div>
       <div class="foot-note">Contract Address</div>
       <div class="status">
@@ -145,9 +148,8 @@
     <div class="input-group">
       <div class="tip">Choose Collateral Currency</div>
       <select v-model="collateralCurrency">
-        <option value="DAI" selected></option>
-        <option value="90">DUTCH AUCTION</option>
-        <option value="180">180 DAYS</option>
+        <option value="BTC" selected>BTC</option>
+        <option value="DAI">DAI</option>
       </select>
       <div class="quantity">
         <input placeholder="Amount" v-model="cAmount" />
@@ -186,6 +188,16 @@ export default {
     DialogEventBus.$off('show-create-dialog');
   },
   methods: {
+    setPoolInfo() {
+      const selected = this.pool.selected;
+      if (selected === 'POOL.IN') {
+        this.pool.url = 'btc.ss.poolin.com:443';
+        this.pool.address = '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869';
+      } else {
+        this.pool.url = '';
+        this.pool.address = '';
+      }
+    },
     hide() {
       DialogEventBus.$emit('hide', this.$el);
       this.$data.step = 1;
@@ -194,7 +206,7 @@ export default {
       this.$data.step = this.$data.step + 1;
     },
     applyPrice() {
-      this.$data.price = 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000;
+      this.$data.price = Math.round(10 ** 6 * 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000) / 10 ** 6;
     },
     async submit() {
       // const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
@@ -217,6 +229,11 @@ export default {
   },
   data() {
     return {
+      pool: {
+        selected: 'POOL.IN',
+        url: 'btc.ss.poolin.com:443',
+        address: '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869'
+      },
       step: 1,
       name: null,
       symbol: null,
@@ -233,8 +250,8 @@ export default {
       totalSupply: 0,
       orderSize: 1,
       collateralCurrency: 'DAI',
-      cAddress: '',
-      cAmount: 0,
+      cAddress: '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869',
+      cAmount: 0.0036,
       hashUnit: 'TH/s',
       duration: 30,
       target: null
