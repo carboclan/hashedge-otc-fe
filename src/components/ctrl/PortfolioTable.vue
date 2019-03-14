@@ -6,7 +6,7 @@
       <div class="header-menu" v-bind:class="{ active: tab === 2}" v-on:click="selectTab(2)">LISTED</div>
       <div class="header-menu" v-bind:class="{ active: tab === 3}" v-on:click="selectTab(3)">COMPLETED</div>
       <div class="header-menu">
-        <select name="sortby" id="sortby">   
+        <select name="sortby" id="sortby">
           <option value="1">hash type</option>
           <option value="2">return</option>
           <option value="3">rating</option>
@@ -15,7 +15,7 @@
     </div>
   </div>
   <div>
-    <div class="portfolio" v-for="portfolio of portfolios" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
+    <div class="portfolio" v-for="portfolio of portfolios[tab - 1]" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
       <div v-on:click="selectPortfolio(portfolio)">
         <PortfolioCard :portfolio="portfolio" />
       </div>
@@ -73,39 +73,41 @@ export default {
     return {
       tab: 1,
       selectedPortfolio: null,
-      portfolios: [{
-        id: 1,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 43.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 100,
-        total: 90,
-        processed: 13,
-        estimateGain: '1.30%',
-        type: 'Seller',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 2,
-        name: 'ETH',
-        code: 'ETH',
-        hashType: 'POW',
-        paid: 13.1602,
-        pUnit: 'DAI',
-        received: 1.12301231,
-        rUnit: 'ETH',
-        amount: 10,
-        total: 30,
-        processed: 7,
-        estimateGain: '2.73%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
+      portfolios: [
+        [
+          {
+            id: 1,
+            name: 'Bitcoin',
+            code: 'BTC',
+            hashType: 'POW',
+            paid: 43.1602,
+            pUnit: 'DAI',
+            received: 0.12301231,
+            rUnit: 'BTC',
+            amount: 100,
+            total: 90,
+            processed: 13,
+            estimateGain: '1.30%',
+            type: 'Seller',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          },
+          {
+            id: 2,
+            name: 'ETH',
+            code: 'ETH',
+            hashType: 'POW',
+            paid: 13.1602,
+            pUnit: 'DAI',
+            received: 1.12301231,
+            rUnit: 'ETH',
+            amount: 10,
+            total: 30,
+            processed: 7,
+            estimateGain: '2.73%',
+            type: 'Buyer',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          },
+          {
         id: 3,
         name: 'Bitcoin',
         code: 'BTC',
@@ -121,7 +123,7 @@ export default {
         type: 'Buyer',
         tx: 'SDLFHEOID2233334988773101223392837493931029334444'
       },
-      {
+          {
         id: 4,
         name: 'Ether',
         code: 'ETH',
@@ -136,7 +138,93 @@ export default {
         estimateGain: '6.30%',
         type: 'Seller',
         tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      }]
+      }
+      ],
+        [
+          {
+            id: 6,
+            name: 'ETH',
+            code: 'ETH',
+            hashType: 'POW',
+            paid: 13.1602,
+            pUnit: 'DAI',
+            received: 1.12301231,
+            rUnit: 'ETH',
+            amount: 10,
+            total: 30,
+            processed: 7,
+            estimateGain: '2.73%',
+            type: 'Buyer',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          },
+          {
+            id: 5,
+            name: 'Bitcoin',
+            code: 'BTC',
+            hashType: 'POW',
+            paid: 43.1602,
+            pUnit: 'DAI',
+            received: 0.12301231,
+            rUnit: 'BTC',
+            amount: 100,
+            total: 90,
+            processed: 13,
+            estimateGain: '1.30%',
+            type: 'Seller',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          }
+        ],
+        [
+          {
+            id: 3,
+            name: 'Bitcoin',
+            code: 'BTC',
+            hashType: 'POW',
+            paid: 4563.1602,
+            pUnit: 'DAI',
+            received: 0.12301231,
+            rUnit: 'BTC',
+            amount: 1000,
+            total: 180,
+            processed: 20,
+            estimateGain: '1.91%',
+            type: 'Buyer',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          },
+          {
+            id: 1,
+            name: 'Bitcoin',
+            code: 'BTC',
+            hashType: 'POW',
+            paid: 43.1602,
+            pUnit: 'DAI',
+            received: 0.12301231,
+            rUnit: 'BTC',
+            amount: 100,
+            total: 90,
+            processed: 13,
+            estimateGain: '1.30%',
+            type: 'Seller',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          },
+          {
+            id: 2,
+            name: 'ETH',
+            code: 'ETH',
+            hashType: 'POW',
+            paid: 13.1602,
+            pUnit: 'DAI',
+            received: 1.12301231,
+            rUnit: 'ETH',
+            amount: 10,
+            total: 30,
+            processed: 7,
+            estimateGain: '2.73%',
+            type: 'Buyer',
+            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+          }
+        ],
+      ]
     };
   }
 }
