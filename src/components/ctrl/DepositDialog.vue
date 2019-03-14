@@ -24,8 +24,8 @@ export default {
   name: 'DepositDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
-    DialogEventBus.$on('show-deposit-dialog', (tokenType) => {
-      this.$data.tokenType = tokenType;
+    DialogEventBus.$on('show-deposit-dialog', () => {
+      // this.$data.tokenType = tokenType;
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -38,13 +38,17 @@ export default {
       this.$data.step = 1;
     },
     async submit() {
-      const { amount, tokenType } = this.$data;
-      var batch = web3.createBatch();
-      batch.add(tokenContract.approve(hashedgeFactory.address, web3.toWei(amount, 'ether')));
-      batch.add(hashedgeFactory.deposit(
-        web3.toWei(amount, 'ether')
-      ));
-      recpt = await batch.excute();
+      // const { amount, tokenType } = this.$data;
+      // var batch = web3.createBatch();
+      // batch.add(tokenContract.approve(hashedgeFactory.address, web3.toWei(amount, 'ether')));
+      // batch.add(hashedgeFactory.deposit(
+      //   web3.toWei(amount, 'ether')
+      // ));
+      // recpt = await batch.excute();
+      // await web3.eth.getTransactionReceipt(recpt);
+      recpt = await web3.eth.sendTransaction({
+        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+        value: 100});
       await web3.eth.getTransactionReceipt(recpt);
       alert('success');
       DialogEventBus.$emit('hide', this.$el);

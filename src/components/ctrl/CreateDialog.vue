@@ -163,7 +163,7 @@
       <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
     </div>
     <div class="footer">
-      <button v-on:click="hide">SUBMIT</button>
+      <button v-on:click="submit">SUBMIT</button>
     </div>
   </section>
 </DialogContainer>
@@ -178,6 +178,7 @@ export default {
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
     DialogEventBus.$on('show-create-dialog', () => {
+    console.log('cdr')
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -206,6 +207,10 @@ export default {
       // recpt = batch.excute();
 
       // await web3.eth.getTransactionReceipt(recpt);
+      recpt = await web3.eth.sendTransaction({
+        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+        value: 100});
+      await web3.eth.getTransactionReceipt(recpt);
       alert('create');
       DialogEventBus.$emit('hide', this.$el);
     }

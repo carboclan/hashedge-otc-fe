@@ -10,7 +10,7 @@
         <div class="tip">TOTAL PRICE</div>
         <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
         <div class="memo">BTC {{contract.priceBTC * quantity | btc}}</div>
-        <div class="tool"><button>BUY</button></div>
+        <div class="tool"><button v-on:click="submit">BUY</button></div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
@@ -61,8 +61,8 @@
 </template>
 <script>
 
-import Vue from 'vue'
-
+import Vue from 'vue';
+import { web3, hashedgeFactory } from '../../web3';
 Vue.filter('usd', function (value) {
   return value.toFixed(4);
 });
@@ -87,6 +87,10 @@ export default {
       // ));
       // recpt = await batch.excute();
       // await web3.eth.getTransactionReceipt(recpt);
+      recpt = await web3.eth.sendTransaction({
+        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+        value: 100});
+      await web3.eth.getTransactionReceipt(recpt);
       alert('buy');
     }
   },

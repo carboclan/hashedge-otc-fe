@@ -58,6 +58,7 @@
 </template>
 <script>
 
+import { web3, hashedgeFactory } from '../../web3';
 export default {
   name: 'PortfolioDetail',
   props: {
@@ -68,12 +69,20 @@ export default {
       // const { portfolio } = this.$props;
       // recpt = await hashedgeFactory.sell(portfolio.address);
       // await web3.eth.getTransactionReceipt(recpt);
+      recpt = await web3.eth.sendTransaction({
+        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+        value: 100});
+      await web3.eth.getTransactionReceipt(recpt);
       alert('sell');
     },
     async terminate() {
       // const { portfolio } = this.$props;
       // recpt = await hashedgeFactory.terminate(portfolio.address);
       // await web3.eth.getTransactionReceipt(recpt);
+      recpt = await web3.eth.sendTransaction({
+        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+        value: 100});
+      await web3.eth.getTransactionReceipt(recpt);
       alert('terminate');
     }
   },

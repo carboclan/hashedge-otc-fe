@@ -13,7 +13,7 @@ export const DialogEventBus = new Vue();
 export default {
   props: ['extraClass'],
   name: 'DialogContainer',
-  beforeCreate() {
+  mounted() {
     DialogEventBus.$on('show', (el) => {
       if (this.$el.isSameNode(el)) {
         this.$data.show = true;
