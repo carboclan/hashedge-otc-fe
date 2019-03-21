@@ -5,8 +5,8 @@
   </div>
   <div class="input-group">
     <div class="quantity">
-      <span>amount to deposit</span>
-      <input placeholder="Price" v-model="amount" />
+      <span>deposit address</span>
+      <input class="address" placeholder="address" v-model="address" disabled />
     </div>
   </div>
   <div class="footer">
@@ -57,7 +57,7 @@ export default {
   data() {
     return {
       show: false,
-      amount: 0
+      address: '0x3930129319309109120591209501295102590125992029'
     };
   }
 }
@@ -139,7 +139,7 @@ export default {
       font-size: 18px;
       text-align: right;
       color: white;
-      width: 150px;
+      width: 95%;
       float: right;
       background: none;
       border: none;

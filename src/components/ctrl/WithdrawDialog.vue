@@ -9,6 +9,12 @@
       <input placeholder="amount" v-model="amount" />
     </div>
   </div>
+  <div class="input-group">
+    <div class="quantity">
+      <span>withdraw address</span>
+      <input placeholder="address" v-model="address" />
+    </div>
+  </div>
   <div class="footer">
     <button v-on:click="hide">CANCEL</button>
     <button v-on:click="submit">OK</button>
@@ -53,7 +59,8 @@ export default {
   data() {
     return {
       show: false,
-      amount: 0
+      amount: 0,
+      address: ''
     };
   }
 }

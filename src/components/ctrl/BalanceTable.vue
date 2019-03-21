@@ -13,9 +13,14 @@
       </div>
     </div>
   </div>
-  <div>
+  <div v-if="tab==1">
     <div class="balance" v-for="balance of balances" v-bind:key="balance.name" v-bind:class="balance.hashType">
       <BalanceCard :balance="balance" />
+    </div>
+  </div>
+  <div v-if="tab==2">
+    <div class="balance" v-for="collateral of collaterals" v-bind:key="collateral.name" v-bind:class="collateral.hashType">
+      <CollateralCard :collateral="collateral" />
     </div>
   </div>
   <WithdrawDialog />
@@ -30,6 +35,7 @@ import { web3 } from '../../web3';
 import WithdrawDialog from './WithdrawDialog';
 import DepositDialog from './DepositDialog';
 import BalanceCard from './BalanceCard';
+import CollateralCard from './CollateralCard';
 
 Vue.filter('formatDate', function(value, format) {
   format = format || 'MM/DD/YYYY';
@@ -42,7 +48,7 @@ Vue.filter('formatDate', function(value, format) {
 export default {
   name: 'BalanceTable',
   props: ['title', 'data'],
-  components: { BalanceCard, WithdrawDialog, DepositDialog },
+  components: { BalanceCard, CollateralCard, WithdrawDialog, DepositDialog },
   methods: {
     selectTab(tab) {
       this.$data.tab = tab;
@@ -62,6 +68,28 @@ export default {
         available: 20,
         onOrder: 14,
         price: 200
+      }],
+      collaterals: [{
+        id: 1,
+        name: 'BTC',
+        hashType: 'POW',
+        payoutType: 'Standard Payout',
+        collateral: '0.2',
+        cUnit: 'wBTC',
+        output: '0.1',
+        oUnit: 'DAI',
+        collateralRate: 130
+      },
+      {
+        id: 2,
+        name: 'BTC',
+        hashType: 'POW',
+        payoutType: 'Standard Payout',
+        collateral: '0.3',
+        cUnit: 'wBTC',
+        output: '0.4',
+        oUnit: 'DAI',
+        collateralRate: 120
       }]
     };
   }
