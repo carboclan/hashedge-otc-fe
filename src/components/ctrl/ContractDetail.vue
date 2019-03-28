@@ -78,8 +78,11 @@ export default {
   },
   methods: {
     async submit() {
-      // const { quantity } = this.$data;
-      // const { contract } = this.$props;
+      const { quantity } = this.$data;
+      const { contract } = this.$props;
+      if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold)) {
+        alert('Invalid Amount!')
+      }
       // var batch = web3.createBatch();
       // batch.add(DaiContract.approve(hashedgeFactory.address, web3.toWei(contract.priceUSD*quantity, 'ether')));
       // batch.add(hashedgeFactory.buy(contract.address,
@@ -87,10 +90,6 @@ export default {
       // ));
       // recpt = await batch.excute();
       // await web3.eth.getTransactionReceipt(recpt);
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: 100});
-      await web3.eth.getTransactionReceipt(recpt);
       alert('buy');
     }
   },

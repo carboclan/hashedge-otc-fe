@@ -2,20 +2,22 @@
 <div class="table-container">
   <div>
     <div class="header">
-      <div class="header-menu" v-bind:class="{ active: tab === 1}" v-on:click="selectTab(1)">ONGOING</div>
-      <div class="header-menu" v-bind:class="{ active: tab === 2}" v-on:click="selectTab(2)">LISTED</div>
-      <div class="header-menu" v-bind:class="{ active: tab === 3}" v-on:click="selectTab(3)">COMPLETED</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'ONGOING'}" v-on:click="selectTab('ONGOING')">ONGOING</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'LISTED'}" v-on:click="selectTab('LISTED')">LISTED</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'COMPLETED'}" v-on:click="selectTab('COMPLETED')">COMPLETED</div>
       <div class="header-menu">
-        <select name="sortby" id="sortby">
-          <option value="1">hash type</option>
-          <option value="2">return</option>
-          <option value="3">rating</option>
+        <select v-model="hashType">
+          <option value="" selected disabled>HASH TYPE</option>
+          <option value="ALL">ALL</option>
+          <option value="POW">POW</option>
+          <option value="POS">POS</option>
+          <option value="DPOS">DPOS</option>
         </select>
       </div>
     </div>
   </div>
   <div>
-    <div class="portfolio" v-for="portfolio of portfolios[tab - 1]" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
+    <div class="portfolio" v-for="portfolio of filterPortfolioList" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
       <div v-on:click="selectPortfolio(portfolio)">
         <PortfolioCard :portfolio="portfolio" />
       </div>
@@ -33,11 +35,10 @@ import { DialogEventBus } from './DialogContainer';
 import PortfolioCard from './PortfolioCard';
 import PortfolioDetail from './PortfolioDetail';
 
-Vue.filter('formatDate', function(value, format) {
-  format = format || 'MM/DD/YYYY';
-
+Vue.filter('formatDate', function(value) {
+  const format = 'MM.DD.YYYY';
   if (value) {
-    return moment(String(value)).forma(format);
+    return moment.unix(String(value)).format(format);
   }
 });
 
@@ -71,43 +72,43 @@ export default {
   },
   data() {
     return {
-      tab: 1,
+      tab: 'ONGOING',
+      hashType: '',
       selectedPortfolio: null,
       portfolios: [
-        [
-          {
-            id: 1,
-            name: 'Bitcoin',
-            code: 'BTC',
-            hashType: 'POW',
-            paid: 43.1602,
-            pUnit: 'DAI',
-            received: 0.12301231,
-            rUnit: 'BTC',
-            amount: 100,
-            total: 90,
-            processed: 13,
-            estimateGain: '1.30%',
-            type: 'Seller',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          },
-          {
-            id: 2,
-            name: 'ETH',
-            code: 'ETH',
-            hashType: 'POW',
-            paid: 13.1602,
-            pUnit: 'DAI',
-            received: 1.12301231,
-            rUnit: 'ETH',
-            amount: 10,
-            total: 30,
-            processed: 7,
-            estimateGain: '2.73%',
-            type: 'Buyer',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          },
-          {
+      {
+        id: 1,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 43.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 100,
+        total: 90,
+        start: '1551344647',
+        estimateGain: '1.30%',
+        type: 'Seller',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 2,
+        name: 'ETH',
+        code: 'ETH',
+        hashType: 'POW',
+        paid: 13.1602,
+        pUnit: 'DAI',
+        received: 1.12301231,
+        rUnit: 'ETH',
+        amount: 10,
+        total: 30,
+        start: '1551344647',
+        estimateGain: '2.73%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
         id: 3,
         name: 'Bitcoin',
         code: 'BTC',
@@ -118,12 +119,12 @@ export default {
         rUnit: 'BTC',
         amount: 1000,
         total: 180,
-        processed: 20,
+        start: '1551344647',
         estimateGain: '1.91%',
         type: 'Buyer',
         tx: 'SDLFHEOID2233334988773101223392837493931029334444'
       },
-          {
+      {
         id: 4,
         name: 'Ether',
         code: 'ETH',
@@ -134,98 +135,122 @@ export default {
         rUnit: 'ETH',
         amount: 50,
         total: 180,
-        processed: 27,
+        start: '1550344647',
         estimateGain: '6.30%',
         type: 'Seller',
         tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 5,
+        name: 'ETH',
+        code: 'ETH',
+        hashType: 'POW',
+        paid: 13.1602,
+        pUnit: 'DAI',
+        received: 1.12301231,
+        rUnit: 'ETH',
+        amount: 10,
+        total: 30,
+        start: '1551344647',
+        estimateGain: '2.73%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 6,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 43.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 100,
+        total: 90,
+        start: '1551344647',
+        estimateGain: '1.30%',
+        type: 'Seller',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 7,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 4563.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 1000,
+        total: 180,
+        start: '1556442247',
+        estimateGain: '1.91%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 8,
+        name: 'Bitcoin',
+        code: 'BTC',
+        hashType: 'POW',
+        paid: 43.1602,
+        pUnit: 'DAI',
+        received: 0.12301231,
+        rUnit: 'BTC',
+        amount: 100,
+        total: 90,
+        start: '1556442247',
+        estimateGain: '1.30%',
+        type: 'Seller',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
+      },
+      {
+        id: 9,
+        name: 'ETH',
+        code: 'ETH',
+        hashType: 'POW',
+        paid: 13.1602,
+        pUnit: 'DAI',
+        received: 1.12301231,
+        rUnit: 'ETH',
+        amount: 10,
+        total: 30,
+        start: '1556442247',
+        estimateGain: '2.73%',
+        type: 'Buyer',
+        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
       }
       ],
-        [
-          {
-            id: 6,
-            name: 'ETH',
-            code: 'ETH',
-            hashType: 'POW',
-            paid: 13.1602,
-            pUnit: 'DAI',
-            received: 1.12301231,
-            rUnit: 'ETH',
-            amount: 10,
-            total: 30,
-            processed: 7,
-            estimateGain: '2.73%',
-            type: 'Buyer',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          },
-          {
-            id: 5,
-            name: 'Bitcoin',
-            code: 'BTC',
-            hashType: 'POW',
-            paid: 43.1602,
-            pUnit: 'DAI',
-            received: 0.12301231,
-            rUnit: 'BTC',
-            amount: 100,
-            total: 90,
-            processed: 13,
-            estimateGain: '1.30%',
-            type: 'Seller',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          }
-        ],
-        [
-          {
-            id: 3,
-            name: 'Bitcoin',
-            code: 'BTC',
-            hashType: 'POW',
-            paid: 4563.1602,
-            pUnit: 'DAI',
-            received: 0.12301231,
-            rUnit: 'BTC',
-            amount: 1000,
-            total: 180,
-            processed: 20,
-            estimateGain: '1.91%',
-            type: 'Buyer',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          },
-          {
-            id: 1,
-            name: 'Bitcoin',
-            code: 'BTC',
-            hashType: 'POW',
-            paid: 43.1602,
-            pUnit: 'DAI',
-            received: 0.12301231,
-            rUnit: 'BTC',
-            amount: 100,
-            total: 90,
-            processed: 13,
-            estimateGain: '1.30%',
-            type: 'Seller',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          },
-          {
-            id: 2,
-            name: 'ETH',
-            code: 'ETH',
-            hashType: 'POW',
-            paid: 13.1602,
-            pUnit: 'DAI',
-            received: 1.12301231,
-            rUnit: 'ETH',
-            amount: 10,
-            total: 30,
-            processed: 7,
-            estimateGain: '2.73%',
-            type: 'Buyer',
-            tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-          }
-        ],
-      ]
     };
+  },
+  computed: {
+    filterPortfolioList: function () {
+      let returnData = this.$data.portfolios;
+      let tab = this.$data.tab
+      if (tab == 'ONGOING') {
+        returnData = returnData.filter(function (item) {
+          console.log(item.start,moment().unix())
+          return (Number(item.start) < moment().unix() && Number(item.start) + item.total*24*3600 > moment().unix())
+        })
+      }
+      if (tab == 'LISTED') {
+        returnData = returnData.filter(function (item) {
+          return (Number(item.start) > moment().unix())
+        })
+      }
+      if (tab == 'COMPLETED') {
+        returnData = returnData.filter(function (item) {
+          return (Number(item.start) + item.total*24*3600 < moment().unix())
+        })
+      }
+      let hashType = this.$data.hashType;
+      if (hashType != 'ALL' && hashType != '') {
+        returnData = returnData.filter(function (item) {
+          return item.hashType == hashType
+        });
+      }
+      return returnData
+    }
   }
 }
 </script>

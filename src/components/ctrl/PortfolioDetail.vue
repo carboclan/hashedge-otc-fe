@@ -4,11 +4,11 @@
     <div class="portfolio-detail">
       <div class="detail-header">
         <div class="tip">PROGRESS</div>
-        <div class="large-price">{{portfolio.processed}}/{{portfolio.total}} days</div>
+        <div class="large-price">{{getProcessed(portfolio.start,portfolio.total)}}/{{portfolio.total}} days</div>
         <div class="process-bar">
-            <div><div class="shares">1.15.2019</div></div>
-            <div class="process"><div class="bar" v-bind:style="{width: portfolio.processed/portfolio.total*256 + 'px'}"></div></div>
-            <div><div class="shares">21.15.2019</div></div>
+            <div><div class="shares">{{portfolio.start | formatDate}}</div></div>
+            <div class="process"><div class="bar" v-bind:style="{width: getProcessed(portfolio.start,portfolio.total) * 155/portfolio.total + 'px'}"></div></div>
+            <div><div class="shares">{{Number(portfolio.start) + portfolio.total*24*3600 | formatDate}}</div></div>
         </div>
       </div>
       <div class="spacer"></div>
@@ -59,12 +59,24 @@
 <script>
 
 import { web3, hashedgeFactory } from '../../web3';
+import moment from 'moment';
+
 export default {
   name: 'PortfolioDetail',
   props: {
     portfolio: Object
   },
   methods: {
+    getProcessed(start, total) {
+      let duration = (moment().unix() - Number(start))/3600/24
+      if (duration < 0) {
+        return 0
+      }
+      if (duration > total) {
+        return total
+      }
+      return parseInt(duration)
+    },
     async sell() {
       // const { portfolio } = this.$props;
       // recpt = await hashedgeFactory.sell(portfolio.address);
@@ -219,7 +231,7 @@ export default {
   .process {
     background: #263238;
     border-radius: 2px;
-    width: 256px;
+    width: 155px;
     height: 3px;
     margin: 8px 16px;
   }

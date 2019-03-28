@@ -2,37 +2,38 @@
 <div class="table-container">
   <div>
     <div class="header">
-      <div class="header-menu" v-bind:class="{ active: tab === 1}" v-on:click="selectTab(1)">ALL</div>
-      <div class="header-menu" v-bind:class="{ active: tab === 2}" v-on:click="selectTab(2)">AUCTION</div>
-      <div class="header-menu" v-bind:class="{ active: tab === 3}" v-on:click="selectTab(3)">FIXED PRICE</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'ALL'}" v-on:click="selectTab('ALL')">ALL</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'AUCTION'}" v-on:click="selectTab('AUCTION')">AUCTION</div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'FIXED'}" v-on:click="selectTab('FIXED')">FIXED PRICE</div>
       <div class="header-menu">
-        <select name="sortby" id="sortby">   
-          <option value="1">hash type</option>
-          <option value="2">return</option>
-          <option value="3">rating</option>
+        <select v-model="hashType">
+          <option value="" selected disabled>HASH TYPE</option>
+          <option value="ALL">ALL</option>
+          <option value="POW">POW</option>
+          <option value="POS">POS</option>
+          <option value="DPOS">DPOS</option>
         </select>
       </div>
     </div>
     <div class="table-header">
-        <select v-model="coinType">   
+        <select v-model="coinType">
           <option value="" selected disabled>COIN</option>
           <option value="ALL">ALL</option>
           <option value="BTC">BTC</option>
           <option value="ETH">ETH</option>
           <option value="EOS">EOS</option>
         </select>
-        <select name="sortby">   
+        <select v-model="payoutCoin">   
           <option value="" selected disabled>PAYOUT CURRENCY</option>
-          <option value="BTC">BTC</option>
-          <option value="ETH">ETH</option>
-          <option value="USD">USD</option>
+          <option value="ALL">ALL</option>
         </select>
-        <select name="sortby">   
+        <select v-model="contractType">   
           <option value="" selected disabled>CONTRACT TYPE</option>
-          <option value="2">return</option>
+          <option value="ALL">ALL</option>
         </select>
-        <select name="sortby">   
+        <select v-model="duration">   
           <option value="" selected disabled>DURATION</option>
+          <option value="ALL">ALL</option>
           <option value="30">30 DAYS</option>
           <option value="90">90 DAYS</option>
           <option value="180">180 DAYS</option>
@@ -96,9 +97,13 @@ export default {
   },
   data() {
     return {
-      tab: 1,
+      tab: 'ALL',
       selectedContract: null,
-      coinType: 'ALL',
+      hashType: '',
+      coinType: '',
+      duration: '',
+      payoutCoin: '',
+      contractType: '',
       contracts: [{
         id: 1,
         name: 'Bitcoin',
@@ -171,14 +176,45 @@ export default {
   },
   computed: {
     filterContractList: function () {
-      var key = this.$data.coinType;
-      var contracts = this.$data.contracts;
-      if (key == 'ALL') {
-        return contracts;
+      let returnData = this.$data.contracts;
+      let tab = this.$data.tab
+      if (tab != 'ALL' && tab != '') {
+        returnData = returnData.filter(function (item) {
+          return item.pricingMethod == tab
+        })
       }
-      return contracts.filter(function (item) {
-          return item.code == key
-      });
+      let coinType = this.$data.coinType;
+      if (coinType != 'ALL' && coinType != '') {
+        returnData = returnData.filter(function (item) {
+          return item.code == coinType
+        });
+      }
+      let hashType = this.$data.hashType;
+      if (hashType != 'ALL' && hashType != '') {
+        returnData = returnData.filter(function (item) {
+          return item.hashType == hashType
+        });
+      }
+      let duration = this.$data.duration;
+      if (duration != 'ALL' && duration != '') {
+        returnData = returnData.filter(function (item) {
+          return item.duration == duration
+        });
+      }
+      let payoutCoin = this.$data.payoutCoin;
+      if (payoutCoin != 'ALL' && payoutCoin != '') {
+        returnData = returnData.filter(function (item) {
+          return item.payoutCoin == payoutCoin
+        });
+      }
+      let contractType = this.$data.contractType;
+      if (contractType != 'ALL' && contractType != '') {
+        returnData = returnData.filter(function (item) {
+          return item.type == contractType
+        });
+      }
+
+      return returnData
     }
   }
 }

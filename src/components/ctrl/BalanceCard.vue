@@ -9,18 +9,10 @@
           <div><div class="tip">AVAILABLE</div></div>
           <div class="pad-top1"><div class="context">{{balance.available}}</div></div>
         </div>
-        <div class="card-center">
-          <div><div class="tip">ON ORDERS</div></div>
-          <div class="pad-top1"><div class="context">{{balance.onOrder}}</div></div>
-        </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE VALUE</div></div>
-          <div class="pad-top1"><div class="price">{{(balance.onOrder + balance.available) * balance.price | usd}}</div></div>
+          <div class="pad-top1"><div class="price">{{(balance.available) * balance.price | usd}}</div></div>
           <div><div class="memo">USD</div></div>
-        </div>
-        <div class="card-tool">
-          <div v-on:click="showWithdrawDialog"><i class="material-icons">remove_circle</i></div>
-          <div v-on:click="showDepositDialog"><i class="material-icons">add_circle</i></div>
         </div>
       </div>
     </div>

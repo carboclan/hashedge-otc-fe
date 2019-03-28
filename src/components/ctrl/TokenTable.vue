@@ -97,6 +97,15 @@ export default {
         unit: 'XZT',
         priceCOIN: -0.082028210,
         profitRate: -0.513
+      },
+      {
+        name: 'EOS',
+        code: 'EOS',
+        hashType: 'DPOS',
+        priceUSD: 0.0001181918,
+        unit: 'EOS',
+        priceCOIN: 0.0000273973 ,
+        profitRate: 15.258
       }]
     };
   },

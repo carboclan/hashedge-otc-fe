@@ -4,13 +4,13 @@
     <div class="header">
       <div class="header-menu" v-bind:class="{ active: tab === 1}" v-on:click="selectTab(1)">BALANCE</div>
       <div class="header-menu" v-bind:class="{ active: tab === 2}" v-on:click="selectTab(2)">COLLATERAL</div>
-      <div class="header-menu">
+      <!-- <div class="header-menu">
         <select name="sortby" id="sortby">   
           <option value="1">BTC</option>
           <option value="2">DAI</option>
           <option value="3">USD</option>
         </select>
-      </div>
+      </div> -->
     </div>
   </div>
   <div v-if="tab==1">
@@ -78,15 +78,15 @@ export default {
         cUnit: 'wBTC',
         output: '0.1',
         oUnit: 'DAI',
-        collateralRate: 130
+        collateralRate: 200
       },
       {
         id: 2,
-        name: 'BTC',
+        name: 'ETH',
         hashType: 'POW',
         payoutType: 'Standard Payout',
         collateral: '0.3',
-        cUnit: 'wBTC',
+        cUnit: 'ETH',
         output: '0.4',
         oUnit: 'DAI',
         collateralRate: 120

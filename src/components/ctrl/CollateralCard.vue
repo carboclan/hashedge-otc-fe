@@ -19,7 +19,7 @@
         </div>
         <div class="card-right">
           <div><div class="tip">COLLATERAL RATE</div></div>
-          <div class="pad-top2"><div class="price">{{collateral.collateralRate}}</div></div>
+          <div class="pad-top2"><div class="price" v-bind:class="collateral.collateralRate < 150 ? 'alert' : ''">{{collateral.collateralRate}}%</div></div>
         </div>
         <div class="card-tool">
           <div v-on:click="showWithdrawDialog"><i class="material-icons">remove_circle</i></div>
@@ -124,6 +124,9 @@ export default {
     text-align: right;
     font-feature-settings: 'tnum' on, 'lnum' on;
     color: #EEF9F5;
+    &.alert {
+      color: rgb(255, 34, 63);
+    }
   }
   .spacer {
     width: 100%;
