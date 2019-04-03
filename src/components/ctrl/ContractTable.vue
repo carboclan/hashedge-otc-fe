@@ -59,23 +59,6 @@ import { DialogEventBus } from './DialogContainer';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
 
-Vue.filter('formatDate', function(value, format) {
-  format = format || 'MM/DD/YYYY';
-
-  if (value) {
-    return moment(String(value)).forma(format);
-  }
-});
-
-Vue.filter('eth', function (value, opt) {
-  opt = opt || {};
-  return (!opt.hideEth && 'Ξ ' || '') + web3.fromWei(value).toNumber().toFixed(opt.decimals || 5);
-});
-
-Vue.filter('bn', function (value) {
-  return value.toNumber();
-});
-
 export default {
   name: 'ContractTable',
   props: ['title', 'data'],

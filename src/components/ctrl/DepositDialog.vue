@@ -5,8 +5,14 @@
   </div>
   <div class="input-group">
     <div class="quantity">
+      <span>amount to deposit</span>
+      <input placeholder="amount" v-model="amount" />
+    </div>
+  </div>
+  <div class="input-group">
+    <div class="quantity">
       <span>deposit address</span>
-      <input class="address" placeholder="address" v-model="address" disabled />
+      <input class="address" placeholder="address" v-model="contractAddress" disabled />
     </div>
   </div>
   <div class="footer">
@@ -17,15 +23,15 @@
 </template>
 
 <script>
-import { web3, hashedgeFactory } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import DialogContainer, { DialogEventBus } from './DialogContainer';
 
 export default {
   name: 'DepositDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
-    DialogEventBus.$on('show-deposit-dialog', () => {
-      // this.$data.tokenType = tokenType;
+    DialogEventBus.$on('show-deposit-dialog', (contractAddress) => {
+      this.$data.contractAddress = contractAddress;
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -35,29 +41,26 @@ export default {
   methods: {
     hide() {
       DialogEventBus.$emit('hide', this.$el);
-      this.$data.step = 1;
     },
     async submit() {
-      // const { amount, tokenType } = this.$data;
-      // var batch = web3.createBatch();
-      // batch.add(tokenContract.approve(hashedgeFactory.address, web3.toWei(amount, 'ether')));
-      // batch.add(hashedgeFactory.deposit(
-      //   web3.toWei(amount, 'ether')
-      // ));
-      // recpt = await batch.excute();
-      // await web3.eth.getTransactionReceipt(recpt);
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: 100});
-      await web3.eth.getTransactionReceipt(recpt);
-      alert('success');
+      const { amount, contractAddress } = this.$data;
+      const colContract = hashedgeContracts.collaterals[contractAddress];
+      const underlying = await colContract.underlying();
+      const tokenContract = hashedgeContracts.erc20Tokens[underlying];
+      const batch = []
+      batch.push(colContract.deposit(web3.toWei(amount, 'ether')));
+      batch.push(tokenContract.approve(contractAddress, web3.toWei(amount, 'ether')));
+      const recpt = await Promise.all(batch);
+      await web3.eth.getTransactionReceipt(recpt[0]);
       DialogEventBus.$emit('hide', this.$el);
+      alert('Success')
     }
   },
   data() {
     return {
       show: false,
-      address: '0x3930129319309109120591209501295102590125992029'
+      amount: 0,
+      contractAddress: ''
     };
   }
 }

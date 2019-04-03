@@ -28,28 +28,11 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import moment from 'moment'
 import { web3 } from '../../web3';
+import moment from 'moment';
 import { DialogEventBus } from './DialogContainer';
 import PortfolioCard from './PortfolioCard';
 import PortfolioDetail from './PortfolioDetail';
-
-Vue.filter('formatDate', function(value) {
-  const format = 'MM.DD.YYYY';
-  if (value) {
-    return moment.unix(String(value)).format(format);
-  }
-});
-
-Vue.filter('eth', function (value, opt) {
-  opt = opt || {};
-  return (!opt.hideEth && 'Ξ ' || '') + web3.fromWei(value).toNumber().toFixed(opt.decimals || 5);
-});
-
-Vue.filter('bn', function (value) {
-  return value.toNumber();
-});
 
 export default {
   name: 'PortfolioTable',

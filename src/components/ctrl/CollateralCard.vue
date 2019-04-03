@@ -3,23 +3,23 @@
     <div class="collateral-card">
       <div class="card-top">
         <div class="card-left">
-          <div><div class="tip">{{collateral.hashType}}</div></div> 
-          <div class="pad-top1"><div class="context">{{collateral.name}}</div></div>
-          <div><div class="memo">{{collateral.payoutType}}</div></div>
+          <div><div class="tip">{{col.hashType}}</div></div> 
+          <div class="pad-top1"><div class="context">{{col.name}}</div></div>
+          <div><div class="memo">{{col.payoutType}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">COLLATERAL</div></div> 
-          <div class="pad-top1"><div class="context">{{collateral.collateral}}</div></div>
-          <div><div class="memo">{{collateral.cUnit}}</div></div>
+          <div class="pad-top1"><div class="context">{{col.balance | eth}}</div></div>
+          <div><div class="memo">{{col.name}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">OUTPUT (24H)</div></div>
-          <div class="pad-top1"><div class="context">{{collateral.output}}</div></div>
-          <div><div class="memo">{{collateral.oUnit}}</div></div>
+          <div class="pad-top1"><div class="context">{{col.margin | eth}}</div></div>
+          <div><div class="memo">{{col.name}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">COLLATERAL RATE</div></div>
-          <div class="pad-top2"><div class="price" v-bind:class="collateral.collateralRate < 150 ? 'alert' : ''">{{collateral.collateralRate}}%</div></div>
+          <div class="pad-top2"><div class="price" v-bind:class="col.collateralRate < 150 ? 'alert' : ''">{{col.collateralRate | percent}}</div></div>
         </div>
         <div class="card-tool">
           <div v-on:click="showWithdrawDialog"><i class="material-icons">remove_circle</i></div>
@@ -33,21 +33,42 @@
 <script>
 
 import { DialogEventBus } from './DialogContainer';
+import { web3, hashedgeContracts } from '../../web3';
 export default {
   name: 'collateralCard',
   props: {
-    collateral: Object
+    collateral: String
+  },
+  async mounted() {
+    const address = web3.eth.accounts[0];
+    const b = await hashedgeContracts.collaterals[this.$props.collateral].balanceOf(address);
+    const m = await hashedgeContracts.collaterals[this.$props.collateral].marginOf(address);
+    const u = await hashedgeContracts.collaterals[this.$props.collateral].underlying();
+    const n = await hashedgeContracts.erc20Tokens[u].name();
+    this.$data.col.margin  = m.toNumber();
+    this.$data.col.balance = b.toNumber();
+    this.$data.col.name = n;
+    this.$data.col.underlying = u;
+    this.$data.col.collateralRate = b * 100 / m;
   },
   methods: {
     showWithdrawDialog() {
-      DialogEventBus.$emit('show-withdraw-dialog');
+      DialogEventBus.$emit('show-withdraw-dialog', this.$props.collateral);
     },
     showDepositDialog() {
-      DialogEventBus.$emit('show-deposit-dialog');
+      DialogEventBus.$emit('show-deposit-dialog', this.$props.collateral);
     }
   },
   data() {
     return {
+      col: {
+        hashType: 'POW',
+        name: 'Loading',
+        payoutType: 'Standard',
+        margin: 0,
+        balance: 0,
+        collateralRate: 200
+      }
     };
   }
 }

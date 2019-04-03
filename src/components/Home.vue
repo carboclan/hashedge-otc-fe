@@ -8,7 +8,7 @@
 </template>
 
 <script>
-import { web3, listExchanges } from '../web3';
+import { web3, hashedgeContracts } from '../web3';
 import TokenTable from './ctrl/TokenTable';
 import { DialogEventBus } from './ctrl/DialogContainer';
 import CreateDialog from './ctrl/CreateDialog';
@@ -17,11 +17,11 @@ export default {
   name: 'Home',
   components: { TokenTable, CreateDialog },
   methods: {
-    showCreatDialog() {
+    async showCreatDialog() {
       DialogEventBus.$emit('show-create-dialog');
     },
     async reload() {
-      this.$data.proposals = await listExchanges();
+      // this.$data.proposals = await listExchanges();
     }
   },
   mounted() {

@@ -61,15 +61,7 @@
 </template>
 <script>
 
-import Vue from 'vue';
 import { web3, hashedgeFactory } from '../../web3';
-Vue.filter('usd', function (value) {
-  return value.toFixed(4);
-});
-
-Vue.filter('btc', function (value) {
-  return value.toFixed(8);
-});
 
 export default {
   name: 'ContractDetail',

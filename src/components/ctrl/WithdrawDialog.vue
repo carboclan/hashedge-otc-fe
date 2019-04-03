@@ -9,12 +9,6 @@
       <input placeholder="amount" v-model="amount" />
     </div>
   </div>
-  <div class="input-group">
-    <div class="quantity">
-      <span>withdraw address</span>
-      <input placeholder="address" v-model="address" />
-    </div>
-  </div>
   <div class="footer">
     <button v-on:click="hide">CANCEL</button>
     <button v-on:click="submit">OK</button>
@@ -23,15 +17,15 @@
 </template>
 
 <script>
-import { web3, hashedgeFactory } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import DialogContainer, { DialogEventBus } from './DialogContainer';
 
 export default {
   name: 'WithdrawDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
-    DialogEventBus.$on('show-withdraw-dialog', () => {
-      // this.$data.contractAddress = contractAddress;
+    DialogEventBus.$on('show-withdraw-dialog', (contractAddress) => {
+      this.$data.contractAddress = contractAddress;
       DialogEventBus.$emit('show', this.$el);
     });
   },
@@ -44,13 +38,9 @@ export default {
       this.$data.step = 1;
     },
     async submit() {
-      // const { amount, address } = this.$data;
-      // const recpt = await hashedgeFactory.withdraw(
-      //   web3.toWei(amount, 'ether')
-      // );
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: this.$data.amount});
+      const { amount, contractAddress } = this.$data;
+      const colContract = hashedgeContracts.collaterals[contractAddress];
+      const recpt = await colContract.withdraw(web3.toWei(amount, 'ether'));
       await web3.eth.getTransactionReceipt(recpt);
       alert('success');
       DialogEventBus.$emit('hide', this.$el);
@@ -60,7 +50,7 @@ export default {
     return {
       show: false,
       amount: 0,
-      address: ''
+      contractAddress: ''
     };
   }
 }

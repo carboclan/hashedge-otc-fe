@@ -3,15 +3,15 @@
     <div class="balance-card">
       <div class="card-top">
         <div class="card-left">
-          <div class="pad-top3"><div class="context">{{balance.name}}</div></div>
+          <div class="pad-top3"><div class="context">{{token.name}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">AVAILABLE</div></div>
-          <div class="pad-top1"><div class="context">{{balance.available}}</div></div>
+          <div class="pad-top1"><div class="context">{{token.balance | eth}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE VALUE</div></div>
-          <div class="pad-top1"><div class="price">{{(balance.available) * balance.price | usd}}</div></div>
+          <div class="pad-top1"><div class="price">{{token.balance * token.price | usd}}</div></div>
           <div><div class="memo">USD</div></div>
         </div>
       </div>
@@ -22,22 +22,34 @@
 <script>
 
 import { DialogEventBus } from './DialogContainer';
-
+import { web3, hashedgeContracts } from '../../web3';
 export default {
   name: 'BalanceCard',
   props: {
-    balance: Object
+    erc20: String
   },
   methods: {
-    showWithdrawDialog() {
-      DialogEventBus.$emit('show-withdraw-dialog');
-    },
-    showDepositDialog() {
-      DialogEventBus.$emit('show-deposit-dialog');
-    }
+    // async mint() {
+    //   const address = web3.eth.accounts[0];
+    //   const recpt = await hashedgeContracts.erc20Tokens[this.$props.erc20].mint(address, 5e18)
+    //   await web3.eth.getTransactionReceipt(recpt);
+    //   const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
+    //   this.$data.token.balance = b / 1e18
+    // }
+  },
+  async mounted() {
+    const address = web3.eth.accounts[0];
+    this.$data.token.name = await hashedgeContracts.erc20Tokens[this.$props.erc20].name();
+    const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
+    this.$data.token.balance = b.toNumber()
   },
   data() {
     return {
+      token: {
+        name: 'Loading',
+        balance: 0,
+        price: 100
+      }
     };
   }
 }

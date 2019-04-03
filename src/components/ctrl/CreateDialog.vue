@@ -6,37 +6,37 @@
     </div>
     <div class="input-group">
       <!--<div class="tip">payment</div>-->
-      <select v-model="contractCurrency">
+      <select v-model="contractAddress">
         <option value="" disabled selected>Contract</option>
-        <option value="BTC">BTC-POW</option>
-        <option value="ETH">ETH-POW</option>
-        <option value="XZT">XZT-POS</option>
+        <option v-for="contract in contractOptions" v-bind:key="contract.address" :value="contract.address">{{contract.name}}</option>
       </select>
-      <select v-model="outputCurrency">
+      <!-- <select v-model="outputCurrency">
         <option value="" disabled selected>Payment Currency</option>
         <option value="BTC">BTC</option>
         <option value="ETH">ETH</option>
         <option value="ETH">DAI</option>
-      </select>
+      </select> -->
     </div>
     <div class="input-group">
       <div class="tip">contract type</div>
       <select v-model="contractType">
         <option value="STD" selected>STANDARD OUTPUT</option>
-        <option value="ACT">ACTURE OUTPUT</option>
+        <!-- <option value="ACT">ACTURE OUTPUT</option> -->
       </select>
     </div>
     <div class="input-group">
       <div class="tip">contract duration</div>
       <select v-model="duration">
-        <option value="30" selected>30 DAYS</option>
-        <option value="90">90 DAYS</option>
-        <option value="180">180 DAYS</option>
+        <option value="60">1 MIN</option>
+        <option value="2592000" selected>30 DAYS</option>
+        <option value="7776000">90 DAYS</option>
+        <option value="15552000">180 DAYS</option>
       </select>
     </div>
     <div class="input-group">
       <div class="tip">contract listing expiration date</div>
-      <input class="date-input" type="date" v-model="expirationDate" />
+      <div class="tip">{{ expirationDate | formatDate}}</div>
+      <!-- <input class="date-input" type="date" v-model="expirationDate" disabled /> -->
     </div>
     <div class="footer">
       <button v-on:click="nextStep">NEXT</button>
@@ -50,7 +50,7 @@
       <div class="tip">pricing method</div>
       <select v-model="pricingMethod">
         <option value="FIXED" selected>FIXED PRICE(BUY NOW)</option>
-        <option value="AUC">DUTCH AUCTION</option>
+        <!-- <option value="AUC">DUTCH AUCTION</option> -->
       </select>
       <div class="quantity">
         <span>Your Fixed Price</span>
@@ -59,7 +59,7 @@
     </div>
     <div class="input-group text-right">
         <div class="tip">Suggest Price</div>
-        <div class="large-price">{{0.2012*(100+diff)*(100+exRate)/10000 |usd}} USD</div>
+        <div class="large-price">{{(0.2012*(100+diff)*(100+exRate) /10000).toFixed(4)}} USD</div>
         <button v-on:click="applyPrice">Use Suggest Price</button>
     </div>
     <div class="input-group">
@@ -76,10 +76,10 @@
         <span>Total Quantity Offering</span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
       </div>
-      <div class="quantity">
+      <!-- <div class="quantity">
         <span>Minimum Order Size</span>
         <input placeholder="Minimum Order" v-model="orderSize" />
-      </div>
+      </div> -->
     </div>
     <div class="footer">
       <button v-on:click="nextStep">NEXT</button>
@@ -146,23 +146,26 @@
       deposit collateral
     </div>
     <div class="input-group">
-      <div class="tip">Choose Collateral Currency</div>
-      <select v-model="collateralCurrency">
+      <div class="tip">Collateral Currency</div>
+      <div class="tip">{{collateralCurrency}}</div>
+      <!-- <select v-model="collateralCurrency">
         <option value="BTC" selected>BTC</option>
         <option value="DAI">DAI</option>
-      </select>
+      </select> -->
       <div class="quantity">
-        <input placeholder="Amount" v-model="cAmount" />
+        <input placeholder="Amount" v-model="collateralAmount" />
       </div>
-      <div class="foot-note">Send exactly this amount of DAI to the address below.</div>
-      <div class="quantity">
-        <input placeholder="Your Validator Address" v-model="cAddress" />
+      <div class="foot-note">Send exactly this amount of {{collateralCurrency}} to the address below.</div>
+      <button v-on:click="depositCollateral">Collateral</button>
+      <!-- <div class="quantity">
+        <input placeholder="Your Collateral Address" v-model="collateralAddress" />
       </div>
-      <div class="foot-note">Contract collateral address.</div>
+      <div class="foot-note">Contract collateral address.</div> -->
     </div>
     <div class="status">
-      <div class="tip">Awaiting Collateral</div>
-      <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
+      <div class="tip" v-show="collateralStep == 1">Awaiting Collateral</div>
+      <div class="tip" v-show="collateralStep == 2">Collateral Deposited</div>
+      <el-progress type="circle" color="#90A4AE" :percentage="collateralStep * 50" status="text">{{collateralStep}} of 2</el-progress>
     </div>
     <div class="footer">
       <button v-on:click="submit">SUBMIT</button>
@@ -172,20 +175,30 @@
 </template>
 
 <script>
-import { web3, hashedgeFactory } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import DialogContainer, { DialogEventBus } from './DialogContainer';
+import moment from 'moment';
 
 export default {
   name: 'CreateDialog',
   components: { DialogContainer, DialogEventBus },
   beforeCreate() {
     DialogEventBus.$on('show-create-dialog', () => {
-    console.log('cdr')
       DialogEventBus.$emit('show', this.$el);
     });
   },
   beforeDestroy() {
     DialogEventBus.$off('show-create-dialog');
+  },
+  async mounted () {
+    const contractOptions = await Promise.all(Object.keys(hashedgeContracts.swap721Tokens).map( async key => {
+      const name = await hashedgeContracts.swap721Tokens[key].name();
+      return ({
+        address: key,
+        name: name
+      })
+    }));
+    this.$data.contractOptions = contractOptions;
   },
   methods: {
     setPoolInfo() {
@@ -198,32 +211,50 @@ export default {
         this.pool.address = '';
       }
     },
+    async loadColInfo() {
+      const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
+      const colAddress = await swapContract.floatingLegCollateral();
+      const colContract = hashedgeContracts.collaterals[colAddress];
+      const floatingLegAddress = await colContract.underlying();
+      const floatingLegContract = hashedgeContracts.erc20Tokens[floatingLegAddress];
+      const floatingLegName = await floatingLegContract.name();
+      const oracleAddress = await swapContract.oracle();
+      const oracleContract = hashedgeContracts.oracles[oracleAddress];
+      const colAmount = await oracleContract.computeProfit(Number(moment().unix()), Number(moment().unix()) + Number(this.$data.duration));
+      this.$data.collateralCurrency = floatingLegName;
+      this.$data.collateralAddress = colAddress;
+      this.$data.floatingLegAddress = floatingLegAddress;
+      this.collateralAmount = colAmount * this.$data.totalSupply * 1.5 / 1e18;
+    },
+    async depositCollateral() {
+      const { collateralAmount, collateralAddress, floatingLegAddress } = this.$data;
+      const colContract = hashedgeContracts.collaterals[collateralAddress];
+      const tokenContract = hashedgeContracts.erc20Tokens[floatingLegAddress];
+      const batch = []
+      batch.push(colContract.deposit(web3.toWei(collateralAmount, 'ether')));
+      batch.push(tokenContract.approve(collateralAddress, web3.toWei(collateralAmount, 'ether')));
+      const recpt = await Promise.all(batch);
+      await web3.eth.getTransactionReceipt(recpt[0]);
+      this.$data.collateralStep = 2;
+    },
     hide() {
       DialogEventBus.$emit('hide', this.$el);
       this.$data.step = 1;
     },
     nextStep() {
       this.$data.step = this.$data.step + 1;
+      if (this.$data.step == 5) {
+        this.loadColInfo();
+      }
     },
     applyPrice() {
       this.$data.price = Math.round(10 ** 6 * 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000) / 10 ** 6;
     },
     async submit() {
-      // const { name, symbol, hashType, currencyType, tokenSize, hashUnit, strikePrice, duration, totalSupply, target } = this.$data;
-      // batch.add(DaiContract.approve(hashedgeFactory.address, web3.toWei(contract.priceUSD*quantity, 'ether')));
-      // batch.add(hashedgeFactory.createExchange(
-      //   web3.toWei(target, 'ether'), name, symbol,
-      //   totalSupply, hashType, currencyType, hashUnit, tokenSize,
-      //   Date.now() / 1000 + 24 * 3600, Date.now() / 1000 + 24 * 3600 * (duration + 1), web3.toWei(strikePrice, 'ether')
-      // ));
-      // recpt = batch.excute();
-
-      // await web3.eth.getTransactionReceipt(recpt);
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: 100});
+      const { contractAddress, duration, price, totalSupply} = this.$data;
+      const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
+      const recpt = await swapContract.mint(1, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
-      alert('create');
       DialogEventBus.$emit('hide', this.$el);
     }
   },
@@ -234,6 +265,8 @@ export default {
         url: 'btc.ss.poolin.com:443',
         address: '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869'
       },
+      contractAddress: '',
+      contractOptions: [],
       step: 1,
       name: null,
       symbol: null,
@@ -242,20 +275,25 @@ export default {
       contractCurrency: '',
       outputCurrency: '',
       contractType: 'STD',
-      expirationDate: '2019-03-14',
       pricingMethod: 'FIXED',
       price: 0,
       diff: 1,
       exRate: 1,
       totalSupply: 0,
       orderSize: 1,
-      collateralCurrency: 'DAI',
-      cAddress: '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869',
-      cAmount: 0.0036,
+      collateralCurrency: '',
+      collateralAddress: '',
+      collateralStep: 1,
+      collateralAmount: 0,
       hashUnit: 'TH/s',
-      duration: 30,
+      duration: '2592000',
       target: null
     };
+  },
+  computed: {
+    expirationDate: function () {
+      return Number(moment().unix()) + Number(this.$data.duration);
+    }
   }
 }
 </script>

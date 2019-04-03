@@ -30,6 +30,36 @@
 </template>
 
 <script>
+import Vue from 'vue';
+import moment from 'moment';
+
+Vue.filter('formatDate', function(value) {
+  const format = 'MM.DD.YYYY';
+  if (value) {
+    return moment.unix(String(value)).format(format);
+  }
+});
+
+Vue.filter('usd', function (value) {
+  return (value/1e18).toFixed(4);
+});
+
+Vue.filter('btc', function (value) {
+  return (value/1e18).toFixed(8);
+});
+
+Vue.filter('eth', function (value) {
+  return (value/1e18).toFixed(6);
+});
+
+Vue.filter('bn', function (value) {
+  return value.toNumber();
+});
+
+Vue.filter('percent', function (value) {
+  return (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%';
+});
+
 export default {
   name: 'App'
 }

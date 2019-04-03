@@ -23,23 +23,9 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import moment from 'moment'
 import { web3 } from '../../web3';
 import { DialogEventBus } from './DialogContainer';
 import TokenCard from './TokenCard';
-
-Vue.filter('formatDate', function(value, format) {
-  format = format || 'MM/DD/YYYY';
-
-  if (value) {
-    return moment(String(value)).forma(format);
-  }
-});
-
-Vue.filter('percent', function (value) {
-  return (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%';
-});
 
 export default {
   name: 'TokenTable',

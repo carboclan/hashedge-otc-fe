@@ -14,12 +14,12 @@
     </div>
   </div>
   <div v-if="tab==1">
-    <div class="balance" v-for="balance of balances" v-bind:key="balance.name" v-bind:class="balance.hashType">
-      <BalanceCard :balance="balance" />
+    <div class="balance" v-for="erc20 of erc20s" v-bind:key="erc20">
+      <BalanceCard :erc20="erc20" />
     </div>
   </div>
   <div v-if="tab==2">
-    <div class="balance" v-for="collateral of collaterals" v-bind:key="collateral.name" v-bind:class="collateral.hashType">
+    <div class="balance" v-for="collateral of collaterals" v-bind:key="collateral">
       <CollateralCard :collateral="collateral" />
     </div>
   </div>
@@ -31,19 +31,11 @@
 <script>
 import Vue from 'vue'
 import moment from 'moment'
-import { web3 } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import WithdrawDialog from './WithdrawDialog';
 import DepositDialog from './DepositDialog';
 import BalanceCard from './BalanceCard';
 import CollateralCard from './CollateralCard';
-
-Vue.filter('formatDate', function(value, format) {
-  format = format || 'MM/DD/YYYY';
-
-  if (value) {
-    return moment(String(value)).forma(format);
-  }
-});
 
 export default {
   name: 'BalanceTable',
@@ -54,43 +46,17 @@ export default {
       this.$data.tab = tab;
     },
   },
+  computed: {
+    erc20s: function() {
+      return Object.keys(hashedgeContracts.erc20Tokens)
+    },
+    collaterals: function() {
+      return Object.keys(hashedgeContracts.collaterals)
+    }
+  },
   data() {
     return {
       tab: 1,
-      balances: [{
-        name: 'wBTC',
-        available: 0.8,
-        onOrder: 1.5,
-        price: 4500
-      },
-      {
-        name: 'ETH',
-        available: 20,
-        onOrder: 14,
-        price: 200
-      }],
-      collaterals: [{
-        id: 1,
-        name: 'BTC',
-        hashType: 'POW',
-        payoutType: 'Standard Payout',
-        collateral: '0.2',
-        cUnit: 'wBTC',
-        output: '0.1',
-        oUnit: 'DAI',
-        collateralRate: 200
-      },
-      {
-        id: 2,
-        name: 'ETH',
-        hashType: 'POW',
-        payoutType: 'Standard Payout',
-        collateral: '0.3',
-        cUnit: 'ETH',
-        output: '0.4',
-        oUnit: 'DAI',
-        collateralRate: 120
-      }]
     };
   }
 }
