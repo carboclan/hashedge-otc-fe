@@ -34,9 +34,10 @@
         <select v-model="duration">   
           <option value="" selected disabled>DURATION</option>
           <option value="ALL">ALL</option>
-          <option value="30">30 DAYS</option>
-          <option value="90">90 DAYS</option>
-          <option value="180">180 DAYS</option>
+          <option value="60">1 MINS</option>
+          <option value="2592000">30 DAYS</option>
+          <option value="7776000">90 DAYS</option>
+          <option value="15552000">180 DAYS</option>
         </select>
     </div>
   </div>
@@ -54,7 +55,7 @@
 <script>
 import Vue from 'vue'
 import moment from 'moment'
-import { web3 } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import { DialogEventBus } from './DialogContainer';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
@@ -63,6 +64,51 @@ export default {
   name: 'ContractTable',
   props: ['title', 'data'],
   components: { ContractCard, ContractDetail },
+  mounted: async function () {
+    const swapInfos = {}
+    await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
+      const name = await token.name();
+      const unit = await token.contractUnit();
+      const type = await token.contractType();
+      swapInfos[token.address] = {
+        name, unit, type
+      }
+    }));
+    const list = await fetch('http://localhost:3000/swap721/list/').then(response => { return response.json() });
+    const contractList = list.result.reduce((pre, next) => {
+      const key = next.contractAddr + '-' + next.issuer + '-' + next.price + '-' + next.contractSize;
+      if (pre[key]) {
+        pre[key].shareTotal += 1;
+        if (next.status === 0) {
+          pre[key].avaliableShares.push(next.id);
+        } else {
+          pre[key].shareSold += 1;
+        }
+      } else {
+        pre[key] = {
+          id: key,
+          name: swapInfos[next.contractAddr].name,
+          code: swapInfos[next.contractAddr].name.substr(0,3),
+          hashType: swapInfos[next.contractAddr].type,
+          address: next.contractAddr,
+          payoutType: 'Standard Payout',
+          duration: Number(moment(next.endTime).unix()) - Number(moment(next.startTime).unix()),
+          pricingMethod: 'FIXED',
+          rating: '☆☆☆☆☆',
+          unit: swapInfos[next.contractAddr].unit,
+          shareSold: next.status === 0 ? 0 : 1,
+          avaliableShares: next.status === 0 ? [next.id] : [],
+          shareTotal: 1,
+          contractSize: next.contractSize,
+          priceUSD: next.price,
+          issuer: next.issuer,
+          payout: next.fixLegPayoutPerDay
+        }
+      }
+      return pre;
+    }, {})
+    this.$data.contracts = Object.values(contractList);
+  },
   methods: {
     selectTab(tab) {
       this.$data.tab = tab;
@@ -87,74 +133,7 @@ export default {
       duration: '',
       payoutCoin: '',
       contractType: '',
-      contracts: [{
-        id: 1,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        priceUSD: 0.1602,
-        unit: 'TH',
-        priceBTC: 0.00004101,
-        rating: '☆☆☆☆☆',
-        hoursLeft: '15:30',
-        shareSold: 1000,
-        shareTotal: 2500,
-        duration: 30,
-        payoutType: 'Standard Payout',
-        pricingMethod: 'FIXED',
-        address: '1231231212312313d2222302233322342'
-      },
-      {
-        id: 2,
-        name: 'Ether',
-        code: 'ETH',
-        hashType: 'POW',
-        priceUSD: 0.0302,
-        unit: 'GH',
-        priceBTC: 0.00001281,
-        rating: '☆☆☆☆',
-        hoursLeft: '100:45',
-        shareSold: 450,
-        shareTotal: 500,
-        duration: 30,
-        payoutType: 'Standard Payout',
-        pricingMethod: 'FIXED',
-        address: '1231231212312313d2222302233322342'
-      },
-      {
-        id: 3,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        priceUSD: 0.1701,
-        unit: 'TH',
-        priceBTC: 0.00004322,
-        rating: '☆☆☆☆☆',
-        hoursLeft: '75:30',
-        shareSold: 1500,
-        shareTotal: 2500,
-        duration: 180,
-        payoutType: 'Standard Payout',
-        pricingMethod: 'FIXED',
-        address: '1231231212312313d2222302233322342'
-      },
-      {
-        id: 4,
-        name: 'Ether',
-        code: 'ETH',
-        hashType: 'POW',
-        priceUSD: 0.0411,
-        unit: 'GH',
-        priceBTC: 0.00002881,
-        rating: '☆☆☆',
-        hoursLeft: '100:45',
-        shareSold: 150,
-        shareTotal: 500,
-        duration: 90,
-        payoutType: 'Standard Payout',
-        pricingMethod: 'FIXED',
-        address: '1231231212312313d2222302233322342'
-      }]
+      contracts: [],
     };
   },
   computed: {

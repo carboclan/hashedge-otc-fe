@@ -35,8 +35,23 @@ import moment from 'moment';
 
 Vue.filter('formatDate', function(value) {
   const format = 'MM.DD.YYYY';
-  if (value) {
+  if (value >= 0) {
     return moment.unix(String(value)).format(format);
+  }
+});
+
+Vue.filter('duration', function(value) {
+  if (value < 60) {
+    return '< 1 MIN'
+  }
+  if (value < 3600) {
+    return `${parseInt(value/60)} MINS`
+  }
+  if (value < 3600 * 24) {
+    return `${parseInt(value/3600)} HOURS`
+  }
+  if (value) {
+    return `${parseInt(value/3600/60)} HOURS`
   }
 });
 

@@ -21,8 +21,8 @@
         </div>
         <div>
           <div class="tip">CONTRACT UNIT PRICE</div>
-          <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
-          <div class="memo">BTC {{contract.priceBTC}}/{{contract.unit}}</div>
+          <div class="small-price">${{contract.priceUSD | usd}}/{{contract.unit}}</div>
+          <div class="memo">BTC {{contract.priceBTC | btc}}/{{contract.unit}}</div>
         </div>
       </div>
       <section v-if="contract.pricingMethod == 'AUCTION'">
@@ -30,12 +30,12 @@
         <div class="detail-cell">
           <div>
             <div class="tip">START PRICE</div>
-            <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
+            <div class="small-price">${{contract.priceUSD | usd}}/{{contract.unit}}</div>
             <div class="memo">Today</div>
           </div>
           <div>
             <div class="tip">RESERVATION PRICE</div>
-            <div class="small-price">${{contract.priceUSD}}/{{contract.unit}}</div>
+            <div class="small-price">${{contract.priceUSD | usd}}/{{contract.unit}}</div>
             <div class="memo">02.15.2019</div>
           </div>
         </div>
@@ -61,7 +61,7 @@
 </template>
 <script>
 
-import { web3, hashedgeFactory } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 
 export default {
   name: 'ContractDetail',
@@ -75,14 +75,19 @@ export default {
       if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold)) {
         alert('Invalid Amount!')
       }
-      // var batch = web3.createBatch();
-      // batch.add(DaiContract.approve(hashedgeFactory.address, web3.toWei(contract.priceUSD*quantity, 'ether')));
-      // batch.add(hashedgeFactory.buy(contract.address,
-      //   quantity
-      // ));
-      // recpt = await batch.excute();
-      // await web3.eth.getTransactionReceipt(recpt);
-      alert('buy');
+      const { address, priceUSD } = contract;
+      console.log(address, priceUSD);
+      const totalPrice = priceUSD * quantity;
+      const swapContract =  hashedgeContracts.swap721Tokens[address];
+      const fixLegAddr = await swapContract.fixLegToken();
+      const fixLegContract = hashedgeContracts.erc20Tokens[fixLegAddr];
+      const tokens = contract.avaliableShares.slice(0,quantity);
+      const batch = [];
+      batch.push(swapContract.initialBuy(tokens));
+      console.log(totalPrice);
+      batch.push(fixLegContract.approve(address, totalPrice));
+      const recpt = await Promise.all(batch);
+      await web3.eth.getTransactionReceipt(recpt[0]);
     }
   },
   data() {

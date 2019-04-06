@@ -4,11 +4,11 @@
     <div class="portfolio-detail">
       <div class="detail-header">
         <div class="tip">PROGRESS</div>
-        <div class="large-price">{{getProcessed(portfolio.start,portfolio.total)}}/{{portfolio.total}} days</div>
+        <div class="large-price">{{getProcessed(portfolio.startTime, portfolio.endTime) | duration}}/{{portfolio.duration | duration}}</div>
         <div class="process-bar">
-            <div><div class="shares">{{portfolio.start | formatDate}}</div></div>
+            <div><div class="shares">{{Number(portfolio.startTime) | formatDate}}</div></div>
             <div class="process"><div class="bar" v-bind:style="{width: getProcessed(portfolio.start,portfolio.total) * 155/portfolio.total + 'px'}"></div></div>
-            <div><div class="shares">{{Number(portfolio.start) + portfolio.total*24*3600 | formatDate}}</div></div>
+            <div><div class="shares">{{Number(portfolio.endTime) | formatDate}}</div></div>
         </div>
       </div>
       <div class="spacer"></div>
@@ -18,41 +18,41 @@
       <div class="spacer"></div>
       <div class="detail-header">
         <div class="tip">ESTIMATED NET GAIN</div>
-        <div class="large-price">{{portfolio.estimateGain}}</div>
+        <div class="large-price">{{portfolio.estimateGain | eth}}</div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
         <div>
           <div class="tip">TOTAL RECEIVED</div>
-          <div class="small-price">{{portfolio.received}}</div>
+          <div class="small-price">{{portfolio.received | eth}}</div>
           <div class="memo">{{portfolio.rUnit}}</div>
         </div>
         <div>
           <div class="tip">TOTAL PAID</div>
-          <div class="small-price">{{portfolio.paid}}</div>
+          <div class="small-price">{{portfolio.paid | usd}}</div>
           <div class="memo">{{portfolio.pUnit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
-      <div class="detail-cell">
+      <div class="detail-cell" v-if="portfolio.priceUSD > 0">
         <div>
           <div class="tip">AMOUNT</div>
-          <div class="small-price">{{portfolio.amount}}</div>
+          <div class="small-price">{{portfolio.contractSize}}</div>
           <div class="memo">{{portfolio.unit}}</div>
         </div>
         <div>
           <div class="tip">PRICE</div>
-          <div class="small-price">{{portfolio.paid}}</div>
+          <div class="small-price">{{portfolio.priceUSD | usd}}</div>
           <div class="memo">{{portfolio.pUnit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="detail-footer">
-          <div class="tip">TXID: {{portfolio.tx | tx}}</div>
+          <div class="tip">TXID: {{portfolio.tx}}</div>
           <div class="copy">COPY</div>
       </div>
     </div>
-    <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div>
+    <!-- <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div> -->
     <div class="tool" v-if="portfolio.type == 'Seller'" v-on:click="terminate"><button>TERMINATE</button></div>
   </div>
 </template>
@@ -67,15 +67,14 @@ export default {
     portfolio: Object
   },
   methods: {
-    getProcessed(start, total) {
-      let duration = (moment().unix() - Number(start))/3600/24
-      if (duration < 0) {
+    getProcessed(start, end) {
+      if (start === 0) {
         return 0
       }
-      if (duration > total) {
-        return total
+      if (Number(moment().unix) > end) {
+        return end - start;
       }
-      return parseInt(duration)
+      return Number(moment().unix - start)
     },
     async sell() {
       // const { portfolio } = this.$props;

@@ -8,17 +8,17 @@
         </div>
         <div class="card-center">
           <div><div class="tip">RECEIVED</div></div>
-          <div class="pad-top1"><div class="context">{{portfolio.received}}</div></div>
+          <div class="pad-top1"><div class="context">{{portfolio.received | eth}}</div></div>
           <div><div class="memo">{{portfolio.rUnit}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">PAID</div></div>
-          <div class="pad-top1"><div class="context">{{portfolio.paid}}</div></div>
+          <div class="pad-top1"><div class="context">{{portfolio.paid | usd}}</div></div>
           <div><div class="memo">{{portfolio.pUnit}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE NET GAIN</div></div>
-          <div class="pad-top2"><div class="price">{{portfolio.estimateGain}}</div></div>
+          <div class="pad-top2"><div class="price">{{1.30 | percent}}</div></div>
         </div>
       </div>
     </div>

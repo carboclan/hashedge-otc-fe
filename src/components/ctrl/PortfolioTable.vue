@@ -28,7 +28,7 @@
 </template>
 
 <script>
-import { web3 } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import moment from 'moment';
 import { DialogEventBus } from './DialogContainer';
 import PortfolioCard from './PortfolioCard';
@@ -38,6 +38,46 @@ export default {
   name: 'PortfolioTable',
   props: ['title', 'data'],
   components: { PortfolioCard, PortfolioDetail },
+    mounted: async function () {
+    const swapInfos = {}
+    await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
+      const name = await token.name();
+      const unit = await token.contractUnit();
+      const type = await token.contractType();
+      swapInfos[token.address] = {
+        name, unit, type
+      }
+    }));
+    const userAddress = web3.eth.accounts[0];
+    const query = `http://localhost:3000/swap721/list/?owner=${userAddress}`;
+    const list = await fetch(query).then(response => { return response.json() });
+    const portfolioList = list.result.map((portfolio) => {
+      return {
+          id: portfolio.contractAddr + portfolio.id,
+          name: swapInfos[portfolio.contractAddr].name,
+          rUnit: swapInfos[portfolio.contractAddr].name.substr(0,3),
+          pUnit: 'DAI',
+          status: portfolio.status,
+          hashType: swapInfos[portfolio.contractAddr].type,
+          address: portfolio.contractAddr,
+          payoutType: 'Standard Payout',
+          startTime: Number(moment(portfolio.startTime).unix()),
+          endTime: Number(moment(portfolio.endTime).unix()),
+          duration: Number(moment(portfolio.endTime).unix()) - Number(moment(portfolio.startTime).unix()),
+          unit: swapInfos[portfolio.contractAddr].unit,
+          shareTotal: 1,
+          received: 30123871310237122,
+          paid: 44038330398330283,
+          priceUSD: portfolio.price,
+          contractSize: portfolio.contractSize,
+          issuer: portfolio.issuer,
+          payout: portfolio.fixLegPayoutPerDay,
+          tx: '10a271e2c039123a812c07213e1231e0274ca141',
+          type: portfolio.issuer === userAddress ? 'Seller' : 'Buyer',
+      }
+    });
+    this.$data.portfolios = portfolioList;
+  },
   methods: {
     selectTab(tab) {
       this.$data.tab = tab;
@@ -58,152 +98,7 @@ export default {
       tab: 'ONGOING',
       hashType: '',
       selectedPortfolio: null,
-      portfolios: [
-      {
-        id: 1,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 43.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 100,
-        total: 90,
-        start: '1551344647',
-        estimateGain: '1.30%',
-        type: 'Seller',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 2,
-        name: 'ETH',
-        code: 'ETH',
-        hashType: 'POW',
-        paid: 13.1602,
-        pUnit: 'DAI',
-        received: 1.12301231,
-        rUnit: 'ETH',
-        amount: 10,
-        total: 30,
-        start: '1551344647',
-        estimateGain: '2.73%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 3,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 4563.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 1000,
-        total: 180,
-        start: '1551344647',
-        estimateGain: '1.91%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 4,
-        name: 'Ether',
-        code: 'ETH',
-        hashType: 'POW',
-        paid: 143.1602,
-        pUnit: 'DAI',
-        received: 7.12301231,
-        rUnit: 'ETH',
-        amount: 50,
-        total: 180,
-        start: '1550344647',
-        estimateGain: '6.30%',
-        type: 'Seller',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 5,
-        name: 'ETH',
-        code: 'ETH',
-        hashType: 'POW',
-        paid: 13.1602,
-        pUnit: 'DAI',
-        received: 1.12301231,
-        rUnit: 'ETH',
-        amount: 10,
-        total: 30,
-        start: '1551344647',
-        estimateGain: '2.73%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 6,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 43.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 100,
-        total: 90,
-        start: '1551344647',
-        estimateGain: '1.30%',
-        type: 'Seller',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 7,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 4563.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 1000,
-        total: 180,
-        start: '1556442247',
-        estimateGain: '1.91%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 8,
-        name: 'Bitcoin',
-        code: 'BTC',
-        hashType: 'POW',
-        paid: 43.1602,
-        pUnit: 'DAI',
-        received: 0.12301231,
-        rUnit: 'BTC',
-        amount: 100,
-        total: 90,
-        start: '1556442247',
-        estimateGain: '1.30%',
-        type: 'Seller',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      },
-      {
-        id: 9,
-        name: 'ETH',
-        code: 'ETH',
-        hashType: 'POW',
-        paid: 13.1602,
-        pUnit: 'DAI',
-        received: 1.12301231,
-        rUnit: 'ETH',
-        amount: 10,
-        total: 30,
-        start: '1556442247',
-        estimateGain: '2.73%',
-        type: 'Buyer',
-        tx: 'SDLFHEOID2233334988773101223392837493931029334444'
-      }
-      ],
+      portfolios: [],
     };
   },
   computed: {
@@ -212,26 +107,25 @@ export default {
       let tab = this.$data.tab
       if (tab == 'ONGOING') {
         returnData = returnData.filter(function (item) {
-          console.log(item.start,moment().unix())
-          return (Number(item.start) < moment().unix() && Number(item.start) + item.total*24*3600 > moment().unix())
+          return (item.status === 1);
         })
       }
       if (tab == 'LISTED') {
         returnData = returnData.filter(function (item) {
-          return (Number(item.start) > moment().unix())
+          return (item.status === 0);
         })
       }
       if (tab == 'COMPLETED') {
         returnData = returnData.filter(function (item) {
-          return (Number(item.start) + item.total*24*3600 < moment().unix())
+          return (item.status === 1);
         })
       }
-      let hashType = this.$data.hashType;
-      if (hashType != 'ALL' && hashType != '') {
-        returnData = returnData.filter(function (item) {
-          return item.hashType == hashType
-        });
-      }
+      // let hashType = this.$data.hashType;
+      // if (hashType != 'ALL' && hashType != '') {
+      //   returnData = returnData.filter(function (item) {
+      //     return item.hashType == hashType
+      //   });
+      // }
       return returnData
     }
   }

@@ -3,9 +3,9 @@
     <div class="contract-card">
       <div class="card-top">
         <div class="card-left">
-          <div><div class="tip">SECONDARY</div></div>
-          <div class="pad-top2"><div class="context">{{contract.hoursLeft}}</div></div>
-          <div><div class="memo">hours left</div></div>
+          <div><div class="tip">{{contract.duration | duration}}</div></div>
+          <div class="pad-top2"><div class="context">{{contract.contractSize}}</div></div>
+          <div><div class="memo">{{contract.unit}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">{{contract.hashType}}</div></div>
@@ -14,8 +14,8 @@
         </div>
         <div class="card-right">
           <div><div class="memo">{{contract.rating}}</div></div>
-          <div class="pad-top1"><div class="price">${{contract.priceUSD}}/{{contract.unit}}</div></div>
-          <div><div class="memo">BTC {{contract.priceBTC}}</div></div>
+          <div class="pad-top1"><div class="price">${{contract.priceUSD | usd}}</div></div>
+          <div><div class="memo">BTC {{contract.priceBTC | btc}}</div></div>
         </div>
       </div>
       <div class="spacer"></div>
