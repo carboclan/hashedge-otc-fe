@@ -71,6 +71,10 @@ Vue.filter('bn', function (value) {
   return value.toNumber();
 });
 
+Vue.filter('tx', function (value) {
+  return value.substr(0,40) + '...';
+});
+
 Vue.filter('percent', function (value) {
   return (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%';
 });

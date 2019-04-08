@@ -17,7 +17,7 @@
     </div>
   </div>
   <div>
-    <div class="portfolio" v-for="portfolio of filterPortfolioList" v-bind:key="portfolio.id" v-bind:class="portfolio.hashType">
+    <div class="portfolio" v-for="portfolio of filterPortfolioList" v-bind:key="portfolio.key" v-bind:class="portfolio.hashType">
       <div v-on:click="selectPortfolio(portfolio)">
         <PortfolioCard :portfolio="portfolio" />
       </div>
@@ -29,6 +29,8 @@
 
 <script>
 import { web3, hashedgeContracts } from '../../web3';
+import config from '../../config';
+import _ from 'co-lodash';
 import moment from 'moment';
 import { DialogEventBus } from './DialogContainer';
 import PortfolioCard from './PortfolioCard';
@@ -39,6 +41,7 @@ export default {
   props: ['title', 'data'],
   components: { PortfolioCard, PortfolioDetail },
     mounted: async function () {
+    //Get ABI info
     const swapInfos = {}
     await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
       const name = await token.name();
@@ -48,14 +51,24 @@ export default {
         name, unit, type
       }
     }));
+    // Get token ifo
+    const query1 = `${config.apiConfig}erc20/info/`;
+    const tokens = await fetch(query1).then(response => { return response.json() });
+    const tokenInfo = _.chain(tokens)
+      .map((token) => [token.code, token])
+      .fromPairs()
+      .value();
+    //Get Contract Info
     const userAddress = web3.eth.accounts[0];
-    const query = `http://localhost:3000/swap721/list/?owner=${userAddress}`;
-    const list = await fetch(query).then(response => { return response.json() });
+    const query2 = `${config.apiConfig}swap721/list/?owner=${userAddress}`;
+    const list = await fetch(query2).then(response => { return response.json() });
     const portfolioList = list.result.map((portfolio) => {
+      const code = swapInfos[portfolio.contractAddr].name.substr(0,3);
       return {
-          id: portfolio.contractAddr + portfolio.id,
+          key: portfolio.contractAddr + portfolio.id,
+          id: portfolio.id,
           name: swapInfos[portfolio.contractAddr].name,
-          rUnit: swapInfos[portfolio.contractAddr].name.substr(0,3),
+          rUnit: code,
           pUnit: 'DAI',
           status: portfolio.status,
           hashType: swapInfos[portfolio.contractAddr].type,
@@ -66,13 +79,14 @@ export default {
           duration: Number(moment(portfolio.endTime).unix()) - Number(moment(portfolio.startTime).unix()),
           unit: swapInfos[portfolio.contractAddr].unit,
           shareTotal: 1,
-          received: 30123871310237122,
-          paid: 44038330398330283,
+          received: portfolio.totalFloatingLegPaid,
+          paid: portfolio.totalFixLegPaid,
           priceUSD: portfolio.price,
           contractSize: portfolio.contractSize,
           issuer: portfolio.issuer,
           payout: portfolio.fixLegPayoutPerDay,
-          tx: '10a271e2c039123a812c07213e1231e0274ca141',
+          tx: portfolio.issueTx,
+          estimateNetGain: portfolio.totalFixLegPaid === 0 ? 0 : portfolio.totalFloatingLegPaid * tokenInfo[code].priceUSD * 100 / portfolio.totalFixLegPaid / tokenInfo[code].priceCOIN - 100,
           type: portfolio.issuer === userAddress ? 'Seller' : 'Buyer',
       }
     });
@@ -117,7 +131,7 @@ export default {
       }
       if (tab == 'COMPLETED') {
         returnData = returnData.filter(function (item) {
-          return (item.status === 1);
+          return (item.status === 2);
         })
       }
       // let hashType = this.$data.hashType;

@@ -1,7 +1,7 @@
 <template>
   <div>
     <div class="token-card">
-      <div class="card-top">
+      <div class="card-top" v-on:click="goToMarket">
         <div class="card-left">
           <div><div class="tip">{{token.hashType}}</div></div>
           <div><div class="context">{{token.name}}</div></div>
@@ -26,6 +26,11 @@ export default {
   name: 'TokenCard',
   props: {
     token: Object
+  },
+  methods: {
+    goToMarket: function () {
+      this.$router.push({ path:'market', query: { coin: this.$props.token.code }})
+    }
   },
   data() {
     return {

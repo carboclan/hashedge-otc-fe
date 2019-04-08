@@ -14,6 +14,9 @@
           <div class="pad-top1"><div class="price">{{token.balance * token.price | usd}}</div></div>
           <div><div class="memo">USD</div></div>
         </div>
+        <div class="card-tool">
+          <div v-on:click="mint"><i class="material-icons">add_circle</i></div>
+        </div>
       </div>
     </div>
   </div>
@@ -29,13 +32,13 @@ export default {
     erc20: String
   },
   methods: {
-    // async mint() {
-    //   const address = web3.eth.accounts[0];
-    //   const recpt = await hashedgeContracts.erc20Tokens[this.$props.erc20].mint(address, 5e18)
-    //   await web3.eth.getTransactionReceipt(recpt);
-    //   const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
-    //   this.$data.token.balance = b / 1e18
-    // }
+    async mint() {
+      const address = web3.eth.accounts[0];
+      const recpt = await hashedgeContracts.erc20Tokens[this.$props.erc20].mint(address, 50e18)
+      await web3.eth.getTransactionReceipt(recpt);
+      const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
+      this.$data.token.balance = b / 1e18
+    }
   },
   async mounted() {
     const address = web3.eth.accounts[0];

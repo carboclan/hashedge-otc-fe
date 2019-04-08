@@ -9,7 +9,7 @@
         </div>
         <div class="tip">TOTAL PRICE</div>
         <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
-        <div class="memo">BTC {{contract.priceBTC * quantity | btc}}</div>
+        <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity | btc}}</div>
         <div class="tool"><button v-on:click="submit">BUY</button></div>
       </div>
       <div class="spacer"></div>
@@ -21,8 +21,8 @@
         </div>
         <div>
           <div class="tip">CONTRACT UNIT PRICE</div>
-          <div class="small-price">${{contract.priceUSD | usd}}/{{contract.unit}}</div>
-          <div class="memo">BTC {{contract.priceBTC | btc}}/{{contract.unit}}</div>
+          <div class="small-price">${{contract.priceUSD / contract.contractSize | usd}}/{{contract.unit}}</div>
+          <div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize | btc}}/{{contract.unit}}</div>
         </div>
       </div>
       <section v-if="contract.pricingMethod == 'AUCTION'">
@@ -47,14 +47,14 @@
           v-model="diff" />
       </div>
       <div class="detail-footer">
-        <div class="tip">EXCHANGE RATE %</div>
+        <div class="tip">EXCHANGE RATE: {{contract.payoutUSD * 1e18  * (100 + exRate) / contract.payout / 100 | usd}} USD</div>
         <el-slider :min="-10" :max="10"
           v-model="exRate" />
       </div>
       <div class="detail-footer">
           <div class="tip">EXPECTED OUTPUT CALCULATOR</div>
-          <div class="large-price">${{0.3212 * (100 + exRate) * (100 - diff) * quantity/ 10000 | usd}}</div>
-          <div class="memo">BTC {{0.00013212 * (100 + exRate) * (100 - diff) * quantity /10000 | btc}} OR ETH {{0.002312 * (100 + exRate) * (100 - diff) * quantity / 10000 | btc}}</div> 
+          <div class="large-price">${{contract.payoutUSD * contract.contractSize * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
+          <div class="memo">{{contract.code}} {{contract.payout * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div> 
       </div>
     </div>
   </div>
@@ -76,7 +76,6 @@ export default {
         alert('Invalid Amount!')
       }
       const { address, priceUSD } = contract;
-      console.log(address, priceUSD);
       const totalPrice = priceUSD * quantity;
       const swapContract =  hashedgeContracts.swap721Tokens[address];
       const fixLegAddr = await swapContract.fixLegToken();
@@ -84,7 +83,6 @@ export default {
       const tokens = contract.avaliableShares.slice(0,quantity);
       const batch = [];
       batch.push(swapContract.initialBuy(tokens));
-      console.log(totalPrice);
       batch.push(fixLegContract.approve(address, totalPrice));
       const recpt = await Promise.all(batch);
       await web3.eth.getTransactionReceipt(recpt[0]);

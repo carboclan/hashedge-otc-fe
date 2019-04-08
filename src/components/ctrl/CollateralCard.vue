@@ -85,13 +85,13 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 160px;
+      width: 120px;
     }
     .card-center {
       width: 100px;
     }
     .card-right {
-      width: 140px;
+      width: 180px;
       div {
         text-align: right;
       }

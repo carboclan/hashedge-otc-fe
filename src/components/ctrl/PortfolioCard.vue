@@ -18,7 +18,7 @@
         </div>
         <div class="card-right">
           <div><div class="tip">ESTIMATE NET GAIN</div></div>
-          <div class="pad-top2"><div class="price">{{1.30 | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{portfolio.estimateNetGain | percent}}</div></div>
         </div>
       </div>
     </div>
@@ -50,13 +50,13 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 180px;
+      width: 160px;
     }
     .card-center {
       width: 100px;
     }
     .card-right {
-      width: 140px;
+      width: 160px;
       div {
         text-align: right;
       }

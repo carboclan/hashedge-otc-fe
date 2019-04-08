@@ -76,10 +76,10 @@
         <span>Total Quantity Offering</span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
       </div>
-      <!-- <div class="quantity">
-        <span>Minimum Order Size</span>
+      <div class="quantity">
+        <span>Contract Size</span>
         <input placeholder="Minimum Order" v-model="orderSize" />
-      </div> -->
+      </div>
     </div>
     <div class="footer">
       <button v-on:click="nextStep">NEXT</button>
@@ -224,7 +224,7 @@ export default {
       this.$data.collateralCurrency = floatingLegName;
       this.$data.collateralAddress = colAddress;
       this.$data.floatingLegAddress = floatingLegAddress;
-      this.collateralAmount = colAmount * this.$data.totalSupply * 1.5 / 1e18;
+      this.$data.collateralAmount = colAmount * this.$data.totalSupply * this.$data.orderSize * 1.5 / 1e18;
     },
     async depositCollateral() {
       const { collateralAmount, collateralAddress, floatingLegAddress } = this.$data;
@@ -242,7 +242,11 @@ export default {
       this.$data.step = 1;
     },
     nextStep() {
-      this.$data.step = this.$data.step + 1;
+      if (this.$data.step === 3) {
+        this.$data.step = this.$data.step + 2;
+      } else {
+        this.$data.step = this.$data.step + 1;
+      }
       if (this.$data.step == 5) {
         this.loadColInfo();
       }
@@ -251,9 +255,9 @@ export default {
       this.$data.price = Math.round(10 ** 6 * 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000) / 10 ** 6;
     },
     async submit() {
-      const { contractAddress, duration, price, totalSupply} = this.$data;
+      const { contractAddress, duration, price, totalSupply, orderSize} = this.$data;
       const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
-      const recpt = await swapContract.mint(1, duration, web3.toWei(price, 'ether'), totalSupply);
+      const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
       DialogEventBus.$emit('hide', this.$el);
     }

@@ -18,7 +18,7 @@
       <div class="spacer"></div>
       <div class="detail-header">
         <div class="tip">ESTIMATED NET GAIN</div>
-        <div class="large-price">{{portfolio.estimateGain | eth}}</div>
+        <div class="large-price">{{portfolio.estimateNetGain | percent}}</div>
       </div>
       <div class="spacer"></div>
       <div class="detail-cell">
@@ -48,17 +48,17 @@
       </div>
       <div class="spacer"></div>
       <div class="detail-footer">
-          <div class="tip">TXID: {{portfolio.tx}}</div>
+          <div class="tip">TXID: {{portfolio.tx | tx}}</div>
           <div class="copy">COPY</div>
       </div>
     </div>
     <!-- <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div> -->
-    <div class="tool" v-if="portfolio.type == 'Seller'" v-on:click="terminate"><button>TERMINATE</button></div>
+    <div class="tool" v-if="portfolio.type == 'Seller'"><button v-on:click="settle">SETTLE</button><button v-on:click="cancel">CANCEL</button></div>
   </div>
 </template>
 <script>
 
-import { web3, hashedgeFactory } from '../../web3';
+import { web3, hashedgeContracts } from '../../web3';
 import moment from 'moment';
 
 export default {
@@ -77,24 +77,26 @@ export default {
       return Number(moment().unix - start)
     },
     async sell() {
-      // const { portfolio } = this.$props;
-      // recpt = await hashedgeFactory.sell(portfolio.address);
+      // // const { portfolio } = this.$props;
+      // // recpt = await hashedgeFactory.sell(portfolio.address);
+      // // await web3.eth.getTransactionReceipt(recpt);
+      // recpt = await web3.eth.sendTransaction({
+      //   to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
+      //   value: 100});
       // await web3.eth.getTransactionReceipt(recpt);
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: 100});
-      await web3.eth.getTransactionReceipt(recpt);
-      alert('sell');
+      // alert('sell');
     },
-    async terminate() {
-      // const { portfolio } = this.$props;
-      // recpt = await hashedgeFactory.terminate(portfolio.address);
-      // await web3.eth.getTransactionReceipt(recpt);
-      recpt = await web3.eth.sendTransaction({
-        to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
-        value: 100});
+    async cancel() {
+      const { portfolio } = this.$props;
+      const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].cancel([portfolio.id]);
       await web3.eth.getTransactionReceipt(recpt);
-      alert('terminate');
+      alert('cancel');
+    },
+    async settle() {
+      const { portfolio } = this.$props;
+      const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].settle([portfolio.id]);
+      await web3.eth.getTransactionReceipt(recpt);
+      alert('settle');
     }
   },
   data() {
@@ -245,6 +247,9 @@ export default {
   text-align: right;
   width: 100%;
   margin: 8px 0;
+  >button {
+    margin-left: 10px;
+  }
   
 }
 </style>

@@ -47,6 +47,9 @@
         <ContractCard :contract="contract"/>
       </div>
     </div>
+    <div class="contract" v-show="filterContractList.length === 0">
+      <div class="empty">No Contract Found</div>
+    </div>
   </div>
   <ContractDetail :contract="selectedContract" v-if="selectedContract != null" />
 </div>
@@ -56,6 +59,7 @@
 import Vue from 'vue'
 import moment from 'moment'
 import { web3, hashedgeContracts } from '../../web3';
+import config from '../../config';
 import { DialogEventBus } from './DialogContainer';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
@@ -65,7 +69,11 @@ export default {
   props: ['title', 'data'],
   components: { ContractCard, ContractDetail },
   mounted: async function () {
+    if (this.$route.query.coin) {
+      this.$data.coinType = this.$route.query.coin;
+    }
     const swapInfos = {}
+    // Get chain info
     await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
       const name = await token.name();
       const unit = await token.contractUnit();
@@ -74,9 +82,18 @@ export default {
         name, unit, type
       }
     }));
-    const list = await fetch('http://localhost:3000/swap721/list/').then(response => { return response.json() });
+    // Get token info
+    const query1 = `${config.apiConfig}erc20/info/`;
+    const tokens = await fetch(query1).then(response => { return response.json() });
+    const tokenInfo = _.chain(tokens)
+      .map((token) => [token.code, token])
+      .fromPairs()
+      .value();
+    // Get contract info
+    const query2 = `${config.apiConfig}swap721/list/`
+    const list = await fetch(query2).then(response => { return response.json() });
     const contractList = list.result.reduce((pre, next) => {
-      const key = next.contractAddr + '-' + next.issuer + '-' + next.price + '-' + next.contractSize;
+      const key = next.issueTx;
       if (pre[key]) {
         pre[key].shareTotal += 1;
         if (next.status === 0) {
@@ -85,10 +102,11 @@ export default {
           pre[key].shareSold += 1;
         }
       } else {
+        const code = swapInfos[next.contractAddr].name.substr(0,3);
         pre[key] = {
           id: key,
           name: swapInfos[next.contractAddr].name,
-          code: swapInfos[next.contractAddr].name.substr(0,3),
+          code: code,
           hashType: swapInfos[next.contractAddr].type,
           address: next.contractAddr,
           payoutType: 'Standard Payout',
@@ -101,8 +119,11 @@ export default {
           shareTotal: 1,
           contractSize: next.contractSize,
           priceUSD: next.price,
+          priceCOIN: next.price * tokenInfo[code].priceCOIN / tokenInfo[code].priceUSD,
           issuer: next.issuer,
-          payout: next.fixLegPayoutPerDay
+          tx: next.issueTx,
+          payout: tokenInfo[code].priceCOIN,
+          payoutUSD: tokenInfo[code].priceUSD,
         }
       }
       return pre;
@@ -226,6 +247,10 @@ export default {
     >select:last-child {
       border-right: none;
     }
+  }
+  .empty {
+    text-align: center;
+    padding: 10px;
   }
 }
 </style>

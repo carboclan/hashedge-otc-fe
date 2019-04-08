@@ -15,7 +15,7 @@
         <div class="card-right">
           <div><div class="memo">{{contract.rating}}</div></div>
           <div class="pad-top1"><div class="price">${{contract.priceUSD | usd}}</div></div>
-          <div><div class="memo">BTC {{contract.priceBTC | btc}}</div></div>
+          <div><div class="memo">{{contract.code}} {{contract.priceCOIN | btc}}</div></div>
         </div>
       </div>
       <div class="spacer"></div>
