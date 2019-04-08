@@ -41,56 +41,7 @@ export default {
   props: ['title', 'data'],
   components: { PortfolioCard, PortfolioDetail },
     mounted: async function () {
-    //Get ABI info
-    const swapInfos = {}
-    await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
-      const name = await token.name();
-      const unit = await token.contractUnit();
-      const type = await token.contractType();
-      swapInfos[token.address] = {
-        name, unit, type
-      }
-    }));
-    // Get token ifo
-    const query1 = `${config.apiConfig}erc20/info/`;
-    const tokens = await fetch(query1).then(response => { return response.json() });
-    const tokenInfo = _.chain(tokens)
-      .map((token) => [token.code, token])
-      .fromPairs()
-      .value();
-    //Get Contract Info
-    const userAddress = web3.eth.accounts[0];
-    const query2 = `${config.apiConfig}swap721/list/?owner=${userAddress}`;
-    const list = await fetch(query2).then(response => { return response.json() });
-    const portfolioList = list.result.map((portfolio) => {
-      const code = swapInfos[portfolio.contractAddr].name.substr(0,3);
-      return {
-          key: portfolio.contractAddr + portfolio.id,
-          id: portfolio.id,
-          name: swapInfos[portfolio.contractAddr].name,
-          rUnit: code,
-          pUnit: 'DAI',
-          status: portfolio.status,
-          hashType: swapInfos[portfolio.contractAddr].type,
-          address: portfolio.contractAddr,
-          payoutType: 'Standard Payout',
-          startTime: Number(moment(portfolio.startTime).unix()),
-          endTime: Number(moment(portfolio.endTime).unix()),
-          duration: Number(moment(portfolio.endTime).unix()) - Number(moment(portfolio.startTime).unix()),
-          unit: swapInfos[portfolio.contractAddr].unit,
-          shareTotal: 1,
-          received: portfolio.totalFloatingLegPaid,
-          paid: portfolio.totalFixLegPaid,
-          priceUSD: portfolio.price,
-          contractSize: portfolio.contractSize,
-          issuer: portfolio.issuer,
-          payout: portfolio.fixLegPayoutPerDay,
-          tx: portfolio.issueTx,
-          estimateNetGain: portfolio.totalFixLegPaid === 0 ? 0 : portfolio.totalFloatingLegPaid * tokenInfo[code].priceUSD * 100 / portfolio.totalFixLegPaid / tokenInfo[code].priceCOIN - 100,
-          type: portfolio.issuer === userAddress ? 'Seller' : 'Buyer',
-      }
-    });
-    this.$data.portfolios = portfolioList;
+    this.$store.dispatch('getPortfolioList');
   },
   methods: {
     selectTab(tab) {
@@ -112,12 +63,11 @@ export default {
       tab: 'ONGOING',
       hashType: '',
       selectedPortfolio: null,
-      portfolios: [],
     };
   },
   computed: {
     filterPortfolioList: function () {
-      let returnData = this.$data.portfolios;
+      let returnData = this.$store.state.portfolioList;
       let tab = this.$data.tab
       if (tab == 'ONGOING') {
         returnData = returnData.filter(function (item) {
@@ -134,12 +84,6 @@ export default {
           return (item.status === 2);
         })
       }
-      // let hashType = this.$data.hashType;
-      // if (hashType != 'ALL' && hashType != '') {
-      //   returnData = returnData.filter(function (item) {
-      //     return item.hashType == hashType
-      //   });
-      // }
       return returnData
     }
   }

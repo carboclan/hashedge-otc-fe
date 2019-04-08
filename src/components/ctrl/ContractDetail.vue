@@ -86,6 +86,7 @@ export default {
       batch.push(fixLegContract.approve(address, totalPrice));
       const recpt = await Promise.all(batch);
       await web3.eth.getTransactionReceipt(recpt[0]);
+      this.$store.dispatch('getContractList');
     }
   },
   data() {

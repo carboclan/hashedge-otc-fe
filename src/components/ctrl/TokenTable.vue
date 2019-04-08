@@ -25,7 +25,6 @@
 <script>
 import { web3 } from '../../web3';
 import { DialogEventBus } from './DialogContainer';
-import config from '../../config';
 import TokenCard from './TokenCard';
 
 export default {
@@ -37,21 +36,15 @@ export default {
       DialogEventBus.$emit('show-create-dialog');
     }
   },
-  async mounted() {
-    const query = `${config.apiConfig}erc20/info/`;
-    const list = await fetch(query).then(response => { return response.json() });
-    this.$data.tokens = list;
-  },
   data() {
     return {
       sortby: '1',
-      tokens: []
     };
   },
   computed: {
     sortedTokenList: function () {
       var key = this.$data.sortby;
-      var tokens = this.$data.tokens;
+      var tokens = this.$store.state.erc20List;
       if (key == '1') {
         return tokens.sort(function (item1, item2) {
           if (item1.priceUSD > item2.priceUSD ) {

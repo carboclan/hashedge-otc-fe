@@ -58,8 +58,6 @@
 <script>
 import Vue from 'vue'
 import moment from 'moment'
-import { web3, hashedgeContracts } from '../../web3';
-import config from '../../config';
 import { DialogEventBus } from './DialogContainer';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
@@ -72,63 +70,7 @@ export default {
     if (this.$route.query.coin) {
       this.$data.coinType = this.$route.query.coin;
     }
-    const swapInfos = {}
-    // Get chain info
-    await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
-      const name = await token.name();
-      const unit = await token.contractUnit();
-      const type = await token.contractType();
-      swapInfos[token.address] = {
-        name, unit, type
-      }
-    }));
-    // Get token info
-    const query1 = `${config.apiConfig}erc20/info/`;
-    const tokens = await fetch(query1).then(response => { return response.json() });
-    const tokenInfo = _.chain(tokens)
-      .map((token) => [token.code, token])
-      .fromPairs()
-      .value();
-    // Get contract info
-    const query2 = `${config.apiConfig}swap721/list/`
-    const list = await fetch(query2).then(response => { return response.json() });
-    const contractList = list.result.reduce((pre, next) => {
-      const key = next.issueTx;
-      if (pre[key]) {
-        pre[key].shareTotal += 1;
-        if (next.status === 0) {
-          pre[key].avaliableShares.push(next.id);
-        } else {
-          pre[key].shareSold += 1;
-        }
-      } else {
-        const code = swapInfos[next.contractAddr].name.substr(0,3);
-        pre[key] = {
-          id: key,
-          name: swapInfos[next.contractAddr].name,
-          code: code,
-          hashType: swapInfos[next.contractAddr].type,
-          address: next.contractAddr,
-          payoutType: 'Standard Payout',
-          duration: Number(moment(next.endTime).unix()) - Number(moment(next.startTime).unix()),
-          pricingMethod: 'FIXED',
-          rating: '☆☆☆☆☆',
-          unit: swapInfos[next.contractAddr].unit,
-          shareSold: next.status === 0 ? 0 : 1,
-          avaliableShares: next.status === 0 ? [next.id] : [],
-          shareTotal: 1,
-          contractSize: next.contractSize,
-          priceUSD: next.price,
-          priceCOIN: next.price * tokenInfo[code].priceCOIN / tokenInfo[code].priceUSD,
-          issuer: next.issuer,
-          tx: next.issueTx,
-          payout: tokenInfo[code].priceCOIN,
-          payoutUSD: tokenInfo[code].priceUSD,
-        }
-      }
-      return pre;
-    }, {})
-    this.$data.contracts = Object.values(contractList);
+    this.$store.dispatch('getContractList');
   },
   methods: {
     selectTab(tab) {
@@ -154,12 +96,11 @@ export default {
       duration: '',
       payoutCoin: '',
       contractType: '',
-      contracts: [],
     };
   },
   computed: {
     filterContractList: function () {
-      let returnData = this.$data.contracts;
+      let returnData = this.$store.state.contractList;
       let tab = this.$data.tab
       if (tab != 'ALL' && tab != '') {
         returnData = returnData.filter(function (item) {

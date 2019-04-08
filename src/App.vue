@@ -33,6 +33,7 @@
 import Vue from 'vue';
 import moment from 'moment';
 
+// define filters
 Vue.filter('formatDate', function(value) {
   const format = 'MM.DD.YYYY';
   if (value >= 0) {
@@ -80,7 +81,10 @@ Vue.filter('percent', function (value) {
 });
 
 export default {
-  name: 'App'
+  name: 'App',
+  mounted () {
+    this.$store.dispatch('getErc20List');
+  }
 }
 </script>
 

@@ -53,7 +53,7 @@
       </div>
     </div>
     <!-- <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div> -->
-    <div class="tool" v-if="portfolio.type == 'Seller'"><button v-on:click="settle">SETTLE</button><button v-on:click="cancel">CANCEL</button></div>
+    <div class="tool" v-if="portfolio.type == 'Seller'"><button v-show="portfolio.status === 1"  v-on:click="settle">SETTLE</button><button v-show="portfolio.status === 0" v-on:click="cancel">CANCEL</button></div>
   </div>
 </template>
 <script>
@@ -90,13 +90,13 @@ export default {
       const { portfolio } = this.$props;
       const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].cancel([portfolio.id]);
       await web3.eth.getTransactionReceipt(recpt);
-      alert('cancel');
+      this.$store.dispatch('getPortfolioList');
     },
     async settle() {
       const { portfolio } = this.$props;
       const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].settle([portfolio.id]);
       await web3.eth.getTransactionReceipt(recpt);
-      alert('settle');
+      this.$store.dispatch('getPortfolioList');
     }
   },
   data() {

@@ -191,14 +191,7 @@ export default {
     DialogEventBus.$off('show-create-dialog');
   },
   async mounted () {
-    const contractOptions = await Promise.all(Object.keys(hashedgeContracts.swap721Tokens).map( async key => {
-      const name = await hashedgeContracts.swap721Tokens[key].name();
-      return ({
-        address: key,
-        name: name
-      })
-    }));
-    this.$data.contractOptions = contractOptions;
+    this.$store.dispatch('getSwapInfos');
   },
   methods: {
     setPoolInfo() {
@@ -260,6 +253,7 @@ export default {
       const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
       DialogEventBus.$emit('hide', this.$el);
+      this.$store.dispatch('getContractList');
     }
   },
   data() {
@@ -270,7 +264,6 @@ export default {
         address: '0xcc1b7347f23f8ef43c183d53c002d19fa2b57869'
       },
       contractAddress: '',
-      contractOptions: [],
       step: 1,
       name: null,
       symbol: null,
@@ -297,6 +290,12 @@ export default {
   computed: {
     expirationDate: function () {
       return Number(moment().unix()) + Number(this.$data.duration);
+    },
+    contractOptions: function () {
+      if (this.$store.state.swapInfos) {
+        return Object.values(this.$store.state.swapInfos);
+      }
+      return []
     }
   }
 }
