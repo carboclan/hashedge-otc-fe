@@ -1,4 +1,3 @@
-const config = {
-    apiConfig: 'http://localhost:3000/',
-}
-export default config;
+export default {
+  apiConfig: '/api/',
+};
