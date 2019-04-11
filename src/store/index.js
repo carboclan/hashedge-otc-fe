@@ -11,6 +11,9 @@ export default new Vuex.Store({
     erc20List: [],
     contractList: [],
     portfolioList: [],
+    dialog: {
+
+    },
     swapInfos: null
   },
   mutations: {
@@ -85,7 +88,8 @@ export default new Vuex.Store({
         }
         return pre;
       }, {})
-      ctx.commit('setContractList', Object.values(contractList));
+      const returnList = Object.values(contractList).filter(item => item.shareSold < item.shareTotal);
+      ctx.commit('setContractList', Object.values(returnList));
     },
     async getPortfolioList (ctx) {
       // Get swap info
