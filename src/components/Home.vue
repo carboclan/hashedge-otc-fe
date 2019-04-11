@@ -10,15 +10,14 @@
 <script>
 import { web3, hashedgeContracts } from '../web3';
 import TokenTable from './ctrl/TokenTable';
-import { DialogEventBus } from './ctrl/DialogContainer';
 import CreateDialog from './ctrl/CreateDialog';
 
 export default {
   name: 'Home',
   components: { TokenTable, CreateDialog },
   methods: {
-    async showCreatDialog() {
-      DialogEventBus.$emit('show-create-dialog');
+    showCreatDialog() {
+      this.$store.commit('showDialog', { name: 'create-dialog', show: true});
     },
     async reload() {
       // this.$data.proposals = await listExchanges();
@@ -35,16 +34,19 @@ export default {
 }
 </script>
 
-<style scoped>
+<style scoped lang="scss">
 .create {
   position: fixed;
   text-align: center;
-  line-height: 50px;
-  right: 50px;
-  bottom: 50px;
-  width: 40px;
-  height: 40px;
+  line-height: 90px;
+  right: 40px;
+  bottom: 40px;
+  width: 60px;
+  height: 60px;
   border-radius: 40px;
   background-color: #263238;
+  >i {
+    font-size: 40px;
+  }
 }
 </style>

@@ -176,20 +176,12 @@
 
 <script>
 import { web3, hashedgeContracts } from '../../web3';
-import DialogContainer, { DialogEventBus } from './DialogContainer';
+import DialogContainer from './DialogContainer';
 import moment from 'moment';
 
 export default {
   name: 'CreateDialog',
-  components: { DialogContainer, DialogEventBus },
-  beforeCreate() {
-    DialogEventBus.$on('show-create-dialog', () => {
-      DialogEventBus.$emit('show', this.$el);
-    });
-  },
-  beforeDestroy() {
-    DialogEventBus.$off('show-create-dialog');
-  },
+  components: { DialogContainer },
   async mounted () {
     this.$store.dispatch('getSwapInfos');
   },
@@ -252,8 +244,8 @@ export default {
       const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
       const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
-      DialogEventBus.$emit('hide', this.$el);
       this.$store.dispatch('getContractList');
+      this.$store.commit('hideDialog');
     }
   },
   data() {
@@ -267,7 +259,6 @@ export default {
       step: 1,
       name: null,
       symbol: null,
-      show: false,
       hashType: 'POW',
       contractCurrency: '',
       outputCurrency: '',
@@ -296,6 +287,9 @@ export default {
         return Object.values(this.$store.state.swapInfos);
       }
       return []
+    },
+    show: function () {
+      return (this.$store.state.dialog.name === 'create-dialog');
     }
   }
 }

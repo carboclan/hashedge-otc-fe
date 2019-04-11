@@ -7,32 +7,21 @@
 </template>
 
 <script>
-import Vue from 'vue';
-export const DialogEventBus = new Vue();
 
 export default {
   props: ['extraClass'],
   name: 'DialogContainer',
   mounted() {
-    DialogEventBus.$on('show', (el) => {
-      if (this.$el.isSameNode(el)) {
-        this.$data.show = true;
-      }
-    });
-
-    DialogEventBus.$on('hide', (el) => {
-      if (this.$el.isSameNode(el)) {
-        this.$data.show = false;
-      }
-    });
   },
-  beforeDestroy() {
-    DialogEventBus.$off('show');
-    DialogEventBus.$off('hide');
+  computed: {
+    show() {
+      return this.$store.state.dialog.show
+    }
+  },
+  methods: {
   },
   data() {
     return {
-      show: false
     }
   }
 }

@@ -32,7 +32,6 @@ import { web3, hashedgeContracts } from '../../web3';
 import config from '../../config';
 import _ from 'co-lodash';
 import moment from 'moment';
-import { DialogEventBus } from './DialogContainer';
 import PortfolioCard from './PortfolioCard';
 import PortfolioDetail from './PortfolioDetail';
 
@@ -51,12 +50,6 @@ export default {
     selectPortfolio(portfolio) {
       this.$data.selectedPortfolio = portfolio;
     },
-    showCreatDialog() {
-      DialogEventBus.$emit('show-create-dialog');
-    },
-    showTradeDialog(token) {
-      DialogEventBus.$emit('show-trade-dialog', token);
-    }
   },
   data() {
     return {

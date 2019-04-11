@@ -1,5 +1,5 @@
 <template>
-<DialogContainer v-show="show" extra-class="deposit-dialog">
+<DialogContainer v-if="show" extra-class="deposit-dialog">
   <div class="title">
     deposit
   </div>
@@ -24,44 +24,40 @@
 
 <script>
 import { web3, hashedgeContracts } from '../../web3';
-import DialogContainer, { DialogEventBus } from './DialogContainer';
+import DialogContainer from './DialogContainer';
 
 export default {
   name: 'DepositDialog',
-  components: { DialogContainer, DialogEventBus },
-  beforeCreate() {
-    DialogEventBus.$on('show-deposit-dialog', (contractAddress) => {
-      this.$data.contractAddress = contractAddress;
-      DialogEventBus.$emit('show', this.$el);
-    });
-  },
-  beforeDestroy() {
-    DialogEventBus.$off('show-deposit-dialog');
+  components: { DialogContainer },
+  mounted() {
+    this.$data.contractAddress = this.$store.state.dialog.params;
   },
   methods: {
     hide() {
-      DialogEventBus.$emit('hide', this.$el);
+      this.$store.commit('hideDialog');
     },
     async submit() {
-      const { amount, contractAddress } = this.$data;
+      const { amount } = this.$data;
+      const contractAddress = this.$store.state.dialog.params;
       const colContract = hashedgeContracts.collaterals[contractAddress];
       const underlying = await colContract.underlying();
       const tokenContract = hashedgeContracts.erc20Tokens[underlying];
-      const batch = []
+      const batch = [];
       batch.push(colContract.deposit(web3.toWei(amount, 'ether')));
       batch.push(tokenContract.approve(contractAddress, web3.toWei(amount, 'ether')));
       const recpt = await Promise.all(batch);
       await web3.eth.getTransactionReceipt(recpt[0]);
-      DialogEventBus.$emit('hide', this.$el);
-      alert('Success')
+      this.$store.commit('hideDialog');
     }
   },
   data() {
     return {
-      show: false,
       amount: 0,
-      contractAddress: ''
     };
+  },
+  computed: {
+    contractAddress: function() { return this.$store.state.dialog.params },
+    show: function() { return (this.$store.state.dialog.name === 'deposit-dialog') },
   }
 }
 </script>

@@ -1,5 +1,5 @@
 <template>
-<DialogContainer v-show="show" extra-class="withdraw-dialog">
+<DialogContainer v-if="show" extra-class="withdraw-dialog">
   <div class="title">
     withdraw
   </div>
@@ -18,40 +18,32 @@
 
 <script>
 import { web3, hashedgeContracts } from '../../web3';
-import DialogContainer, { DialogEventBus } from './DialogContainer';
+import DialogContainer from './DialogContainer';
 
 export default {
   name: 'WithdrawDialog',
-  components: { DialogContainer, DialogEventBus },
-  beforeCreate() {
-    DialogEventBus.$on('show-withdraw-dialog', (contractAddress) => {
-      this.$data.contractAddress = contractAddress;
-      DialogEventBus.$emit('show', this.$el);
-    });
-  },
-  beforeDestroy() {
-    DialogEventBus.$off('show-withdraw-dialog');
-  },
+  components: { DialogContainer },
   methods: {
     hide() {
-      DialogEventBus.$emit('hide', this.$el);
-      this.$data.step = 1;
+      this.$store.commit('hideDialog');
     },
     async submit() {
-      const { amount, contractAddress } = this.$data;
+      const { amount } = this.$data;
+      const contractAddress = this.$store.state.dialog.params;
       const colContract = hashedgeContracts.collaterals[contractAddress];
       const recpt = await colContract.withdraw(web3.toWei(amount, 'ether'));
       await web3.eth.getTransactionReceipt(recpt);
-      alert('success');
-      DialogEventBus.$emit('hide', this.$el);
+      this.$store.commit('hideDialog');
     }
   },
   data() {
     return {
-      show: false,
       amount: 0,
-      contractAddress: ''
     };
+  },
+  computed: {
+    contractAddress: function() { return this.$store.state.dialog.params },
+    show: function() { return (this.$store.state.dialog.name === 'withdraw-dialog') },
   }
 }
 </script>

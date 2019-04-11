@@ -56,9 +56,8 @@
 </template>
 
 <script>
-import Vue from 'vue'
-import moment from 'moment'
-import { DialogEventBus } from './DialogContainer';
+import Vue from 'vue';
+import moment from 'moment';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
 
@@ -80,12 +79,6 @@ export default {
     selectContract(contract) {
       this.$data.selectedContract = contract;
     },
-    showCreatDialog() {
-      DialogEventBus.$emit('show-create-dialog');
-    },
-    showTradeDialog(token) {
-      DialogEventBus.$emit('show-trade-dialog', token);
-    }
   },
   data() {
     return {

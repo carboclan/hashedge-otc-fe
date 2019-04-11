@@ -31,8 +31,6 @@
 </template>
 
 <script>
-
-import { DialogEventBus } from './DialogContainer';
 import { web3, hashedgeContracts } from '../../web3';
 export default {
   name: 'collateralCard',
@@ -53,10 +51,10 @@ export default {
   },
   methods: {
     showWithdrawDialog() {
-      DialogEventBus.$emit('show-withdraw-dialog', this.$props.collateral);
+      this.$store.commit('showDialog', { name: 'withdraw-dialog', show: true, params: this.$props.collateral});
     },
     showDepositDialog() {
-      DialogEventBus.$emit('show-deposit-dialog', this.$props.collateral);
+      this.$store.commit('showDialog', { name: 'deposit-dialog', show: true, params: this.$props.collateral});
     }
   },
   data() {

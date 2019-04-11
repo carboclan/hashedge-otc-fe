@@ -12,11 +12,23 @@ export default new Vuex.Store({
     contractList: [],
     portfolioList: [],
     dialog: {
-
+      name: '',
+      show: false,
+      params: '',
     },
     swapInfos: null
   },
   mutations: {
+    showDialog (state, payload) {
+      state.dialog = payload
+    },
+    hideDialog (state) {
+      state.dialog = {
+        name: '',
+        show: false,
+        params: {}
+      }
+    },
     setErc20List (state, payload) {
       state.erc20List = payload
     },

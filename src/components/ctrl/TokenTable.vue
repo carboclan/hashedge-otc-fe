@@ -24,7 +24,6 @@
 
 <script>
 import { web3 } from '../../web3';
-import { DialogEventBus } from './DialogContainer';
 import TokenCard from './TokenCard';
 
 export default {
@@ -32,9 +31,6 @@ export default {
   props: ['title', 'data'],
   components: { TokenCard },
   methods: {
-    showCreatDialog() {
-      DialogEventBus.$emit('show-create-dialog');
-    }
   },
   data() {
     return {
