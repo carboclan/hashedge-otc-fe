@@ -22,7 +22,7 @@
       <div class="card-bottom">
           <div><div class="shares">{{contract.shareSold}} SOLD</div></div>
           <div class="process"><div class="bar" v-bind:style="{width: contract.shareSold/contract.shareTotal*256 + 'px'}"></div></div>
-          <div><div class="shares">{{contract.shareTotal}} SHARES</div></div>
+          <div><div class="shares">{{contract.shareTotal}} UNITS</div></div>
       </div>
     </div>
   </div>

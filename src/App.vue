@@ -9,9 +9,7 @@
           </a>
         </li>
         <li v-bind:class="{ active: $route.name === 'market' }">
-          <a href="#/market">
-            market
-          </a>
+          <router-link :to="{ name: 'market', query: { coin: 'ALL'}}">market</router-link>
         </li>
         <li v-bind:class="{ active: $route.name === 'portfolio' }">
           <a href="#/portfolio">
