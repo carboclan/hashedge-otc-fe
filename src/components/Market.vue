@@ -17,6 +17,9 @@ export default {
     showCreatDialog() {
       this.$store.commit('showDialog', { name: 'create-dialog', show: true});
     },
+  },
+  beforeRouteUpdate(to, from, next) {
+    this.$forceUpdate();
   }
 }
 </script>

@@ -9,7 +9,9 @@
           </a>
         </li>
         <li v-bind:class="{ active: $route.name === 'market' }">
-          <router-link :to="{ name: 'market', query: { coin: 'ALL'}}">market</router-link>
+          <a href="#/market" v-on:click="resetCoinType">
+            market
+          </a>
         </li>
         <li v-bind:class="{ active: $route.name === 'portfolio' }">
           <a href="#/portfolio">
@@ -89,6 +91,11 @@ export default {
       this.$store.commit('showDialog', { name: 'login-dialog', show: true});
     }
     this.$store.dispatch('getErc20List');
+  },
+  methods: {
+    resetCoinType() {
+      this.$store.commit('setCoinType', 'ALL');
+    }
   }
 }
 </script>

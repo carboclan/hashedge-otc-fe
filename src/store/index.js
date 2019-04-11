@@ -17,9 +17,13 @@ export default new Vuex.Store({
       show: false,
       params: '',
     },
-    swapInfos: null
+    swapInfos: null,
+    coinType: 'ALL',
   },
   mutations: {
+    setCoinType (state, payload) {
+      state.coinType = payload;
+    },
     showDialog (state, payload) {
       state.dialog = payload
     },

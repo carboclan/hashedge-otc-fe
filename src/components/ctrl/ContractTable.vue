@@ -66,9 +66,6 @@ export default {
   props: ['title', 'data'],
   components: { ContractCard, ContractDetail },
   mounted: async function () {
-    if (this.$route.query.coin) {
-      this.$data.coinType = this.$route.query.coin;
-    }
     this.$store.dispatch('getContractList');
   },
   methods: {
@@ -85,13 +82,20 @@ export default {
       tab: 'ALL',
       selectedContract: null,
       hashType: '',
-      coinType: '',
       duration: '',
       payoutCoin: '',
       contractType: '',
     };
   },
   computed: {
+    coinType: {
+      get() {
+        return this.$store.state.coinType;
+      },
+      set(val) {
+        this.$store.commit('setCoinType', val);
+      }
+    },
     filterContractList: function () {
       let returnData = this.$store.state.contractList;
       let tab = this.$data.tab
@@ -100,7 +104,7 @@ export default {
           return item.pricingMethod == tab
         })
       }
-      let coinType = this.$data.coinType;
+      let coinType = this.$store.state.coinType;
       if (coinType != 'ALL' && coinType != '') {
         returnData = returnData.filter(function (item) {
           return item.code == coinType

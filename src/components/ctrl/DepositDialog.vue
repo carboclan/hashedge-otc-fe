@@ -3,18 +3,23 @@
   <div class="title">
     deposit
   </div>
-  <div class="input-group">
-    <div class="quantity">
-      <span>amount to deposit</span>
-      <input placeholder="amount" v-model="amount" />
+  <section v-show="step==0">
+    <div class="input-group">
+      <div class="quantity">
+        <span>amount to deposit</span>
+        <input placeholder="amount" v-model="amount" />
+      </div>
     </div>
-  </div>
-  <div class="input-group">
-    <div class="quantity">
-      <span>deposit address</span>
-      <input class="address" placeholder="address" v-model="contractAddress" disabled />
+    <div class="input-group">
+      <div class="quantity">
+        <span>deposit address</span>
+        <input class="address" placeholder="address" v-model="contractAddress" disabled />
+      </div>
     </div>
-  </div>
+  </section>
+  <section v-show="step==1">
+    <div class="title"> Please finish next steps in Metamask</div>
+  </section>
   <div class="footer">
     <button v-on:click="hide">CANCEL</button>
     <button v-on:click="submit">OK</button>
@@ -37,6 +42,7 @@ export default {
       this.$store.commit('hideDialog');
     },
     async submit() {
+      this.$data.step = 1;
       const { amount } = this.$data;
       const contractAddress = this.$store.state.dialog.params;
       const colContract = hashedgeContracts.collaterals[contractAddress];
@@ -47,12 +53,15 @@ export default {
       batch.push(tokenContract.approve(contractAddress, web3.toWei(amount, 'ether')));
       const recpt = await Promise.all(batch);
       await web3.eth.getTransactionReceipt(recpt[0]);
+      await web3.eth.getTransactionReceipt(recpt[1]);
+      this.$data.step = 0;
       this.$store.commit('hideDialog');
     }
   },
   data() {
     return {
       amount: 0,
+      step: 0,
     };
   },
   computed: {

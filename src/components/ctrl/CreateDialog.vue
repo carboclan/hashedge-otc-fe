@@ -7,7 +7,7 @@
     <div class="input-group">
       <!--<div class="tip">payment</div>-->
       <select v-model="contractAddress">
-        <option value="" disabled selected>Contract</option>
+        <option value="" disabled selected>Select a contract</option>
         <option v-for="contract in contractOptions" v-bind:key="contract.address" :value="contract.address">{{contract.name}}</option>
       </select>
       <!-- <select v-model="outputCurrency">

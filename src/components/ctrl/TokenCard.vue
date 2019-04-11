@@ -29,7 +29,8 @@ export default {
   },
   methods: {
     goToMarket: function () {
-      this.$router.push({ path:'market', query: { coin: this.$props.token.code }})
+      this.$store.commit('setCoinType', this.$props.token.code)
+      this.$router.push({ path:'market' })
     }
   },
   data() {
