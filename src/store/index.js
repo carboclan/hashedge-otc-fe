@@ -8,6 +8,7 @@ Vue.use(Vuex);
 
 export default new Vuex.Store({
   state: {
+    metamaskState: 0,
     erc20List: [],
     contractList: [],
     portfolioList: [],

@@ -1,5 +1,5 @@
 <template>
-<DialogContainer v-show="show" extra-class="create-dialog">
+<DialogContainer v-if="show" extra-class="create-dialog">
   <section v-show="step==1">
     <div class="title">
       basics
@@ -240,6 +240,9 @@ export default {
       this.$data.price = Math.round(10 ** 6 * 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000) / 10 ** 6;
     },
     async submit() {
+      if (!web3.eth.accounts[0]) {
+        this.$store.commit('showDialog', { name: 'login-dialog', show: true});
+      }
       const { contractAddress, duration, price, totalSupply, orderSize} = this.$data;
       const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
       const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);

@@ -1,17 +1,10 @@
 <template>
-<DialogContainer v-if="show" extra-class="withdraw-dialog">
+<DialogContainer v-if="show" extra-class="login-dialog">
   <div class="title">
-    withdraw
-  </div>
-  <div class="input-group">
-    <div class="quantity">
-      <span>amount to withdraw</span>
-      <input placeholder="amount" v-model="amount" />
-    </div>
+    Hashedge dApp needs Metamask login.
   </div>
   <div class="footer">
-    <button v-on:click="hide">CANCEL</button>
-    <button v-on:click="submit">OK</button>
+    <button v-on:click="submit">Try Again</button>
   </div>
 </DialogContainer>
 </template>
@@ -21,19 +14,13 @@ import { web3, hashedgeContracts } from '../../web3';
 import DialogContainer from './DialogContainer';
 
 export default {
-  name: 'WithdrawDialog',
+  name: 'LoginDialog',
   components: { DialogContainer },
   methods: {
-    hide() {
-      this.$store.commit('hideDialog');
-    },
     async submit() {
-      const { amount } = this.$data;
-      const contractAddress = this.$store.state.dialog.params;
-      const colContract = hashedgeContracts.collaterals[contractAddress];
-      const recpt = await colContract.withdraw(web3.toWei(amount, 'ether'));
-      await web3.eth.getTransactionReceipt(recpt);
-      this.$store.commit('hideDialog');
+      if (web3.eth.accounts[0]) {
+        this.$store.commit('hideDialog');
+      }
     }
   },
   data() {
@@ -42,14 +29,13 @@ export default {
     };
   },
   computed: {
-    contractAddress: function() { return this.$store.state.dialog.params },
-    show: function() { return (this.$store.state.dialog.name === 'withdraw-dialog') },
+    show: function() { return (this.$store.state.dialog.name === 'login-dialog') },
   }
 }
 </script>
 
-<style scoped lang="scss">
-.withdraw-dialog {
+<style lang="scss">
+.login-dialog {
   .dialog-container {
     width: 432px;
     background-color: #37474F;

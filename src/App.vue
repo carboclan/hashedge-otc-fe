@@ -25,6 +25,7 @@
         </li>
       </ul>
     </div>
+    <LoginDialog />
     <router-view/>
   </div>
 </template>
@@ -32,6 +33,8 @@
 <script>
 import Vue from 'vue';
 import moment from 'moment';
+import LoginDialog from './components/ctrl/LoginDialog';
+import { web3 } from './web3';
 
 // define filters
 Vue.filter('formatDate', function(value) {
@@ -82,7 +85,11 @@ Vue.filter('percent', function (value) {
 
 export default {
   name: 'App',
+  components: { LoginDialog },
   mounted () {
+    if (!web3.eth.accounts[0]) {
+      this.$store.commit('showDialog', { name: 'login-dialog', show: true});
+    }
     this.$store.dispatch('getErc20List');
   }
 }
