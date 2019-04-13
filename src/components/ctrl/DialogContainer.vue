@@ -1,6 +1,6 @@
 <template>
-<div class="dialog-mask" v-bind:class="extraClass" v-bind:style="{ display: show ? 'flex' : 'none' }">
-  <div class="dialog-container">
+<div class="dialog-mask" v-bind:class="extraClass" v-on:click="triggerMask" v-bind:style="{ display: show ? 'flex' : 'none' }">
+  <div ref="dialog" class="dialog-container">
     <slot></slot>
   </div>
 </div>
@@ -19,6 +19,13 @@ export default {
     }
   },
   methods: {
+    triggerMask(e) {
+      if (this.$refs.dialog) {
+        if (!this.$refs.dialog.contains(e.target)) {
+          this.$store.commit('hideDialog');
+        }
+      }
+    }
   },
   data() {
     return {

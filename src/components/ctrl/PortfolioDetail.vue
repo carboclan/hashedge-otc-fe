@@ -60,11 +60,26 @@
 
 import { web3, hashedgeContracts } from '../../web3';
 import moment from 'moment';
+import ClipboardJS from 'clipboard';
 
 export default {
   name: 'PortfolioDetail',
   props: {
     portfolio: Object
+  },
+  mounted() {
+    const { portfolio } = this.$props;
+    this.$data.clipboard = new ClipboardJS('.copy', {
+      text: function() {
+          return portfolio.tx;
+      }
+    });
+    this.$data.clipboard.on('success', function(e) {
+      alert('tx hash has copied to clipboard');
+    });
+  },
+  beforeDestory() {
+    this.$data.clipboard.destory();
   },
   methods: {
     getProcessed(start, end) {
