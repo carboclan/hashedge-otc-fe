@@ -59,7 +59,7 @@
     </div>
     <div class="input-group text-right">
         <div class="tip">Suggest Price</div>
-        <div class="large-price">{{(0.2012*(100+diff)*(100+exRate) /10000).toFixed(4)}} USD</div>
+        <div class="large-price">${{suggestPrice | usd}} USD</div>
         <button v-on:click="applyPrice">Use Suggest Price</button>
     </div>
     <div class="input-group">
@@ -237,7 +237,7 @@ export default {
       }
     },
     applyPrice() {
-      this.$data.price = Math.round(10 ** 6 * 0.2012*(100+this.$data.diff)*(100+this.$data.exRate)/10000) / 10 ** 6;
+      this.$data.price = this.suggestPrice / 1e18;
     },
     async submit() {
       if (!web3.eth.accounts[0]) {
@@ -290,6 +290,19 @@ export default {
         return Object.values(this.$store.state.swapInfos);
       }
       return []
+    },
+    suggestPrice: function () {
+      if (!this.$data.contractAddress) {
+        return 0;
+      }
+      const { orderSize, duration, exRate, diff } = this.$data;
+      const tokenInfo = _.chain(this.$store.state.erc20List)
+        .map((token) => [token.code, token])
+        .fromPairs()
+        .value();
+      const code = this.$store.state.swapInfos[this.$data.contractAddress].code;
+      const payoutUSD = tokenInfo[code].priceUSD;
+      return payoutUSD * orderSize * duration * (100 + exRate) * (100 - diff) / 3600 / 24 / 10000;
     },
     show: function () {
       return (this.$store.state.dialog.name === 'create-dialog');

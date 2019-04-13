@@ -161,9 +161,10 @@ export default new Vuex.Store({
         const name = await token.name();
         const unit = await token.contractUnit();
         const type = await token.contractType();
+        const code = name.substr(0,3);
         swapInfos[token.address] = {
           address: token.address,
-          name, unit, type
+          name, unit, type, code
         }
       }));
       ctx.commit('setSwapInfos', swapInfos);
