@@ -106,7 +106,7 @@ export default new Vuex.Store({
         return pre;
       }, {})
       const returnList = Object.values(contractList).filter(item => item.shareSold < item.shareTotal);
-      ctx.commit('setContractList', Object.values(returnList));
+      ctx.commit('setContractList', returnList);
     },
     async getPortfolioList (ctx) {
       // Get swap info
@@ -125,10 +125,16 @@ export default new Vuex.Store({
       const userAddress = web3.eth.accounts[0];
       const query2 = `${config.apiConfig}swap721/list/?owner=${userAddress}`;
       const list = await fetch(query2).then(response => { return response.json() });
-      const portfolioList = list.result.map((portfolio) => {
-        const code = swapInfos[portfolio.contractAddr].name.substr(0,3);
-        return {
-            key: portfolio.contractAddr + portfolio.id,
+      const portfolioList = list.result.reduce((pre, portfolio) => {
+        const key = portfolio.issueTx + '_' + moment(portfolio.startTime).unix();
+        if (pre[key]) {
+          pre[key].shareTotal += 1;
+          pre[key].received += portfolio.totalFloatingLegPaid;
+          pre[key].paid += portfolio.totalFixLegPaid;
+        } else {
+          const code = swapInfos[portfolio.contractAddr].name.substr(0,3);
+          pre[key] = {
+            key: key,
             id: portfolio.id,
             name: swapInfos[portfolio.contractAddr].name,
             rUnit: code,
@@ -151,9 +157,11 @@ export default new Vuex.Store({
             tx: portfolio.issueTx,
             estimateNetGain: portfolio.totalFixLegPaid === 0 ? 0 : portfolio.totalFloatingLegPaid * tokenInfo[code].priceUSD * 100 / portfolio.totalFixLegPaid / tokenInfo[code].priceCOIN - 100,
             type: portfolio.issuer === userAddress ? 'Seller' : 'Buyer',
+          }
         }
-      });
-      ctx.commit('setPortfolioList', portfolioList);
+        return pre;
+      }, {});
+      ctx.commit('setPortfolioList', Object.values(portfolioList));
     },
     async getSwapInfos (ctx) {
       let swapInfos = {}
