@@ -47,7 +47,7 @@
           v-model="diff" />
       </div>
       <div class="detail-footer">
-        <div class="tip">EXCHANGE RATE: {{contract.payoutUSD * 1e18  * (100 + exRate) / contract.payout / 100 | usd}} USD</div>
+        <div class="tip">EXCHANGE RATE: {{ rateMap[contract.code] * 1e18  * (100 + exRate) / 100 | usd}} USD</div>
         <el-slider :min="-10" :max="10"
           v-model="exRate" />
       </div>
@@ -67,6 +67,11 @@ export default {
   name: 'ContractDetail',
   props: {
     contract: Object
+  },
+  computed: {
+    rateMap() {
+      return this.$store.state.rateMap;
+    }
   },
   methods: {
     async submit() {

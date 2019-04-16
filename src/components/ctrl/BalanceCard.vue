@@ -14,9 +14,9 @@
           <div class="pad-top1"><div class="price">{{token.balance * token.price | usd}}</div></div>
           <div><div class="memo">USD</div></div>
         </div>
-        <div class="card-tool">
+        <!-- <div class="card-tool">
           <div v-on:click="mint"><i class="material-icons">add_circle</i></div>
-        </div>
+        </div> -->
       </div>
     </div>
   </div>
@@ -24,7 +24,6 @@
 
 <script>
 
-import { DialogEventBus } from './DialogContainer';
 import { web3, hashedgeContracts } from '../../web3';
 export default {
   name: 'BalanceCard',
@@ -42,16 +41,18 @@ export default {
   },
   async mounted() {
     const address = web3.eth.accounts[0];
-    this.$data.token.name = await hashedgeContracts.erc20Tokens[this.$props.erc20].name();
+    const name = await hashedgeContracts.erc20Tokens[this.$props.erc20].name();
     const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
+    this.$data.token.name = name;
     this.$data.token.balance = b.toNumber()
+    this.$data.token.price = this.$store.state.rateMap[name];
   },
   data() {
     return {
       token: {
         name: 'Loading',
         balance: 0,
-        price: 100
+        price: 1
       }
     };
   }

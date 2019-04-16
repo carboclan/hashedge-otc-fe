@@ -65,7 +65,7 @@ export default {
         payoutType: 'Standard',
         margin: 0,
         balance: 0,
-        collateralRate: 200
+        collateralRate: 0
       }
     };
   }

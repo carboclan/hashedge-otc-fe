@@ -12,6 +12,14 @@ export default new Vuex.Store({
     erc20List: [],
     contractList: [],
     portfolioList: [],
+    rateMap: {
+      ETH: 162.02,
+      WETH: 162.02,
+      BTC: 5072.63,
+      WBTC: 5072.63,
+      DAI: 1,
+      EOS: 5.39
+    },
     dialog: {
       name: '',
       show: false,
@@ -96,7 +104,7 @@ export default new Vuex.Store({
             shareTotal: 1,
             contractSize: next.contractSize,
             priceUSD: next.price,
-            priceCOIN: next.price * tokenInfo[code].priceCOIN / tokenInfo[code].priceUSD,
+            priceCOIN: next.price / ctx.state.rateMap[code],
             issuer: next.issuer,
             tx: next.issueTx,
             payout: tokenInfo[code].priceCOIN,
