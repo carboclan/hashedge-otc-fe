@@ -9,7 +9,7 @@
 <script>
 
 export default {
-  props: ['extraClass'],
+  props: ['extraClass', 'forced'],
   name: 'DialogContainer',
   mounted() {
   },
@@ -20,7 +20,7 @@ export default {
   },
   methods: {
     triggerMask(e) {
-      if (this.$refs.dialog) {
+      if (!this.$props.forced && this.$refs.dialog) {
         if (!this.$refs.dialog.contains(e.target)) {
           this.$store.commit('hideDialog');
         }
@@ -45,6 +45,7 @@ export default {
   bottom: 0;
   display: flex;
   background-color: rgba(255, 255, 255, 0.3);
+  z-index: 1010;
 }
 
 .dialog-container {

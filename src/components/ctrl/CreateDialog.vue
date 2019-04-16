@@ -63,12 +63,14 @@
         <button v-on:click="applyPrice">Use Suggest Price</button>
     </div>
     <div class="input-group">
-        <div class="tip">DIFFICULTY %</div>
+        <div class="tip">DIFFICULTY:</div>
         <el-slider :min="-10" :max="10"
-          v-model="diff" />
-        <div class="tip">EXCHANGE RATE %</div>
+          v-model="diff"
+          :format-tooltip="formatPercent" />
+        <div class="tip">EXCHANGE RATE:</div>
         <el-slider :min="-10" :max="10"
-          v-model="exRate" />
+          v-model="exRate"
+          :format-tooltip="formatPercent" />
     </div>
     <div class="input-group">
       <div class="tip">total offering</div>
@@ -186,6 +188,9 @@ export default {
     this.$store.dispatch('getSwapInfos');
   },
   methods: {
+    formatPercent(value) {
+      return (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
+    },
     setPoolInfo() {
       const selected = this.pool.selected;
       if (selected === 'POOL.IN') {
@@ -268,8 +273,8 @@ export default {
       contractType: 'STD',
       pricingMethod: 'FIXED',
       price: 0,
-      diff: 1,
-      exRate: 1,
+      diff: 0,
+      exRate: 0,
       totalSupply: 0,
       orderSize: 1,
       collateralCurrency: '',

@@ -1,5 +1,5 @@
 <template>
-<DialogContainer v-if="show" extra-class="login-dialog">
+<DialogContainer v-if="show" forced="true" extra-class="login-dialog">
   <div class="title">
     Hashedge dApp needs Metamask login.
   </div>

@@ -42,14 +42,16 @@
       </section>
       <div class="spacer"></div>
       <div class="detail-footer">
-        <div class="tip">DIFFICULTY %</div>
+        <div class="tip">DIFFICULTY:</div>
         <el-slider :min="-10" :max="10"
-          v-model="diff" />
+          v-model="diff"
+          :format-tooltip="formatPercent" />
       </div>
       <div class="detail-footer">
         <div class="tip">EXCHANGE RATE: {{ rateMap[contract.code] * 1e18  * (100 + exRate) / 100 | usd}} USD</div>
         <el-slider :min="-10" :max="10"
-          v-model="exRate" />
+          v-model="exRate"
+          :format-tooltip="formatPercent" />
       </div>
       <div class="detail-footer">
           <div class="tip">EXPECTED OUTPUT CALCULATOR</div>
@@ -74,6 +76,9 @@ export default {
     }
   },
   methods: {
+    formatPercent(value) {
+      (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
+    },
     async submit() {
       const { quantity } = this.$data;
       const { contract } = this.$props;
