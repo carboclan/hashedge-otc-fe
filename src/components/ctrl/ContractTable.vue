@@ -6,34 +6,26 @@
       <div class="header-menu" v-bind:class="{ active: tab === 'AUCTION'}" v-on:click="selectTab('AUCTION')">AUCTION</div>
       <div class="header-menu" v-bind:class="{ active: tab === 'FIXED'}" v-on:click="selectTab('FIXED')">FIXED PRICE</div>
       <div class="header-menu">
-        <select v-model="hashType">
-          <option value="" selected disabled>HASH TYPE</option>
-          <option value="ALL">ALL</option>
-          <option value="POW">POW</option>
-          <option value="POS">POS</option>
-          <option value="DPOS">DPOS</option>
+        <select v-model="coinType">
+          <option value="" selected>SETTLE TYPE</option>
+          <option value="POW">BTC</option>
+          <option value="POS">ETH</option>
+          <option value="DPOS">EOS</option>
         </select>
       </div>
     </div>
     <div class="table-header">
-        <select v-model="coinType">
-          <option value="" selected disabled>COIN</option>
-          <option value="ALL">ALL</option>
-          <option value="BTC">BTC</option>
-          <option value="ETH">ETH</option>
-          <option value="EOS">EOS</option>
+        <select v-model="contractType">   
+          <option value="" selected>CONTRACT TYPE</option>
+          <option value="BTC-POW">BTC-POW</option>
+          <option value="ETH-POW">ETH-POW</option>
+          <option value="EOS-POS">EOS-POS</option>
         </select>
         <select v-model="payoutCoin">   
-          <option value="" selected disabled>PAYOUT CURRENCY</option>
-          <option value="ALL">ALL</option>
-        </select>
-        <select v-model="contractType">   
-          <option value="" selected disabled>CONTRACT TYPE</option>
-          <option value="ALL">ALL</option>
+          <option value="" selected>PAYOUT CURRENCY</option>
         </select>
         <select v-model="duration">   
-          <option value="" selected disabled>DURATION</option>
-          <option value="ALL">ALL</option>
+          <option value="" selected>DURATION</option>
           <option value="60">1 MINS</option>
           <option value="2592000">30 DAYS</option>
           <option value="7776000">90 DAYS</option>
@@ -81,7 +73,6 @@ export default {
     return {
       tab: 'ALL',
       selectedContract: null,
-      hashType: '',
       duration: '',
       payoutCoin: '',
       contractType: '',
@@ -110,12 +101,6 @@ export default {
           return item.code == coinType
         });
       }
-      let hashType = this.$data.hashType;
-      if (hashType != 'ALL' && hashType != '') {
-        returnData = returnData.filter(function (item) {
-          return item.hashType == hashType
-        });
-      }
       let duration = this.$data.duration;
       if (duration != 'ALL' && duration != '') {
         returnData = returnData.filter(function (item) {
@@ -131,7 +116,7 @@ export default {
       let contractType = this.$data.contractType;
       if (contractType != 'ALL' && contractType != '') {
         returnData = returnData.filter(function (item) {
-          return item.type == contractType
+          return item.name == contractType
         });
       }
 
@@ -176,11 +161,11 @@ export default {
     color: #455A64;
     border-top: 0.5px solid #455A64;
     display: flex;
-    justify-content: flex-end;
     >select {
       border: none;
       border-radius: 0;
       border-right: 0.5px solid #455A64;
+      min-width: 30%
     }
     >select:last-child {
       border-right: none;

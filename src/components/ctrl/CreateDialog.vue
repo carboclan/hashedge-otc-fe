@@ -18,10 +18,10 @@
       </select> -->
     </div>
     <div class="input-group">
-      <div class="tip">contract type</div>
+      <div class="tip">settle type</div>
       <select v-model="contractType">
         <option value="STD" selected>STANDARD OUTPUT</option>
-        <!-- <option value="ACT">ACTURE OUTPUT</option> -->
+        <option value="ACT" disabled>ACTURE OUTPUT</option>
       </select>
     </div>
     <div class="input-group">
@@ -56,11 +56,11 @@
         <span>Your Fixed Price</span>
         <input placeholder="Price" v-model="price" />
       </div>
+      <button v-on:click="applyPrice">Use Suggested Price</button>
     </div>
     <div class="input-group text-right">
         <div class="tip">Suggest Price</div>
         <div class="large-price">${{suggestPrice | usd}} USD</div>
-        <button v-on:click="applyPrice">Use Suggest Price</button>
     </div>
     <div class="input-group">
         <div class="tip">DIFFICULTY:</div>
