@@ -4,6 +4,7 @@ import Home from '@/components/Home'
 import Market from '@/components/Market'
 import Balance from '@/components/Balance'
 import Portfolio from '@/components/Portfolio'
+import Test from '@/components/Test'
 
 Vue.use(Router)
 
@@ -28,6 +29,11 @@ export default new Router({
       path: '/balance',
       name: 'balance',
       component: Balance
+    },
+    {
+      path: '/test',
+      name: 'test',
+      component: Test
     },
     {
       path: '*',
