@@ -52,15 +52,37 @@
         <option value="FIXED" selected>FIXED PRICE(BUY NOW)</option>
         <!-- <option value="AUC">DUTCH AUCTION</option> -->
       </select>
-      <div class="quantity">
-        <span>Your Fixed Price</span>
+      <el-tooltip class="help-mark" effect="dark">
+        <div class="tip-content" slot="content">
+          <div class="tip-title">pricing method</div>
+          <div class="tip-title">
+            Fixed Price (Buy-it-now)
+          </div>
+          Buyers can purchase contract immediately<br />
+          at the price you set.
+          <div class="tip-title">
+            Dutch Auction
+          </div>
+          Open descending-price auction, where price<br />
+          starts at an artificially high price and<br />
+          lowers in steps over time to your reservation<br />
+          price.
+        </div>
+        <i class="material-icons">help_circle</i>
+      </el-tooltip>
+      <div class="quantity price-input">
+        <span>YOUR FIXED PRICE</span>
         <input placeholder="Price" v-model="price" />
+        <div class="unit">{{hashUnit}}</div>
       </div>
-      <button v-on:click="applyPrice">Use Suggested Price</button>
+      <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button>
+    </div>
+    <div class="tip">
+      OPTIONAL: Suggested Price Calculator
     </div>
     <div class="input-group text-right">
-        <div class="tip">Suggest Price</div>
-        <div class="large-price">${{suggestPrice | usd}} USD</div>
+      <div class="tip">Suggest Price</div>
+      <div class="large-price">${{suggestPrice | usd}} USD</div>
     </div>
     <div class="input-group">
         <div class="tip">DIFFICULTY:</div>
@@ -75,23 +97,50 @@
     <div class="input-group">
       <div class="tip">total offering</div>
       <div class="quantity">
-        <span>Total Quantity Offering</span>
+        <span>TOTAL QUANTITY OFFERING</span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
       </div>
       <div class="quantity">
-        <span>Contract Size</span>
+        <span>MINIMUM PURCHASE AMOUNT</span>
         <input placeholder="Minimum Order" v-model="orderSize" />
+        <div class="unit">{{hashUnit}}</div>
       </div>
     </div>
     <div class="footer">
+      <button v-on:click="lastStep" class="left">BACK</button>
       <button v-on:click="nextStep">NEXT</button>
     </div>
   </section>
   <section v-show="step==3">
     <div class="title">
-      mining configuration
+      deposit collateral
     </div>
     <div class="input-group">
+      <div class="tip">Collateral Currency</div>
+      <div class="tip">{{collateralCurrency}}</div>
+      <!-- <select v-model="collateralCurrency">
+        <option value="BTC" selected>BTC</option>
+        <option value="DAI">DAI</option>
+      </select> -->
+      <div class="quantity">
+        <input placeholder="Amount" style="width: 100%;" v-model="collateralAmount" />
+      </div>
+      <div class="foot-note">Send exactly this amount of {{collateralCurrency}} to the address below.</div>
+      <button v-on:click="depositCollateral" class="right">Deposit Collateral</button>
+      <!-- <div class="quantity">
+        <input placeholder="Your Collateral Address" v-model="collateralAddress" />
+      </div>
+      <div class="foot-note">Contract collateral address.</div> -->
+    </div>
+    <div class="status">
+      <div class="tip" v-show="collateralStep == 1">Awaiting Collateral</div>
+      <div class="tip" v-show="collateralStep == 2">Collateral Deposited</div>
+      <el-progress type="circle" color="#90A4AE" :percentage="collateralStep * 50" status="text">{{collateralStep}} of 2</el-progress>
+    </div>
+    <div class="title" v-on:click="switchPool" >
+      <i class="material-icons">arrow_drop_down_circle</i>OPTIONAL: mining configuration
+    </div>
+    <div class="input-group" v-show="showPool">
       <div class="tip">Mining Pool Name</div>
       <select v-model="pool.selected" v-on:change="setPoolInfo">
         <option value="POOL.IN">pool.in</option>
@@ -113,63 +162,7 @@
       </div>
     </div>
     <div class="footer">
-      <button v-on:click="nextStep">NEXT</button>
-    </div>
-  </section>
-  <section v-show="step==4">
-    <div class="title">
-      validator verification
-    </div>
-    <div class="input-group">
-      <div class="quantity">
-        <input placeholder="Your Validator Address"/>
-      </div>
-      <div class="foot-note">We will automatically generate a message digest for you to sign.</div>
-      <div class="quantity">
-        <input placeholder="Your Validator Address"/>
-      </div>
-      <div class="foot-note">Sign this message digest with the private key of your validator address. </div>
-    </div>
-    <div class="input-group">
-      <div class="tip">enter your signed output</div>
-      <textarea/>
-      <button>Submit</button>
-    </div>
-    <div class="status">
-      <div class="tip">Awaiting Varification</div>
-      <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
-    </div>
-    <div class="footer">
-      <button v-on:click="nextStep">NEXT</button>
-    </div>
-  </section>
-  <section v-show="step==5">
-    <div class="title">
-      deposit collateral
-    </div>
-    <div class="input-group">
-      <div class="tip">Collateral Currency</div>
-      <div class="tip">{{collateralCurrency}}</div>
-      <!-- <select v-model="collateralCurrency">
-        <option value="BTC" selected>BTC</option>
-        <option value="DAI">DAI</option>
-      </select> -->
-      <div class="quantity">
-        <input placeholder="Amount" v-model="collateralAmount" />
-      </div>
-      <div class="foot-note">Send exactly this amount of {{collateralCurrency}} to the address below.</div>
-      <button v-on:click="depositCollateral">Collateral</button>
-      <!-- <div class="quantity">
-        <input placeholder="Your Collateral Address" v-model="collateralAddress" />
-      </div>
-      <div class="foot-note">Contract collateral address.</div> -->
-    </div>
-    <div class="status">
-      <div class="tip" v-show="collateralStep == 1">Awaiting Collateral</div>
-      <div class="tip" v-show="collateralStep == 2">Collateral Deposited</div>
-      <el-progress type="circle" color="#90A4AE" :percentage="collateralStep * 50" status="text">{{collateralStep}} of 2</el-progress>
-    </div>
-    <div class="footer">
+      <button v-on:click="lastStep" class="left">BACK</button>
       <button v-on:click="submit">SUBMIT</button>
     </div>
   </section>
@@ -190,6 +183,9 @@ export default {
   methods: {
     formatPercent(value) {
       return (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
+    },
+    switchPool() {
+      this.showPool = !this.showPool;
     },
     setPoolInfo() {
       const selected = this.pool.selected;
@@ -232,14 +228,13 @@ export default {
       this.$data.step = 1;
     },
     nextStep() {
-      if (this.$data.step === 3) {
-        this.$data.step = this.$data.step + 2;
-      } else {
-        this.$data.step = this.$data.step + 1;
-      }
-      if (this.$data.step == 5) {
+      this.$data.step = this.$data.step + 1;
+      if (this.$data.step == 3) {
         this.loadColInfo();
       }
+    },
+    lastStep() {
+      this.$data.step = this.$data.step - 1;
     },
     applyPrice() {
       this.$data.price = this.suggestPrice / 1e18;
@@ -258,6 +253,7 @@ export default {
   },
   data() {
     return {
+      showPool: false,
       pool: {
         selected: 'POOL.IN',
         url: 'btc.ss.poolin.com:443',
@@ -327,6 +323,13 @@ export default {
     font-size: 17px;
     color: white;
     margin: 8px 0;
+    >i {
+      display: inline-block;
+      width: 24px;
+      position: relative;
+      top: 6px;
+      margin: 0 10px;
+    }
   }
   .input-group {
     padding: 8px;
@@ -366,6 +369,10 @@ export default {
     font-variant: small-caps;
     color: #CFD8DC;
   }
+  .help-mark {
+    position: relative;
+    top: 5px;
+  }
   .foot-note {
     position: relative;
     top: -16px;
@@ -380,6 +387,7 @@ export default {
     margin: 8px auto;
     padding: 8px;
     text-align: center;
+    clear: both;
   }
   .quantity {
     background: #263238;
@@ -389,8 +397,13 @@ export default {
     padding: 8px;
     height: 56px;
     margin-bottom: 16px;
+    display: flex;
+    &.price-input {
+      width: 65%;
+    }
     >span {
       font-size: 12px;
+      width: 40%;
       color: #B0BEC5;
     }
     >input {
@@ -400,11 +413,24 @@ export default {
       font-size: 18px;
       text-align: right;
       color: white;
-      width: 150px;
+      width: 50%;
       float: right;
       background: none;
       border: none;
     }
+    >.unit {
+      width: 10%;
+      float: right;
+      margin: 8px 0;
+      line-height: 24px;
+      color:#607D8B;
+    }
+  }
+  .price-button {
+    float: right;
+    display: inline-block;
+    position: relative;
+    top: -55px;
   }
   .spacer {
     width: 100%;

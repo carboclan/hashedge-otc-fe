@@ -3,27 +3,22 @@
     <div class="title">selected contract details</div>
     <div class="contract-detail">
       <div class="detail-header">
-        <div class="quantity">
-          <span>EnterQuantity</span>
-          <input placeholder="Quantity" v-model="quantity"/>
-        </div>
-        <div class="tip">TOTAL PRICE</div>
-        <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
-        <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity | btc}}</div>
-        <div class="tool"><button v-on:click="submit">BUY</button></div>
-      </div>
-      <div class="spacer"></div>
-      <div class="detail-cell">
-        <div>
-          <div class="tip">QUANTITY AVALABLE</div>
-          <div class="small-price">{{contract.shareTotal - contract.shareSold}}</div>
-          <div class="memo">of {{contract.shareTotal}} Units</div>
-        </div>
         <div>
           <div class="tip">CONTRACT UNIT PRICE</div>
           <div class="small-price">${{contract.priceUSD / contract.contractSize | usd}}/{{contract.unit}}</div>
           <div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize | btc}}/{{contract.unit}}</div>
         </div>
+      </div>
+      <div class="spacer"></div>
+      <div class="detail-header">
+        <div class="quantity">
+          <span>EnterQuantity</span>
+          <input placeholder="Quantity" v-model="quantity"/>
+          <div class="unit">of {{contract.shareTotal - contract.shareSold}} Units</div>
+        </div>
+        <div class="tip">TOTAL PRICE</div>
+        <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
+        <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity | btc}}</div>
       </div>
       <section v-if="contract.pricingMethod == 'AUCTION'">
         <div class="spacer"></div>
@@ -40,16 +35,19 @@
           </div>
         </div>
       </section>
-      <div class="spacer"></div>
+    </div>
+    <div class="tool"><button v-on:click="submit">BUY QUANTITY</button></div>
+    <div class="title">OPTIONAL: calculate contract’s expected output</div>
+    <div class="contract-detail">
       <div class="detail-footer">
         <div class="tip">DIFFICULTY:</div>
-        <el-slider :min="-10" :max="10"
+        <el-slider :min="-30" :max="30"
           v-model="diff"
           :format-tooltip="formatPercent" />
       </div>
       <div class="detail-footer">
         <div class="tip">EXCHANGE RATE: {{ rateMap[contract.code] * 1e18  * (100 + exRate) / 100 | usd}} USD</div>
-        <el-slider :min="-10" :max="10"
+        <el-slider :min="-30" :max="30"
           v-model="exRate"
           :format-tooltip="formatPercent" />
       </div>
@@ -132,13 +130,16 @@ export default {
   }
   .quantity {
     background: #263238;
-    border: 0.25px solid #607D8B;
+    border-bottom: 1px solid #CFD8DC;
     box-sizing: border-box;
-    border-radius: 4px;
+    border-radius: 4px 4px 0 0;
     padding: 8px;
     height: 56px;
     margin-bottom: 16px;
+    display: flex;
     >span {
+      font-size: 12px;
+      width: 30%;
       color: #B0BEC5;
     }
     >input {
@@ -148,10 +149,17 @@ export default {
       font-size: 18px;
       text-align: right;
       color: white;
-      width: 150px;
+      width: 50%;
       float: right;
       background: none;
       border: none;
+    }
+    >.unit {
+      width: 20%;
+      float: right;
+      margin: 8px 0;
+      line-height: 24px;
+      color:#607D8B;
     }
   }
   .detail-cell {
@@ -172,9 +180,6 @@ export default {
     text-transform: uppercase;
     font-variant: small-caps;
     color: #CFD8DC;
-  }
-  .tool {
-    text-align: right;
   }
   .small-price  {
     line-height: 24px;
@@ -202,5 +207,9 @@ export default {
     width: 100%;
     border: 0.5px solid #263238;
   }
+}
+.tool {
+  text-align: right;
+  margin: 10px;
 }
 </style>

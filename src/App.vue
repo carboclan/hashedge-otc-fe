@@ -176,11 +176,30 @@ ul {
   padding: 0;
 }
 
+.left {
+  float: left;
+}
 .right {
   float: right;
 }
 .text-right {
   text-align: right;
+}
+
+.help-mark {
+    width: 20px;
+    font-size: 20px;
+    display: inline-block;
+}
+
+.tip-content {
+  color:#78909C;
+  line-height: 16px;
+  padding: 10px;
+  .tip-title {
+    font-weight: bold;
+    margin: 10px 0;
+  }
 }
 </style>
 

@@ -10,8 +10,9 @@
       </div>
     </div>
     <div class="table-header">
-      <div>PAYOUT(LAST 24 HOURS)</div>
-      <div>PERFORMANCE(LAST 24 HOURS)</div>
+      <div>1 DAY PAYOUT</div>
+      <div>1 DAY PERFORMANCE</div>
+      <div>30 DAY PERFORMANCE</div>
     </div>
   </div>
   <div>

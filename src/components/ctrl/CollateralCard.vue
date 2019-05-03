@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="collateral-card">
+    <div class="collateral-card" v-on:click="switchTool">
       <div class="card-top">
         <div class="card-left">
           <div><div class="tip">{{col.hashType}}</div></div> 
@@ -21,9 +21,9 @@
           <div><div class="tip">COLLATERAL RATE</div></div>
           <div class="pad-top2"><div class="price" v-bind:class="col.collateralRate < 150 ? 'alert' : ''">{{col.collateralRate | percent}}</div></div>
         </div>
-        <div class="card-tool">
-          <div v-on:click="showWithdrawDialog"><i class="material-icons">remove_circle</i></div>
-          <div v-on:click="showDepositDialog"><i class="material-icons">add_circle</i></div>
+        <div class="card-tool" v-show="showTool">
+          <button v-on:click="showWithdrawDialog">WITHDRAW</button>
+          <button v-on:click="showDepositDialog">DEPOSIT</button>
         </div>
       </div>
     </div>
@@ -55,6 +55,9 @@ export default {
     },
     showDepositDialog() {
       this.$store.commit('showDialog', { name: 'deposit-dialog', show: true, params: this.$props.collateral});
+    },
+    switchTool() {
+      this.showTool = !this.showTool
     }
   },
   data() {
@@ -66,7 +69,8 @@ export default {
         margin: 0,
         balance: 0,
         collateralRate: 0
-      }
+      },
+      showTool: false
     };
   }
 }
@@ -79,6 +83,7 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   margin: 8px;
+  position: relative;
   .card-top {
     padding: 8px;
     display: flex;
@@ -86,18 +91,22 @@ export default {
       width: 120px;
     }
     .card-center {
-      width: 100px;
+      width: 120px;
     }
     .card-right {
-      width: 180px;
+      width: 200px;
       div {
         text-align: right;
       }
     }
     .card-tool {
-      width: 40px;
-      padding: 12px 8px;
+      width: 80px;
+      position: absolute;
+      right: -100px;
       text-align: center;
+      >button {
+        margin: 5px;
+      }
     }
   }
   .material-icons {

@@ -1,6 +1,9 @@
 <template>
 <div class="dialog-mask" v-bind:class="extraClass" v-on:click="triggerMask" v-bind:style="{ display: show ? 'flex' : 'none' }">
   <div ref="dialog" class="dialog-container">
+    <div class="close-mark" v-on:click="closeDialog">
+      <i class="material-icons">clear</i>
+    </div>
     <slot></slot>
   </div>
 </div>
@@ -22,9 +25,12 @@ export default {
     triggerMask(e) {
       if (!this.$props.forced && this.$refs.dialog) {
         if (!this.$refs.dialog.contains(e.target)) {
-          this.$store.commit('hideDialog');
+          // this.$store.commit('hideDialog');
         }
       }
+    },
+    closeDialog() {
+      this.$store.commit('hideDialog');
     }
   },
   data() {
@@ -47,7 +53,10 @@ export default {
   background-color: rgba(255, 255, 255, 0.3);
   z-index: 1010;
 }
-
+.close-mark {
+  float: right;
+  margin: 5px;
+}
 .dialog-container {
   border-radius: 4px;
 }
