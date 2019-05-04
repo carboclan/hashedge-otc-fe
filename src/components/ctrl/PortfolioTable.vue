@@ -6,12 +6,11 @@
       <div class="header-menu" v-bind:class="{ active: tab === 'LISTED'}" v-on:click="selectTab('LISTED')">LISTED</div>
       <div class="header-menu" v-bind:class="{ active: tab === 'COMPLETED'}" v-on:click="selectTab('COMPLETED')">COMPLETED</div>
       <div class="header-menu">
-        <select v-model="hashType">
-          <option value="" selected disabled>HASH TYPE</option>
-          <option value="ALL">ALL</option>
-          <option value="POW">POW</option>
-          <option value="POS">POS</option>
-          <option value="DPOS">DPOS</option>
+        <select v-model="contractType">   
+          <option value="ALL" selected>ALL</option>
+          <option value="BTC-POW">BTC-POW</option>
+          <option value="ETH-POW">ETH-POW</option>
+          <option value="EOS-POS">EOS-POS</option>
         </select>
       </div>
     </div>
@@ -21,6 +20,9 @@
       <div v-on:click="selectPortfolio(portfolio)">
         <PortfolioCard :portfolio="portfolio" />
       </div>
+    </div>
+    <div class="portfolio" v-show="filterPortfolioList.length === 0">
+      <div class="empty">No Portfolio Found</div>
     </div>
   </div>
   <PortfolioDetail :portfolio="selectedPortfolio" v-if="selectedPortfolio != null" />
@@ -54,7 +56,7 @@ export default {
   data() {
     return {
       tab: 'ONGOING',
-      hashType: '',
+      contractType: 'ALL',
       selectedPortfolio: null,
     };
   },
@@ -76,6 +78,12 @@ export default {
         returnData = returnData.filter(function (item) {
           return (item.status === 2);
         })
+      }
+      let contractType = this.$data.contractType;
+      if (contractType != 'ALL' && contractType != '') {
+        returnData = returnData.filter(function (item) {
+          return item.name == contractType
+        });
       }
       return returnData
     }
@@ -110,6 +118,10 @@ export default {
         color: white;
       }
     }
+  }
+  .empty {
+    text-align: center;
+    padding: 10px;
   }
 }
 </style>

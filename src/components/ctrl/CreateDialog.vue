@@ -23,6 +23,33 @@
         <option value="STD" selected>STANDARD PAYOFF</option>
         <option value="ACT" disabled>ACTUAL PAYOFF</option>
       </select>
+      <el-tooltip class="help-mark" effect="dark">
+        <div class="tip-content" slot="content">
+          <div class="tip-title">
+            Standard Payoff
+          </div>
+          You pay the buyer of the contract according to the <br />
+          market-wide theoretical output per unit of productivity <br />
+          as published in the CoinCow Index, settled daily. i.e. <br />
+          for BTC mining Contract, Standard Output for the past <br />
+          24 hours is 0.00004141BTC/Th. The payout will be settled <br />
+          daily from your collateral deposit. If you choose to <br />
+          transfer designated amount of mining capacity to contract's <br />
+          co-custodian address for the duration of the contract in <br />
+          the Mining Configuration process, the amount of required <br />
+          collateral deposit for issuing this contract will be <br />
+          significantly less. 
+          <div class="tip-title">
+            Actual Payoff
+          </div>
+          You pay the buyer of this contract according to actual mining <br />
+          output per unit of productivity, settled daily. You will be <br />
+          prompted to configure mining and transfer designated amount of <br />
+          mining capacity to contract's co-custodian address under for <br />
+          the duration of the contract. 
+        </div>
+        <i class="material-icons">help_circle</i>
+      </el-tooltip>
     </div>
     <div class="input-group">
       <div class="tip">contract duration</div>
@@ -36,6 +63,14 @@
     <div class="input-group">
       <div class="tip">contract listing expiration date</div>
       <div class="tip">{{ expirationDate | formatDate}}</div>
+      <el-tooltip class="help-mark" effect="dark">
+        <div class="tip-content" slot="content">
+          Your contract goes live as soon as transaction occurs. <br />
+          Contract unsold after Contract Listing Expiration Date <br />
+          will not be available for purchase by buyers. 
+        </div>
+        <i class="material-icons">help_circle</i>
+      </el-tooltip>
       <!-- <input class="date-input" type="date" v-model="expirationDate" disabled /> -->
     </div>
     <div class="footer">
@@ -73,7 +108,7 @@
       <div class="quantity price-input">
         <span>YOUR FIXED PRICE</span>
         <input placeholder="Price" v-model="price" />
-        <div class="unit">{{hashUnit}}</div>
+        <div class="long-unit">USD/{{hashUnit}}</div>
       </div>
       <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button>
     </div>
@@ -99,6 +134,7 @@
       <div class="quantity">
         <span>TOTAL QUANTITY OFFERING</span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
+        <div class="unit">{{hashUnit}}</div>
       </div>
       <div class="quantity">
         <span>MINIMUM PURCHASE AMOUNT</span>
@@ -140,6 +176,7 @@
     <div class="title" v-on:click="switchPool" >
       <i class="material-icons">arrow_drop_down_circle</i>OPTIONAL: mining configuration
     </div>
+    <div class="info">Completing this step can help reduce up to 50% of required collateral.</div>
     <div class="input-group" v-show="showPool">
       <div class="tip">Mining Pool Name</div>
       <select v-model="pool.selected" v-on:change="setPoolInfo">
@@ -156,10 +193,9 @@
         <input placeholder="Contract Address" style="width: 100%" v-model="pool.address" />
       </div>
       <div class="foot-note">Contract Address</div>
-      <div class="status">
-        <div class="tip">Awaiting Configuration</div>
-        <el-progress type="circle" color="#90A4AE" :percentage="50" status="text">1 of 2</el-progress>
-      </div>
+      <div class="info">
+        The Mining Configuration process may take some time. Please click "Submit" once you have completed the configuration process, and check back in 24 hours via Balance – Collateral page. You may withdraw excess collateral beyond what is required any time from Balance -Collateral page.
+      </div> 
     </div>
     <div class="footer">
       <button v-on:click="lastStep" class="left">BACK</button>
@@ -237,7 +273,7 @@ export default {
       this.$data.step = this.$data.step - 1;
     },
     applyPrice() {
-      this.$data.price = this.suggestPrice / 1e18;
+      this.$data.price = parseInt(this.suggestPrice / 1e12)/ 1e6;
     },
     async submit() {
       if (!web3.eth.accounts[0]) {
@@ -363,11 +399,18 @@ export default {
   }
   .tip {
     line-height: 20px;
-    font-size: 10px;
+    font-size: 12px;
     letter-spacing: 0.015em;
     text-transform: uppercase;
     font-variant: small-caps;
     color: #CFD8DC;
+  }
+  .info {
+    line-height: 16px;
+    font-size: 12px;
+    letter-spacing: 0.015em;
+    color: #CFD8DC;
+    padding: 8px;
   }
   .help-mark {
     position: relative;
@@ -419,7 +462,14 @@ export default {
       border: none;
     }
     >.unit {
-      width: 10%;
+      width: 40px;
+      float: right;
+      margin: 8px 0;
+      line-height: 24px;
+      color:#607D8B;
+    }
+    >.long-unit {
+      width: 80px;
       float: right;
       margin: 8px 0;
       line-height: 24px;
