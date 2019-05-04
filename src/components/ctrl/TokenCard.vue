@@ -55,10 +55,10 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 100px;
+      width: 90px;
     }
     .card-center {
-      width: 170px;
+      width: 180px;
     }
     .card-right {
       width: 150px;

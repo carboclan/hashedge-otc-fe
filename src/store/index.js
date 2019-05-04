@@ -94,7 +94,7 @@ export default new Vuex.Store({
             code: code,
             hashType: swapInfos[next.contractAddr].type,
             address: next.contractAddr,
-            payoutType: 'Standard Payout',
+            payoffType: 'STD',
             duration: Number(moment(next.endTime).unix()) - Number(moment(next.startTime).unix()),
             pricingMethod: 'FIXED',
             rating: '☆☆☆☆☆',
@@ -107,8 +107,8 @@ export default new Vuex.Store({
             priceCOIN: next.price / ctx.state.rateMap[code],
             issuer: next.issuer,
             tx: next.issueTx,
-            payout: tokenInfo[code].priceCOIN,
-            payoutUSD: tokenInfo[code].priceUSD,
+            payoff: tokenInfo[code].priceCOIN,
+            payoffUSD: tokenInfo[code].priceUSD,
           }
         }
         return pre;
@@ -150,7 +150,7 @@ export default new Vuex.Store({
             status: portfolio.status,
             hashType: swapInfos[portfolio.contractAddr].type,
             address: portfolio.contractAddr,
-            payoutType: 'Standard Payout',
+            payoffType: 'STD',
             startTime: Number(moment(portfolio.startTime).unix()),
             endTime: Number(moment(portfolio.endTime).unix()),
             duration: Number(moment(portfolio.endTime).unix()) - Number(moment(portfolio.startTime).unix()),
@@ -161,7 +161,7 @@ export default new Vuex.Store({
             priceUSD: portfolio.price,
             contractSize: portfolio.contractSize,
             issuer: portfolio.issuer,
-            payout: portfolio.fixLegPayoutPerDay,
+            payoff: portfolio.fixLegpayoffPerDay,
             tx: portfolio.issueTx,
             estimateNetGain: portfolio.totalFixLegPaid === 0 ? 0 : portfolio.totalFloatingLegPaid * tokenInfo[code].priceUSD * 100 / portfolio.totalFixLegPaid / tokenInfo[code].priceCOIN - 100,
             type: portfolio.issuer === userAddress ? 'Seller' : 'Buyer',

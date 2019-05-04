@@ -33,7 +33,7 @@ export default {
   methods: {
     async mint() {
       const address = web3.eth.accounts[0];
-      const recpt = await hashedgeContracts.erc20Tokens[this.$props.erc20].mint(address, 50e18)
+      const recpt = await hashedgeContracts.erc20Tokens[this.$props.erc20].mint(address, 5e18)
       await web3.eth.getTransactionReceipt(recpt);
       const b = await hashedgeContracts.erc20Tokens[this.$props.erc20].balanceOf(address);
       this.$data.token.balance = b / 1e18
@@ -70,13 +70,13 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 180px;
+      width: 80px;
     }
     .card-center {
-      width: 100px;
+      width: 150px;
     }
     .card-right {
-      width: 140px;
+      width: 190px;
       div {
         text-align: right;
       }

@@ -38,13 +38,13 @@ export default {
 .create {
   position: fixed;
   text-align: center;
-  padding: 0 10px;
+  padding: 0 20px;
   line-height: 40px;
   right: 40px;
   bottom: 40px;
   height: 40px;
   border-radius: 20px;
   background-color: #263238;
-  font-size: 16px;
+  font-size: 14px;
 }
 </style>

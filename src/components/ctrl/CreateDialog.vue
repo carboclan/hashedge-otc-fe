@@ -10,7 +10,7 @@
         <option value="" disabled selected>Select a contract</option>
         <option v-for="contract in contractOptions" v-bind:key="contract.address" :value="contract.address">{{contract.name}}</option>
       </select>
-      <!-- <select v-model="outputCurrency">
+      <!-- <select v-model="payoffCurrency">
         <option value="" disabled selected>Payment Currency</option>
         <option value="BTC">BTC</option>
         <option value="ETH">ETH</option>
@@ -20,8 +20,8 @@
     <div class="input-group">
       <div class="tip">settle type</div>
       <select v-model="contractType">
-        <option value="STD" selected>STANDARD OUTPUT</option>
-        <option value="ACT" disabled>ACTURE OUTPUT</option>
+        <option value="STD" selected>STANDARD PAYOFF</option>
+        <option value="ACT" disabled>ACTUAL PAYOFF</option>
       </select>
     </div>
     <div class="input-group">
@@ -86,11 +86,11 @@
     </div>
     <div class="input-group">
         <div class="tip">DIFFICULTY:</div>
-        <el-slider :min="-10" :max="10"
+        <el-slider :min="-50" :max="50"
           v-model="diff"
           :format-tooltip="formatPercent" />
         <div class="tip">EXCHANGE RATE:</div>
-        <el-slider :min="-10" :max="10"
+        <el-slider :min="-50" :max="50"
           v-model="exRate"
           :format-tooltip="formatPercent" />
     </div>
@@ -113,7 +113,7 @@
   </section>
   <section v-show="step==3">
     <div class="title">
-      deposit collateral
+      collateral
     </div>
     <div class="input-group">
       <div class="tip">Collateral Currency</div>
@@ -125,7 +125,7 @@
       <div class="quantity">
         <input placeholder="Amount" style="width: 100%;" v-model="collateralAmount" />
       </div>
-      <div class="foot-note">Send exactly this amount of {{collateralCurrency}} to the address below.</div>
+      <div class="foot-note">Your {{collateralCurrency}} will send to {{collateralAddress}}</div>
       <button v-on:click="depositCollateral" class="right">Deposit Collateral</button>
       <!-- <div class="quantity">
         <input placeholder="Your Collateral Address" v-model="collateralAddress" />
@@ -265,7 +265,7 @@ export default {
       symbol: null,
       hashType: 'POW',
       contractCurrency: '',
-      outputCurrency: '',
+      payoffCurrency: '',
       contractType: 'STD',
       pricingMethod: 'FIXED',
       price: 0,
@@ -302,8 +302,8 @@ export default {
         .fromPairs()
         .value();
       const code = this.$store.state.swapInfos[this.$data.contractAddress].code;
-      const payoutUSD = tokenInfo[code].priceUSD;
-      return payoutUSD * orderSize * duration * (100 + exRate) * (100 - diff) / 3600 / 24 / 10000;
+      const payoffUSD = tokenInfo[code].priceUSD;
+      return payoffUSD * orderSize * duration * (100 + exRate) * (100 - diff) / 3600 / 24 / 10000;
     },
     show: function () {
       return (this.$store.state.dialog.name === 'create-dialog');

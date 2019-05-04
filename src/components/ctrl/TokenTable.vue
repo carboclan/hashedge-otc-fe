@@ -11,8 +11,8 @@
     </div>
     <div class="table-header">
       <div>1 DAY PAYOUT</div>
-      <div>1 DAY PERFORMANCE</div>
-      <div>30 DAY PERFORMANCE</div>
+      <div>1 DAY PERFORMANCE<br><span class="tip">net gain over hold coin</span></div>
+      <div>30 DAY PERFORMANCE<br><span class="tip">net gain over hold coin</span></div>
     </div>
   </div>
   <div>
@@ -104,6 +104,10 @@ export default {
     justify-content: flex-end;
     >div {
       margin-left: 24px;
+      text-align: right;
+      >.tip {
+        color: rgba(60, 80, 89, 0.5);
+      }
     }
   }
 }

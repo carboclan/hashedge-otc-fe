@@ -5,7 +5,7 @@
         <div class="card-left">
           <div><div class="tip">{{portfolio.shareTotal}} UNITS</div></div>
           <div class="pad-top1"><div class="context">{{portfolio.name}}</div></div>
-          <div><div class="memo">{{portfolio.type}}</div></div>
+          <div><div class="memo">You are {{portfolio.type}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">RECEIVED</div></div>

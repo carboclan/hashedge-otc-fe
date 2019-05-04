@@ -4,15 +4,7 @@
     <div class="header">
       <div class="header-menu" v-bind:class="{ active: tab === 'ALL'}" v-on:click="selectTab('ALL')">ALL</div>
       <div class="header-menu" v-bind:class="{ active: tab === 'AUCTION'}" v-on:click="selectTab('AUCTION')">AUCTION</div>
-      <div class="header-menu" v-bind:class="{ active: tab === 'FIXED'}" v-on:click="selectTab('FIXED')">FIXED PRICE</div>
-      <div class="header-menu">
-        <select v-model="coinType">
-          <option value="" selected>SETTLE TYPE</option>
-          <option value="POW">BTC</option>
-          <option value="POS">ETH</option>
-          <option value="DPOS">EOS</option>
-        </select>
-      </div>
+      <div class="header-menu" v-bind:class="{ active: tab === 'FIXED'}" v-on:click="selectTab('FIXED')">BUY IT NOW</div>
     </div>
     <div class="table-header">
         <select v-model="contractType">   
@@ -21,10 +13,14 @@
           <option value="ETH-POW">ETH-POW</option>
           <option value="EOS-POS">EOS-POS</option>
         </select>
-        <select v-model="payoutCoin">   
+        <!-- <select v-model="payoffCoin">   
           <option value="" selected>PAYOUT CURRENCY</option>
+        </select> -->
+        <select v-model="payoffType">
+          <option value="STD" selected>STANDARD PAYOFF</option>
+          <option value="ACT">ACTUAL PAYOFF</option>
         </select>
-        <select v-model="duration">   
+        <select v-model="duration">
           <option value="" selected>DURATION</option>
           <option value="60">1 MINS</option>
           <option value="2592000">30 DAYS</option>
@@ -74,7 +70,7 @@ export default {
       tab: 'ALL',
       selectedContract: null,
       duration: '',
-      payoutCoin: '',
+      payoffType: 'STD',
       contractType: '',
     };
   },
@@ -107,10 +103,10 @@ export default {
           return item.duration == duration
         });
       }
-      let payoutCoin = this.$data.payoutCoin;
-      if (payoutCoin != 'ALL' && payoutCoin != '') {
+      let payoffType = this.$data.payoffType;
+      if (payoffType != 'ALL' && payoffType != '') {
         returnData = returnData.filter(function (item) {
-          return item.payoutCoin == payoutCoin
+          return item.payoffType == payoffType
         });
       }
       let contractType = this.$data.contractType;
@@ -165,7 +161,7 @@ export default {
       border: none;
       border-radius: 0;
       border-right: 0.5px solid #455A64;
-      min-width: 30%
+      min-width: 25%
     }
     >select:last-child {
       border-right: none;

@@ -10,7 +10,7 @@
         <div class="card-center">
           <div><div class="tip">{{contract.hashType}}</div></div>
           <div class="pad-top2"><div class="context">{{contract.name}}</div></div>
-          <div><div class="memo">{{contract.payoutType}}</div></div>
+          <div><div class="memo">{{contract.payoffType}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="memo">{{contract.rating}}</div></div>

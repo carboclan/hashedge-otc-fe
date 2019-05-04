@@ -5,7 +5,7 @@
         <div class="card-left">
           <div><div class="tip">{{col.hashType}}</div></div> 
           <div class="pad-top1"><div class="context">{{col.name}}</div></div>
-          <div><div class="memo">{{col.payoutType}}</div></div>
+          <div><div class="memo">{{col.payoffType}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">COLLATERAL</div></div> 
@@ -13,7 +13,7 @@
           <div><div class="memo">{{col.name}}</div></div>
         </div>
         <div class="card-center">
-          <div><div class="tip">OUTPUT (24H)</div></div>
+          <div><div class="tip">PAYOFF (24H)</div></div>
           <div class="pad-top1"><div class="context">{{col.margin | eth}}</div></div>
           <div><div class="memo">{{col.name}}</div></div>
         </div>
@@ -65,7 +65,7 @@ export default {
       col: {
         hashType: 'POW',
         name: 'Loading',
-        payoutType: 'Standard',
+        payoffType: 'Standard',
         margin: 0,
         balance: 0,
         collateralRate: 0

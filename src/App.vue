@@ -1,7 +1,7 @@
 <template>
   <div id="app">
     <div class="nav">
-      <div class="brand">Hashedge otc</div>
+      <div class="brand">Hashedge</div>
       <ul class="nav-list">
         <li v-bind:class="{ active: $route.name === 'home' }">
           <a href="#/home">
@@ -60,7 +60,7 @@ Vue.filter('duration', function(value) {
 });
 
 Vue.filter('usd', function (value) {
-  return (value/1e18).toFixed(4);
+  return (value/1e18).toFixed(6);
 });
 
 Vue.filter('btc', function (value) {
@@ -68,7 +68,7 @@ Vue.filter('btc', function (value) {
 });
 
 Vue.filter('eth', function (value) {
-  return (value/1e18).toFixed(6);
+  return (value/1e18).toFixed(8);
 });
 
 Vue.filter('bn', function (value) {

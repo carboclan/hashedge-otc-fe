@@ -36,25 +36,25 @@
         </div>
       </section>
     </div>
-    <div class="tool"><button v-on:click="submit">BUY QUANTITY</button></div>
-    <div class="title">OPTIONAL: calculate contract’s expected output</div>
+    <div class="tool"><button v-on:click="submit">BUY</button></div>
+    <div class="title">OPTIONAL: calculate contract’s expected payoff</div>
     <div class="contract-detail">
       <div class="detail-footer">
         <div class="tip">DIFFICULTY:</div>
-        <el-slider :min="-30" :max="30"
+        <el-slider :min="-50" :max="50"
           v-model="diff"
           :format-tooltip="formatPercent" />
       </div>
       <div class="detail-footer">
         <div class="tip">EXCHANGE RATE: {{ rateMap[contract.code] * 1e18  * (100 + exRate) / 100 | usd}} USD</div>
-        <el-slider :min="-30" :max="30"
+        <el-slider :min="-50" :max="50"
           v-model="exRate"
           :format-tooltip="formatPercent" />
       </div>
       <div class="detail-footer">
-          <div class="tip">EXPECTED OUTPUT CALCULATOR</div>
-          <div class="large-price">${{contract.payoutUSD * contract.contractSize * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
-          <div class="memo">{{contract.code}} {{contract.payout * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div> 
+          <div class="tip">OPTIONAL: Expected Payoff Calculator</div>
+          <div class="large-price">${{contract.payoffUSD * contract.contractSize * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
+          <div class="memo">{{contract.code}} {{contract.payoff * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div> 
       </div>
     </div>
   </div>
@@ -81,7 +81,8 @@ export default {
       const { quantity } = this.$data;
       const { contract } = this.$props;
       if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold)) {
-        alert('Invalid Amount!')
+        alert('Invalid Amount!');
+        return;
       }
       const { address, priceUSD } = contract;
       const totalPrice = priceUSD * quantity;

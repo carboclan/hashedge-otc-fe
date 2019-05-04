@@ -13,7 +13,7 @@
       </div>
       <div class="spacer"></div>
       <div class="detail-header">
-        <div class="seller">Contract {{portfolio.type}}</div>
+        <div class="seller">Your are Contract {{portfolio.type}}</div>
       </div>
       <div class="spacer"></div>
       <div class="detail-header">
