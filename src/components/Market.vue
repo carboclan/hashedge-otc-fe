@@ -29,11 +29,11 @@ export default {
   position: fixed;
   text-align: center;
   padding: 0 20px;
-  line-height: 40px;
-  right: 40px;
-  bottom: 40px;
-  height: 40px;
-  border-radius: 20px;
+  line-height: 32px;
+  right: 32px;
+  bottom: 32px;
+  height: 32px;
+  border-radius: 4px;
   background-color: #263238;
   font-size: 14px;
 }
