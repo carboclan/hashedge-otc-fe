@@ -38,7 +38,7 @@
           co-custodian address for the duration of the contract in <br />
           the Mining Configuration process, the amount of required <br />
           collateral deposit for issuing this contract will be <br />
-          significantly less. 
+          significantly less.
           <div class="tip-title">
             Actual Payoff
           </div>
@@ -46,7 +46,7 @@
           output per unit of productivity, settled daily. You will be <br />
           prompted to configure mining and transfer designated amount of <br />
           mining capacity to contract's co-custodian address under for <br />
-          the duration of the contract. 
+          the duration of the contract.
         </div>
         <i class="material-icons">help_circle</i>
       </el-tooltip>
@@ -67,7 +67,7 @@
         <div class="tip-content" slot="content">
           Your contract goes live as soon as transaction occurs. <br />
           Contract unsold after Contract Listing Expiration Date <br />
-          will not be available for purchase by buyers. 
+          will not be available for purchase by buyers.
         </div>
         <i class="material-icons">help_circle</i>
       </el-tooltip>
@@ -195,7 +195,7 @@
       <div class="foot-note">Contract Address</div>
       <div class="info">
         The Mining Configuration process may take some time. Please click "Submit" once you have completed the configuration process, and check back in 24 hours via Balance – Collateral page. You may withdraw excess collateral beyond what is required any time from Balance -Collateral page.
-      </div> 
+      </div>
     </div>
     <div class="footer">
       <button v-on:click="lastStep" class="left">BACK</button>
@@ -242,7 +242,12 @@ export default {
       const floatingLegName = await floatingLegContract.name();
       const oracleAddress = await swapContract.oracle();
       const oracleContract = hashedgeContracts.oracles[oracleAddress];
-      const colAmount = await oracleContract.computeProfit(Number(moment().unix()), Number(moment().unix()) + Number(this.$data.duration));
+
+      const colAmount = await oracleContract.computeProfit(
+        Number(moment().unix()),
+        Number(moment().unix() + Math.min(3600 * 24, this.$data.duration))
+      );
+
       this.$data.collateralCurrency = floatingLegName;
       this.$data.collateralAddress = colAddress;
       this.$data.floatingLegAddress = floatingLegAddress;
