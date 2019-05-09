@@ -2,17 +2,19 @@
 <div class="table-container">
   <div>
     <div class="header">
-      <div class="header-menu">
-        <select name="sortby" v-model="sortby">   
-          <option value="1">PAYOUT</option>
-          <option value="2">PERFORMANCE</option>
-        </select>
-      </div>
+      <!-- <select name="sortby" v-model="sortby">   
+        <option value="1">PAYOUT</option>
+        <option value="2">PERFORMANCE</option>
+      </select> -->
+      <div class="header-menu right-border">LAST 24 HOURS</div>
+      <div class="header-menu">PAST 30 DAYS</div>
     </div>
     <div class="table-header">
-      <div>1 DAY PAYOUT</div>
-      <div>1 DAY PERFORMANCE<br><span class="tip">net gain over hold coin</span></div>
-      <div>30 DAY PERFORMANCE<br><span class="tip">net gain over hold coin</span></div>
+      <div class="long">mining/staking payoff</div>
+      <div>performance</div>
+      <div class="right-border">net gain</div>
+      <div>performance</div>
+      <div>net gain</div>
     </div>
   </div>
   <div>
@@ -69,8 +71,11 @@ export default {
   background-color: #37474F;
   border-radius: 4px;
   color: #ECEFF1;
-  width: 464px;
+  width: 638px;
   padding-bottom: 1px;
+  .right-border {
+    border-right: 0.5px solid #455A64;
+  }
   .header {
     height: 48px;
     background: #263238;
@@ -78,35 +83,29 @@ export default {
     display: flex;
     justify-content: flex-end;
     .header-menu {
-      color: #455A64;
-      padding: 0 12px;
+      color: white;
       height: 48px;
-      width: 25%;
+      width: 164px;
       line-height: 48px;
       font-size: 14px;
       text-align: center;
       letter-spacing: 0.02em;
       text-transform: uppercase;
       font-variant: small-caps;
-      &.active {
-        border-bottom: 1px solid white;
-        color: white;
-      }
     }
   }
   .table-header {
     background-color: #263238;
     font-size: 12px;
-    padding: 4px 8px;
-    color: #455A64;
-    border-top: 0.5px solid #455A64;
+    line-height: 22px;
+    color: #78909C;
     display: flex;
     justify-content: flex-end;
     >div {
-      margin-left: 24px;
-      text-align: right;
-      >.tip {
-        color: rgba(60, 80, 89, 0.5);
+      text-align: center;
+      width: 82px;
+      &.long {
+        width: 210px;
       }
     }
   }

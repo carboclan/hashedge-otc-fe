@@ -13,11 +13,15 @@
         </div>
         <div class="card-right">
           <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
-          <div><div class="memo">{{token.profitRate | percent}}</div></div>
         </div>
         <div class="card-right">
           <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
-          <div><div class="memo">{{token.profitRate | percent}}</div></div>
+        </div>
+        <div class="card-right">
+          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
+        </div>
+        <div class="card-right">
+          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
         </div>
       </div>
     </div>
@@ -46,7 +50,7 @@ export default {
 
 <style lang="scss">
 .token-card {
-  width: 448px;
+  width: 620px;
   background: #455A64;
   border-radius: 4px;
   font-size: 14px;
@@ -55,13 +59,13 @@ export default {
     padding: 8px;
     display: flex;
     .card-left {
-      width: 90px;
+      width: 120px;
     }
     .card-center {
-      width: 180px;
+      width: 160px;
     }
     .card-right {
-      width: 150px;
+      width: 85px;
       div {
         text-align: right;
       }
@@ -97,12 +101,11 @@ export default {
     color: #78909C;
   }
   .price {
-    font-family: Eczar;
     line-height: 28px;
-    font-size: 24px;
+    font-size: 18px;
     text-align: right;
     font-feature-settings: 'tnum' on, 'lnum' on;
-    color: #EEF9F5;
+    color: #78909C;
   }
   .spacer {
     width: 100%;
