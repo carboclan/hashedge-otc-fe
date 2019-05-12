@@ -1,6 +1,6 @@
 <template>
 <DialogContainer v-if="show" extra-class="create-dialog">
-  <section v-show="step==1">
+  <section v-show="step === 1">
     <div class="title">
       basics
     </div>
@@ -77,7 +77,7 @@
       <button v-on:click="nextStep">NEXT</button>
     </div>
   </section>
-  <section v-show="step==2">
+  <section v-show="step === 2">
     <div class="title">
       pricing
     </div>
@@ -108,16 +108,18 @@
       <div class="quantity price-input">
         <span>YOUR FIXED PRICE</span>
         <input placeholder="Price" v-model="price" />
-        <div class="long-unit">USD/{{hashUnit}}</div>
+        <div class="long-unit">USD</div>
       </div>
       <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button>
+      <div class="large-price">${{price / orderSize}} USD/{{hashUnit}}</div>
     </div>
     <div class="tip">
       OPTIONAL: Suggested Price Calculator
     </div>
     <div class="input-group text-right">
       <div class="tip">Suggest Price</div>
-      <div class="large-price">${{suggestPrice | usd}} USD</div>
+      <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
+      <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
     </div>
     <div class="input-group">
         <div class="tip">DIFFICULTY:</div>
@@ -147,7 +149,7 @@
       <button v-on:click="nextStep">NEXT</button>
     </div>
   </section>
-  <section v-show="step==3">
+  <section v-show="step === 3">
     <div class="title">
       collateral
     </div>
@@ -269,8 +271,17 @@ export default {
       this.$data.step = 1;
     },
     nextStep() {
+      if (this.$data.step === 1) {
+        if (!this.$data.contractAddress) {
+          return alert('Please select a contract.');
+        }
+
+        this.$data.hashUnit = '';
+        hashedgeContracts.swap721Tokens[this.$data.contractAddress].contractUnit().then(unit => this.$data.hashUnit = unit);
+      }
+
       this.$data.step = this.$data.step + 1;
-      if (this.$data.step == 3) {
+      if (this.$data.step === 3) {
         this.loadColInfo();
       }
     },
@@ -285,7 +296,7 @@ export default {
         this.$store.commit('showDialog', { name: 'login-dialog', show: true});
       }
       const { contractAddress, duration, price, totalSupply, orderSize} = this.$data;
-      const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
+      const swapContract = hashedgeContracts.swap721Tokens[contractAddress];
       const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
       this.$store.dispatch('getContractList');
@@ -318,7 +329,7 @@ export default {
       collateralAddress: '',
       collateralStep: 1,
       collateralAmount: 0,
-      hashUnit: 'TH/s',
+      hashUnit: '',
       duration: '2592000',
       target: null
     };
