@@ -75,7 +75,7 @@ export default {
   },
   methods: {
     formatPercent(value) {
-      (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
+      return (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
     },
     async submit() {
       const { quantity } = this.$data;

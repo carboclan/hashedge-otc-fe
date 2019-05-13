@@ -9,21 +9,21 @@
         </div>
         <div class="card-center">
           <div><div class="tip">COLLATERAL</div></div> 
-          <div class="pad-top1"><div class="context">{{col.balance | eth}}</div></div>
+          <div class="pad-top1 with-tool">
+            <div v-on:click="showWithdrawDialog"><i class="material-icons">remove_circle</i></div>
+            <div class="context">{{col.balance | usd}}</div>
+            <div v-on:click="showDepositDialog"><i class="material-icons">add_circle</i></div>
+          </div>
           <div><div class="memo">{{col.name}}</div></div>
         </div>
         <div class="card-center">
           <div><div class="tip">PAYOFF (24H)</div></div>
-          <div class="pad-top1"><div class="context">{{col.margin | eth}}</div></div>
+          <div class="pad-top1"><div class="context">{{col.margin | usd}}</div></div>
           <div><div class="memo">{{col.name}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="tip">COLLATERAL RATE</div></div>
           <div class="pad-top2"><div class="price" v-bind:class="col.collateralRate < 150 ? 'alert' : ''">{{col.collateralRate | percent}}</div></div>
-        </div>
-        <div class="card-tool" v-show="showTool">
-          <button v-on:click="showWithdrawDialog">WITHDRAW</button>
-          <button v-on:click="showDepositDialog">DEPOSIT</button>
         </div>
       </div>
     </div>
@@ -91,10 +91,10 @@ export default {
       width: 120px;
     }
     .card-center {
-      width: 120px;
+      width: 160px;
     }
     .card-right {
-      width: 200px;
+      width: 160px;
       div {
         text-align: right;
       }
@@ -126,6 +126,13 @@ export default {
   }
   .pad-top1 {
     padding-top: 8px;
+  }
+  .with-tool {
+    display: flex;
+    margin-left: -25px;
+    i {
+      margin: 0 5px;
+    }
   }
   .pad-top2 {
     padding-top: 16px;

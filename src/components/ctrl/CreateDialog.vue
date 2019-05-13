@@ -323,7 +323,7 @@ export default {
       price: 0,
       diff: 0,
       exRate: 0,
-      totalSupply: 0,
+      totalSupply: 1,
       orderSize: 1,
       collateralCurrency: '',
       collateralAddress: '',
