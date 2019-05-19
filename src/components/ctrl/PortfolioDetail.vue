@@ -94,6 +94,8 @@ export default {
       return Number(moment().unix - start)
     },
     async sell() {
+      console.log(this.portfolio);
+      alert(`Contract will be sold at price: ${(this.portfolio.priceUSD / 1e18).toFixed(8)}DAI`);
       await waitForInit();
       // // const { portfolio } = this.$props;
       // // recpt = await hashedgeFactory.sell(portfolio.address);
@@ -106,7 +108,7 @@ export default {
       const erc721 = hashedgeContracts.swap721Tokens[erc721Address];
       const erc20Address = await erc721.fixLegToken();
 
-      const order = await createAuction(erc721, this.portfolio.id, erc20Address, 1, 3600 * 24);
+      const order = await createAuction(erc721, this.portfolio.id, erc20Address, this.portfolio.priceUSD, 3600 * 24);
       console.log(order);
 
       const decodedErc20 = assetDataUtils.decodeERC20AssetData(order.takerAssetData);
