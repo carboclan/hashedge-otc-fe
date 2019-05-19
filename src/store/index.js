@@ -27,8 +27,12 @@ export default new Vuex.Store({
     },
     swapInfos: null,
     coinType: 'ALL',
+    orders: []
   },
   mutations: {
+    pushOrder(state, order) {
+      state.orders = [...state.orders, order];
+    },
     setCoinType (state, payload) {
       state.coinType = payload;
     },

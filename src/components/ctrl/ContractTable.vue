@@ -7,13 +7,13 @@
       <div class="header-menu" v-bind:class="{ active: tab === 'FIXED'}" v-on:click="selectTab('FIXED')">BUY IT NOW</div>
     </div>
     <div class="table-header">
-        <select v-model="contractType">   
+        <select v-model="contractType">
           <option value="" selected>CONTRACT TYPE</option>
           <option value="BTC-POW">BTC-POW</option>
           <option value="ETH-POW">ETH-POW</option>
           <option value="EOS-POS">EOS-POS</option>
         </select>
-        <!-- <select v-model="payoffCoin">   
+        <!-- <select v-model="payoffCoin">
           <option value="" selected>PAYOUT CURRENCY</option>
         </select> -->
         <select v-model="payoffType">
@@ -29,7 +29,7 @@
         </select>
     </div>
   </div>
-  <div>
+  <div v-if="tab !== 'AUCTION'">
     <div class="contract" v-for="contract of filterContractList"  v-bind:key="contract.id" v-bind:class="contract.hashType">
       <div v-on:click="selectContract(contract)">
         <ContractCard :contract="contract"/>
@@ -39,20 +39,29 @@
       <div class="empty">No Contract Found</div>
     </div>
   </div>
+  <div v-if="tab === 'AUCTION'">
+    <div class="contract" v-for="order of orders"  v-bind:key="order.portfolio.id" v-bind:class="order.portfolio.hashType">
+      <div>
+        <AuctionCard :order="order"/>
+      </div>
+    </div>
+    <div class="contract" v-show="orders.length === 0">
+      <div class="empty">No Contract Found</div>
+    </div>
+  </div>
   <ContractDetail :contract="selectedContract" v-if="selectedContract != null" />
 </div>
 </template>
 
 <script>
-import Vue from 'vue';
-import moment from 'moment';
+import AuctionCard from './AuctionCard';
 import ContractCard from './ContractCard';
 import ContractDetail from './ContractDetail';
 
 export default {
   name: 'ContractTable',
   props: ['title', 'data'],
-  components: { ContractCard, ContractDetail },
+  components: { AuctionCard, ContractCard, ContractDetail },
   mounted: async function () {
     this.$store.dispatch('getContractList');
   },
@@ -66,12 +75,14 @@ export default {
     },
   },
   data() {
+    console.log(this.$store.state.orders);
     return {
       tab: 'ALL',
       selectedContract: null,
       duration: '',
       payoffType: 'STD',
       contractType: '',
+      orders: this.$store.state.orders
     };
   },
   computed: {

@@ -109,6 +109,7 @@ export default {
       const erc20Address = await erc721.fixLegToken();
 
       const order = await createAuction(erc721, this.portfolio.id, erc20Address, this.portfolio.priceUSD, 3600 * 24);
+      this.$store.commit('pushOrder', { portfolio: this.portfolio, order });
       console.log(order);
 
       const decodedErc20 = assetDataUtils.decodeERC20AssetData(order.takerAssetData);
