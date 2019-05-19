@@ -1,16 +1,17 @@
 import { Web3Wrapper } from '@0x/web3-wrapper';
-import { BigNumber, ContractWrappers, generatePseudoRandomSalt, DutchAuctionWrapper, assetDataUtils, orderHashUtils } from '0x.js';
+import { MetamaskSubprovider, signatureUtils, BigNumber, ContractWrappers, generatePseudoRandomSalt, DutchAuctionWrapper, assetDataUtils, orderHashUtils } from '0x.js';
 import { getContractAddressesForNetworkOrThrow } from '@0x/contract-addresses';
 
 export const UNLIMITED_ALLOWANCE_IN_BASE_UNITS = new BigNumber(2).pow(256).minus(1);
 
-let networkId, accounts, web3Wrapper, contractAddresses, contractWrappers;
+let networkId, accounts, web3Wrapper, contractAddresses, contractWrappers, metamaskSubprovider;
 const exp = { };
 
 const initPromise = (async function () {
   accounts = await window.ethereum.enable();
 
   web3Wrapper = new Web3Wrapper(window.ethereum);
+  metamaskSubprovider = new MetamaskSubprovider(window.ethereum);
   networkId = await web3Wrapper.getNetworkIdAsync();
 
   contractAddresses = getContractAddressesForNetworkOrThrow(networkId);
@@ -37,7 +38,7 @@ export async function createAuction(erc721, tokenId, erc20Address, price, durati
   const makerAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(
     erc721MakerAssetData,
     Math.round(Date.now() / 1000 - 600),
-    new BigNumber(price * 1e18)
+    new BigNumber(price)
   );
 
   const order = {
@@ -64,7 +65,7 @@ export async function createAuction(erc721, tokenId, erc20Address, price, durati
   }
 
   const orderHashBuff = orderHashUtils.getOrderHashHex(order);
-  const signature = await web3Wrapper.signMessageAsync(accounts[0], orderHashBuff);
+  const signature = await signatureUtils.ecSignHashAsync(metamaskSubprovider, orderHashBuff, accounts[0]);
 
   return {
     ...order,
@@ -89,7 +90,7 @@ export async function bidAuction(auctionOrder, erc20) {
   }
 
   const orderHashBuff = orderHashUtils.getOrderHashHex(order);
-  const signature = await web3Wrapper.signMessageAsync(accounts[0], orderHashBuff);
+  const signature = await signatureUtils.ecSignHashAsync(metamaskSubprovider, orderHashBuff, accounts[0]);
   order.signature = signature;
 
   console.log(order);
