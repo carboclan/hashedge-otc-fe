@@ -37,7 +37,7 @@ export async function createAuction(erc721, tokenId, erc20Address, price, durati
   const makerAssetData = DutchAuctionWrapper.encodeDutchAuctionAssetData(
     erc721MakerAssetData,
     Math.round(Date.now() / 1000 - 600),
-    1
+    new BigNumber(price * 1e18)
   );
 
   const order = {
