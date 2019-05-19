@@ -10,6 +10,9 @@
     "build": "node build/build.js"
   },
   "dependencies": {
+    "0x.js": "^6.0.9",
+    "@0x/contract-addresses": "^2.3.3",
+    "@0x/web3-wrapper": "^6.0.6",
     "clipboard": "^2.0.4",
     "co-lodash": "^0.2.0",
     "element-ui": "^2.6.1",

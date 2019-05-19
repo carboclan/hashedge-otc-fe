@@ -52,8 +52,8 @@
           <div class="copy">COPY</div>
       </div>
     </div>
-    <!-- <div class="tool" v-if="portfolio.type == 'Buyer'" v-on:click="sell"><button>Sell</button></div> -->
-    <div class="tool" v-if="portfolio.type == 'Seller'"><button v-show="portfolio.status === 1"  v-on:click="settle">SETTLE</button><button v-show="portfolio.status === 0" v-on:click="cancel">CANCEL</button></div>
+    <div class="tool" v-if="portfolio.type === 'Buyer'" v-on:click="sell"><button>Sell</button></div>
+    <div class="tool" v-if="portfolio.type === 'Seller'"><button v-show="portfolio.status === 1"  v-on:click="settle">SETTLE</button><button v-show="portfolio.status === 0" v-on:click="cancel">CANCEL</button></div>
   </div>
 </template>
 <script>
@@ -61,6 +61,8 @@
 import { web3, hashedgeContracts } from '../../web3';
 import moment from 'moment';
 import ClipboardJS from 'clipboard';
+import { assetDataUtils } from '0x.js';
+import { waitForInit, createAuction, bidAuction } from '../../web3/0x';
 
 export default {
   name: 'PortfolioDetail',
@@ -92,6 +94,7 @@ export default {
       return Number(moment().unix - start)
     },
     async sell() {
+      await waitForInit();
       // // const { portfolio } = this.$props;
       // // recpt = await hashedgeFactory.sell(portfolio.address);
       // // await web3.eth.getTransactionReceipt(recpt);
@@ -99,7 +102,18 @@ export default {
       //   to: '0xf747DA315F3868622D5828Fd49FbD247109Edf43',
       //   value: 100});
       // await web3.eth.getTransactionReceipt(recpt);
-      // alert('sell');
+      const erc721Address = this.portfolio.address;
+      const erc721 = hashedgeContracts.swap721Tokens[erc721Address];
+      const erc20Address = await erc721.fixLegToken();
+
+      const order = await createAuction(erc721, this.portfolio.id, erc20Address, 1, 3600 * 24);
+      console.log(order);
+
+      const decodedErc20 = assetDataUtils.decodeERC20AssetData(order.takerAssetData);
+      const erc20 = hashedgeContracts.erc20Tokens[decodedErc20.tokenAddress];
+
+      const bid = await bidAuction(order, erc20);
+      console.log(bid);
     },
     async cancel() {
       const { portfolio } = this.$props;
@@ -265,6 +279,6 @@ export default {
   >button {
     margin-left: 10px;
   }
-  
+
 }
 </style>
