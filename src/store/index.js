@@ -34,7 +34,7 @@ export default new Vuex.Store({
       state.orders = [...state.orders, order];
     },
     removeOrder(state, order) {
-      state.orders = state.orders.filter(o => o !== order);
+      state.orders = [];//state.orders.filter(o => o !== order);
     },
     setCoinType (state, payload) {
       state.coinType = payload;

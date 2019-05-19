@@ -40,12 +40,12 @@
     </div>
   </div>
   <div v-if="tab === 'AUCTION'">
-    <div class="contract" v-for="order of orders"  v-bind:key="order.portfolio.id" v-bind:class="order.portfolio.hashType">
+    <div class="contract" v-for="order of $store.state.orders"  v-bind:key="order.portfolio.id" v-bind:class="order.portfolio.hashType">
       <div>
         <AuctionCard :order="order"/>
       </div>
     </div>
-    <div class="contract" v-show="orders.length === 0">
+    <div class="contract" v-show="$store.state.orders.length === 0">
       <div class="empty">No Contract Found</div>
     </div>
   </div>
@@ -81,8 +81,7 @@ export default {
       selectedContract: null,
       duration: '',
       payoffType: 'STD',
-      contractType: '',
-      orders: this.$store.state.orders
+      contractType: ''
     };
   },
   computed: {
