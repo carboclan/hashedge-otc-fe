@@ -43,6 +43,8 @@ export default {
 
       const bid = await bidAuction(order, erc20);
       console.log(bid);
+      alert('bid success');
+      this.$store.commit('removeOrder', order);
     }
   },
   data() {

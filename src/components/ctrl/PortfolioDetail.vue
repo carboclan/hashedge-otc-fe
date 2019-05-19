@@ -111,12 +111,6 @@ export default {
       const order = await createAuction(erc721, this.portfolio.id, erc20Address, this.portfolio.priceUSD, 3600 * 24);
       this.$store.commit('pushOrder', { portfolio: this.portfolio, order });
       console.log(order);
-
-      const decodedErc20 = assetDataUtils.decodeERC20AssetData(order.takerAssetData);
-      const erc20 = hashedgeContracts.erc20Tokens[decodedErc20.tokenAddress];
-
-      const bid = await bidAuction(order, erc20);
-      console.log(bid);
     },
     async cancel() {
       const { portfolio } = this.$props;

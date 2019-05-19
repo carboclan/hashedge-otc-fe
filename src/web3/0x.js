@@ -75,6 +75,7 @@ export async function createAuction(erc721, tokenId, erc20Address, price, durati
 
 export async function bidAuction(auctionOrder, erc20) {
   const auctionData = DutchAuctionWrapper.decodeDutchAuctionData(auctionOrder.makerAssetData);
+  alert(`You will buy at price: ${(auctionData.beginAmount / 1e18).toFixed(8)}DAI`);
 
   const order = {
     ...auctionOrder,
