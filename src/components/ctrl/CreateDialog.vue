@@ -1,11 +1,14 @@
 <template>
 <DialogContainer v-if="show" extra-class="create-dialog">
+  <section v-show="showAlert">
+    <div class="alert">you need to fulfill the require elements</div>
+  </section>
   <section v-show="step === 1">
     <div class="title">
       basics
     </div>
     <div class="input-group">
-      <!--<div class="tip">payment</div>-->
+      <div class="tip">contract type<span class="red">*</span></div>
       <select v-model="contractAddress">
         <option value="" disabled selected>Select a contract</option>
         <option v-for="contract in contractOptions" v-bind:key="contract.address" :value="contract.address">{{contract.name}}</option>
@@ -18,7 +21,7 @@
       </select> -->
     </div>
     <div class="input-group">
-      <div class="tip">settle type</div>
+      <div class="tip">settle type<span class="red">*</span></div>
       <select v-model="contractType">
         <option value="STD" selected>STANDARD PAYOFF</option>
         <option value="ACT" disabled>ACTUAL PAYOFF</option>
@@ -52,7 +55,7 @@
       </el-tooltip>
     </div>
     <div class="input-group">
-      <div class="tip">contract duration</div>
+      <div class="tip">contract duration<span class="red">*</span></div>
       <select v-model="duration">
         <option value="60">1 MIN</option>
         <option value="2592000" selected>30 DAYS</option>
@@ -106,7 +109,7 @@
         <i class="material-icons">help_circle</i>
       </el-tooltip>
       <div class="quantity price-input">
-        <span>YOUR FIXED PRICE</span>
+        <span>YOUR FIXED PRICE<span class="red">*</span></span>
         <input placeholder="Price" v-model="price" />
         <div class="long-unit">USD</div>
       </div>
@@ -118,8 +121,13 @@
     </div>
     <div class="input-group text-right">
       <div class="tip">Suggest Price</div>
-      <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
-      <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
+      <section v-if="suggestPrice > 0">
+        <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
+        <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
+      </section>
+      <section v-else>
+        <div class="large-price">LOADING ...</div>
+      </section>
     </div>
     <div class="input-group">
         <div class="tip">DIFFICULTY:</div>
@@ -134,12 +142,12 @@
     <div class="input-group">
       <div class="tip">total offering</div>
       <div class="quantity">
-        <span>TOTAL QUANTITY OFFERING</span>
+        <span>TOTAL QUANTITY OFFERING<span class="red">*</span></span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
         <div class="unit">{{hashUnit}}</div>
       </div>
       <div class="quantity">
-        <span>MINIMUM PURCHASE AMOUNT</span>
+        <span>MINIMUM PURCHASE AMOUNT<span class="red">*</span></span>
         <input placeholder="Minimum Order" v-model="orderSize" />
         <div class="unit">{{hashUnit}}</div>
       </div>
@@ -260,10 +268,9 @@ export default {
       const colContract = hashedgeContracts.collaterals[collateralAddress];
       const tokenContract = hashedgeContracts.erc20Tokens[floatingLegAddress];
       const batch = []
-      batch.push(colContract.deposit(web3.toWei(collateralAmount, 'ether')));
-      batch.push(tokenContract.approve(collateralAddress, web3.toWei(collateralAmount, 'ether')));
-      const recpt = await Promise.all(batch);
-      await web3.eth.getTransactionReceipt(recpt[0]);
+      const recpt1 = await tokenContract.approve(collateralAddress, web3.toWei(collateralAmount, 'ether'));
+      const recpt2 = await colContract.deposit(web3.toWei(collateralAmount, 'ether'));
+      await web3.eth.getTransactionReceipt(recpt2);
       this.$data.collateralStep = 2;
     },
     hide() {
@@ -273,13 +280,27 @@ export default {
     nextStep() {
       if (this.$data.step === 1) {
         if (!this.$data.contractAddress) {
-          return alert('Please select a contract.');
+          this.$data.showAlert = true;
+          setTimeout(() => {
+            this.$data.showAlert = false;
+          }, 2000)
+          return;
         }
-
         this.$data.hashUnit = '';
         hashedgeContracts.swap721Tokens[this.$data.contractAddress].contractUnit().then(unit => this.$data.hashUnit = unit);
       }
-
+      if (this.$data.step === 2) {
+        const { price, totalSupply, orderSize} = this.$data;
+        if (price <= 0 || totalSupply <= 0 || orderSize <= 0) {
+          this.$data.showAlert = true;
+          setTimeout(() => {
+            this.$data.showAlert = false;
+          }, 2000)
+          return;
+        }
+        this.$data.hashUnit = '';
+        hashedgeContracts.swap721Tokens[this.$data.contractAddress].contractUnit().then(unit => this.$data.hashUnit = unit);
+      }
       this.$data.step = this.$data.step + 1;
       if (this.$data.step === 3) {
         this.loadColInfo();
@@ -296,6 +317,7 @@ export default {
         this.$store.commit('showDialog', { name: 'login-dialog', show: true});
       }
       const { contractAddress, duration, price, totalSupply, orderSize} = this.$data;
+      console.log(contractAddress)
       const swapContract = hashedgeContracts.swap721Tokens[contractAddress];
       const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
       await web3.eth.getTransactionReceipt(recpt);
@@ -306,6 +328,7 @@ export default {
   data() {
     return {
       showPool: false,
+      showAlert: false,
       pool: {
         selected: 'POOL.IN',
         url: 'btc.ss.poolin.com:443',
@@ -507,6 +530,11 @@ export default {
     border-radius: 0px 0px 4px 4px;
     height: 36px;
     text-align: right;
+  }
+  .alert {
+    color: red;
+    height: 20px;
+    padding: 5px 10px;
   }
 }
 </style>

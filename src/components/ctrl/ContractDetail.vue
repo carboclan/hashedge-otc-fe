@@ -90,11 +90,9 @@ export default {
       const fixLegAddr = await swapContract.fixLegToken();
       const fixLegContract = hashedgeContracts.erc20Tokens[fixLegAddr];
       const tokens = contract.avaliableShares.slice(0,quantity);
-      const batch = [];
-      batch.push(swapContract.initialBuy(tokens));
-      batch.push(fixLegContract.approve(address, totalPrice));
-      const recpt = await Promise.all(batch);
-      await web3.eth.getTransactionReceipt(recpt[0]);
+      const recpt1 = await fixLegContract.approve(address, totalPrice);
+      const recpt2 = await swapContract.initialBuy(tokens);
+      await web3.eth.getTransactionReceipt(recpt2);
       this.$store.dispatch('getContractList');
     }
   },

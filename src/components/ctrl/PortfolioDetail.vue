@@ -7,7 +7,7 @@
         <div class="large-price">{{getProcessed(portfolio.startTime, portfolio.endTime) | duration}}/{{portfolio.duration | duration}}</div>
         <div class="process-bar">
             <div><div class="shares">{{Number(portfolio.startTime) | formatDate}}</div></div>
-            <div class="process"><div class="bar" v-bind:style="{width: getProcessed(portfolio.start,portfolio.total) * 155/portfolio.total + 'px'}"></div></div>
+            <div class="process"><div class="bar" v-bind:style="{width: getProcessed(portfolio.startTime, portfolio.endTime) * 155/ portfolio.duration + 'px'}"></div></div>
             <div><div class="shares">{{Number(portfolio.endTime) | formatDate}}</div></div>
         </div>
       </div>
@@ -86,10 +86,10 @@ export default {
       if (start === 0) {
         return 0
       }
-      if (Number(moment().unix) > end) {
+      if (Number(moment().unix()) > end) {
         return end - start;
       }
-      return Number(moment().unix - start)
+      return Number(moment().unix() - start)
     },
     async sell() {
       // // const { portfolio } = this.$props;

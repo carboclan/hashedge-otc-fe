@@ -48,12 +48,9 @@ export default {
       const colContract = hashedgeContracts.collaterals[contractAddress];
       const underlying = await colContract.underlying();
       const tokenContract = hashedgeContracts.erc20Tokens[underlying];
-      const batch = [];
-      batch.push(colContract.deposit(web3.toWei(amount, 'ether')));
-      batch.push(tokenContract.approve(contractAddress, web3.toWei(amount, 'ether')));
-      const recpt = await Promise.all(batch);
-      await web3.eth.getTransactionReceipt(recpt[0]);
-      await web3.eth.getTransactionReceipt(recpt[1]);
+      const recpt1 = await tokenContract.approve(contractAddress, web3.toWei(amount, 'ether'));
+      const recpt2 = await colContract.deposit(web3.toWei(amount, 'ether'));
+      await web3.eth.getTransactionReceipt(recpt2);
       this.$data.step = 0;
       this.$store.commit('hideDialog');
     }

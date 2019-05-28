@@ -46,7 +46,7 @@ Vue.filter('formatDate', function(value) {
 
 Vue.filter('duration', function(value) {
   if (value < 60) {
-    return '< 1 MIN'
+    return `${parseInt(value)} SECS`
   }
   if (value < 3600) {
     return `${parseInt(value/60)} MINS`
@@ -55,7 +55,7 @@ Vue.filter('duration', function(value) {
     return `${parseInt(value/3600)} HOURS`
   }
   if (value) {
-    return `${parseInt(value/3600/60)} HOURS`
+    return `${parseInt(value/3600/24)} DAYS`
   }
 });
 
@@ -200,6 +200,10 @@ ul {
     font-weight: bold;
     margin: 10px 0;
   }
+}
+
+.red {
+  color: red;
 }
 </style>
 

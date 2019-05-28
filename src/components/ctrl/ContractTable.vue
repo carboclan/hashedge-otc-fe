@@ -115,7 +115,9 @@ export default {
           return item.name == contractType
         });
       }
-
+      returnData = returnData.sort(function (item1, item2) {
+        return (item1.priceUSD - item2.priceUSD)
+      })
       return returnData
     }
   }
