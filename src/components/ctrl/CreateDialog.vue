@@ -5,7 +5,7 @@
   </section>
   <section v-show="step === 1">
     <div class="title">
-      basics
+      issue a new mining contract (STEP 1/3)
     </div>
     <div class="input-group">
       <div class="tip">contract type<span class="red">*</span></div>
@@ -55,36 +55,6 @@
       </el-tooltip>
     </div>
     <div class="input-group">
-      <div class="tip">contract duration<span class="red">*</span></div>
-      <select v-model="duration">
-        <option value="60">1 MIN</option>
-        <option value="2592000" selected>30 DAYS</option>
-        <option value="7776000">90 DAYS</option>
-        <option value="15552000">180 DAYS</option>
-      </select>
-    </div>
-    <div class="input-group">
-      <div class="tip">contract listing expiration date</div>
-      <div class="tip">{{ expirationDate | formatDate}}</div>
-      <el-tooltip class="help-mark" effect="dark">
-        <div class="tip-content" slot="content">
-          Your contract goes live as soon as transaction occurs. <br />
-          Contract unsold after Contract Listing Expiration Date <br />
-          will not be available for purchase by buyers.
-        </div>
-        <i class="material-icons">help_circle</i>
-      </el-tooltip>
-      <!-- <input class="date-input" type="date" v-model="expirationDate" disabled /> -->
-    </div>
-    <div class="footer">
-      <button v-on:click="nextStep">NEXT</button>
-    </div>
-  </section>
-  <section v-show="step === 2">
-    <div class="title">
-      pricing
-    </div>
-    <div class="input-group">
       <div class="tip">pricing method</div>
       <select v-model="pricingMethod">
         <option value="FIXED" selected>FIXED PRICE(BUY NOW)</option>
@@ -108,50 +78,92 @@
         </div>
         <i class="material-icons">help_circle</i>
       </el-tooltip>
-      <div class="quantity price-input">
-        <span>YOUR FIXED PRICE<span class="red">*</span></span>
-        <input placeholder="Price" v-model="price" />
-        <div class="long-unit">USD</div>
+    </div>
+    <div class="input-group">
+      <div class="tip">contract listing expiration date</div>
+      <div class="tip">{{ expirationDate | formatDate}}</div>
+      <el-tooltip class="help-mark" effect="dark">
+        <div class="tip-content" slot="content">
+          Your contract goes live as soon as transaction occurs. <br />
+          Contract unsold after Contract Listing Expiration Date <br />
+          will not be available for purchase by buyers.
+        </div>
+        <i class="material-icons">help_circle</i>
+      </el-tooltip>
+      <!-- <input class="date-input" type="date" v-model="expirationDate" disabled /> -->
+    </div>
+    <div class="footer">
+      <button v-on:click="nextStep">NEXT</button>
+    </div>
+  </section>
+  <section v-show="step === 2">
+    <div class="title">
+      issue a new mining contract (STEP 2/3)
+    </div>
+    <div class="title" v-on:click="switchCal" >
+      <i class="material-icons">arrow_drop_down_circle</i>OPTIONAL: Suggested Price Calculator
+    </div>
+    <section v-if="showCal">
+      <div class="tip">
+        Move the sliders to input your prediction for the next 30 Days.
+      </div>  
+      <div class="input-group text-right">
+        <div class="tip">Suggest Price</div>
+        <section v-if="suggestPrice > 0">
+          <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
+          <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
+        </section>
+        <section v-else>
+          <div class="large-price">LOADING ...</div>
+        </section>
       </div>
-      <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button>
-      <div class="large-price">${{price / orderSize}} USD/{{hashUnit}}</div>
-    </div>
-    <div class="tip">
-      OPTIONAL: Suggested Price Calculator
-    </div>
-    <div class="input-group text-right">
-      <div class="tip">Suggest Price</div>
-      <section v-if="suggestPrice > 0">
-        <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
-        <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
-      </section>
-      <section v-else>
-        <div class="large-price">LOADING ...</div>
-      </section>
-    </div>
-    <div class="input-group">
-        <div class="tip">DIFFICULTY:</div>
-        <el-slider :min="-50" :max="50"
-          v-model="diff"
-          :format-tooltip="formatPercent" />
-        <div class="tip">EXCHANGE RATE:</div>
-        <el-slider :min="-50" :max="50"
-          v-model="exRate"
-          :format-tooltip="formatPercent" />
-    </div>
-    <div class="input-group">
-      <div class="tip">total offering</div>
+      <div class="input-group">
+          <div class="tip">DIFFICULTY:</div>
+          <el-slider :min="-50" :max="50"
+            v-model="diff"
+            :format-tooltip="formatPercent" />
+          <div class="tip">EXCHANGE RATE:</div>
+          <el-slider :min="-50" :max="50"
+            v-model="exRate"
+            :format-tooltip="formatPercent" />
+      </div>
+    </section>
+    <!-- <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button> -->
+ 
+
+   <div class="input-group">
+      <div class="tip">1. pricing<span class="red">*</span></div>
       <div class="quantity">
-        <span>TOTAL QUANTITY OFFERING<span class="red">*</span></span>
+        <span>ENTER YOUR PRICE<br />or APPLY SUGGESTED PRICE</span>
+        <input placeholder="Price" v-model="price" />
+        <div class="long-unit">USD/{{hashUnit}}/DAY</div>
+      </div>
+    </div>
+
+    <div class="input-group">
+      <div class="tip">2. contract duration<span class="red">*</span></div>
+      <select v-model="duration">
+        <option value="60">1 MIN</option>
+        <option value="2592000" selected>30 DAYS</option>
+        <option value="7776000">90 DAYS</option>
+        <option value="15552000">180 DAYS</option>
+      </select>
+    </div>
+
+    <div class="input-group">
+      <div class="tip">3. total offering<span class="red">*</span></div>
+      <div class="quantity half-input left">
+        <span>TOTAL QUANTITY OFFERING</span>
         <input placeholder="Total Offering" v-model="totalSupply"/>
         <div class="unit">{{hashUnit}}</div>
       </div>
-      <div class="quantity">
-        <span>MINIMUM PURCHASE AMOUNT<span class="red">*</span></span>
+      <div class="quantity half-input right">
+        <span>MINIMUM PURCHASE AMOUNT</span>
         <input placeholder="Minimum Order" v-model="orderSize" />
         <div class="unit">{{hashUnit}}</div>
       </div>
     </div>
+    <div><div class="title">TOTAL PRICE</div><div class="large-price">USD {{price}}</div></div>
     <div class="footer">
       <button v-on:click="lastStep" class="left">BACK</button>
       <button v-on:click="nextStep">NEXT</button>
@@ -159,11 +171,11 @@
   </section>
   <section v-show="step === 3">
     <div class="title">
-      collateral
+      issue a new mining contract (STEP 3/3)
     </div>
     <div class="input-group">
-      <div class="tip">Collateral Currency</div>
-      <div class="tip">{{collateralCurrency}}</div>
+      <div class="tip">Required collateral will be auto-calculated base on contract specs</div>
+      <div class="tip">Collateral Currency: {{collateralCurrency}}</div>
       <!-- <select v-model="collateralCurrency">
         <option value="BTC" selected>BTC</option>
         <option value="DAI">DAI</option>
@@ -232,6 +244,10 @@ export default {
     },
     switchPool() {
       this.showPool = !this.showPool;
+    },
+    switchCal() {
+      console.log('gogogo');
+      this.showCal = !this.showCal;
     },
     setPoolInfo() {
       const selected = this.pool.selected;
@@ -329,6 +345,7 @@ export default {
     return {
       showPool: false,
       showAlert: false,
+      showCal: false,
       pool: {
         selected: 'POOL.IN',
         url: 'btc.ss.poolin.com:443',
@@ -480,8 +497,8 @@ export default {
     height: 56px;
     margin-bottom: 16px;
     display: flex;
-    &.price-input {
-      width: 65%;
+    &.half-input {
+      width: 49%;
     }
     >span {
       font-size: 12px;
@@ -508,7 +525,7 @@ export default {
       color:#607D8B;
     }
     >.long-unit {
-      width: 80px;
+      width: 120px;
       float: right;
       margin: 8px 0;
       line-height: 24px;

@@ -1,28 +1,26 @@
 <template>
   <div>
-    <div class="contract-card">
+    <div class="contract-card" v-bind:style="{ background: selected ? '#37474F' : '#455A64' }">
       <div class="card-top">
         <div class="card-left">
           <div><div class="tip">{{contract.duration | duration}}</div></div>
-          <div class="pad-top2"><div class="context">{{contract.contractSize}}</div></div>
-          <div><div class="memo">{{contract.unit}}</div></div>
+          <div><div class="pad-top2"><span class="hash-type">{{contract.hashType}}</span></div></div>
         </div>
         <div class="card-center">
-          <div><div class="tip">{{contract.hashType}}</div></div>
-          <div class="pad-top2"><div class="context">{{contract.name}}</div></div>
-          <div><div class="memo">{{contract.payoffType}}</div></div>
+          <div><div class="tip">{{contract.issuer}}</div></div>
+          <div class="pad-top2"><div class="context">{{contract.name}}-{{contract.payoffType}}</div></div>
         </div>
         <div class="card-right">
           <div><div class="memo">{{contract.rating}}</div></div>
-          <div class="pad-top1"><div class="price">${{contract.priceUSD | usd}}</div></div>
-          <div><div class="memo">{{contract.code}} {{contract.priceCOIN | btc}}</div></div>
+          <div class="pad-top1"><div class="price">${{contract.priceUSD | usd}}</div>/{{contract.unit}}/DAY</div>
+          <div><div class="memo">{{contract.code}} {{contract.priceCOIN | btc}}/{{contract.unit}}/DAY</div></div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="card-bottom">
-          <div><div class="shares">{{contract.shareSold}} SOLD</div></div>
+          <div><div class="shares">{{contract.shareSold}}{{contract.unit}} SOLD</div></div>
           <div class="process"><div class="bar" v-bind:style="{width: contract.shareSold/contract.shareTotal*256 + 'px'}"></div></div>
-          <div><div class="shares">{{contract.shareTotal}} UNITS</div></div>
+          <div><div class="shares">{{contract.shareTotal}}{{contract.unit}} TOTAL</div></div>
       </div>
     </div>
   </div>
@@ -32,7 +30,8 @@
 export default {
   name: 'ContractCard',
   props: {
-    contract: Object
+    contract: Object,
+    selected: Boolean,
   },
   data() {
     return {
@@ -44,7 +43,6 @@ export default {
 <style lang="scss">
 .contract-card {
   width: 448px;
-  background: #455A64;
   border-radius: 4px;
   font-size: 14px;
   margin: 8px;
@@ -90,6 +88,12 @@ export default {
     letter-spacing: 0.004em;
     color: #78909C;
   }
+  .hash-type {
+    color: #455A64;
+    background-color: #CFD8DC;
+    border-radius: 4px;
+    padding: 2px 4px;
+  }
   .price {
     font-family: Eczar;
     line-height: 28px;
@@ -100,7 +104,7 @@ export default {
   }
   .spacer {
     width: 100%;
-    border-bottom: 0.5px solid #37474F;
+    border-bottom: 1px solid #37474F;
   }
   .card-bottom {
     padding: 8px;

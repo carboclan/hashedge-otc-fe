@@ -32,7 +32,7 @@
   <div>
     <div class="contract" v-for="contract of filterContractList"  v-bind:key="contract.id" v-bind:class="contract.hashType">
       <div v-on:click="selectContract(contract)">
-        <ContractCard :contract="contract"/>
+        <ContractCard :contract="contract" :selected="selectedContract ? selectedContract.id == contract.id : false"/>
       </div>
     </div>
     <div class="contract" v-show="filterContractList.length === 0">
