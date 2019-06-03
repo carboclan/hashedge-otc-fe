@@ -8,26 +8,25 @@
           <div><div class="memo">{{token.code}}</div></div>
         </div>
         <div class="card-center">
-          <div class="pad-top3"><div class="context">{{token.priceUSD | usd}} USD/{{token.unit}}</div></div>
-          <div><div class="memo">{{token.code}} {{token.priceCOIN | eth}} /{{token.unit}}</div></div>
+          <div class="pad-top3"><div class="context">{{token.usdPayoff | usd}} USD/{{token.unit}}</div></div>
+          <div><div class="memo">{{token.code}} {{token.coinPayoff | eth}} /{{token.unit}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.dailyPerformance | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.dailyNetGain | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.monthlyPerformance | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.profitRate | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.monthlyNetGain | percent}}</div></div>
         </div>
       </div>
     </div>
   </div>
 </template>
-
 <script>
 
 export default {

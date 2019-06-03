@@ -5,8 +5,8 @@
       <div class="detail-header">
         <div>
           <div class="tip">CONTRACT UNIT PRICE</div>
-          <div class="small-price">${{contract.priceUSD / contract.contractSize | usd}}/{{contract.unit}}</div>
-          <div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize | btc}}/{{contract.unit}}</div>
+          <div class="small-price">${{contract.priceUSD / contract.contractSize * 3600 * 24 / contract.duration | usd}}/{{contract.unit}}/DAY</div>
+          <div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize * 3600 * 24 / contract.duration | btc}}/{{contract.unit}}</div>
         </div>
       </div>
       <div class="spacer"></div>
@@ -14,11 +14,11 @@
         <div class="quantity">
           <span>EnterQuantity</span>
           <input placeholder="Quantity" v-model="quantity"/>
-          <div class="unit">of {{contract.shareTotal - contract.shareSold}} Units</div>
+          <div class="unit">of {{(contract.shareTotal - contract.shareSold) * contract.contractSize}} {{contract.unit}}</div>
         </div>
         <div class="tip">TOTAL PRICE</div>
-        <div class="large-price">${{contract.priceUSD * quantity | usd}}</div>
-        <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity | btc}}</div>
+        <div class="large-price">${{contract.priceUSD * quantity / contract.contractSize | usd}}</div>
+        <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity / contract.contractSize | btc}}</div>
       </div>
       <section v-if="contract.pricingMethod == 'AUCTION'">
         <div class="spacer"></div>
@@ -80,16 +80,16 @@ export default {
     async submit() {
       const { quantity } = this.$data;
       const { contract } = this.$props;
-      if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold)) {
+      if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold) * contract.contractSize) {
         alert('Invalid Amount!');
         return;
       }
       const { address, priceUSD } = contract;
-      const totalPrice = priceUSD * quantity;
+      const totalPrice = priceUSD * quantity / contractSize;
       const swapContract =  hashedgeContracts.swap721Tokens[address];
       const fixLegAddr = await swapContract.fixLegToken();
       const fixLegContract = hashedgeContracts.erc20Tokens[fixLegAddr];
-      const tokens = contract.avaliableShares.slice(0,quantity);
+      const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contractSize));
       const recpt1 = await fixLegContract.approve(address, totalPrice);
       const recpt2 = await swapContract.initialBuy(tokens);
       await web3.eth.getTransactionReceipt(recpt2);

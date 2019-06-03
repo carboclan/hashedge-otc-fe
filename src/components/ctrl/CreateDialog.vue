@@ -106,16 +106,6 @@
     <section v-if="showCal">
       <div class="tip">
         Move the sliders to input your prediction for the next 30 Days.
-      </div>  
-      <div class="input-group text-right">
-        <div class="tip">Suggest Price</div>
-        <section v-if="suggestPrice > 0">
-          <div class="large-price">${{suggestPrice | usd}} USD/CONTRACT</div>
-          <div class="large-price">${{suggestPrice / orderSize | usd}} USD/{{hashUnit}}</div>
-        </section>
-        <section v-else>
-          <div class="large-price">LOADING ...</div>
-        </section>
       </div>
       <div class="input-group">
           <div class="tip">DIFFICULTY:</div>
@@ -127,15 +117,25 @@
             v-model="exRate"
             :format-tooltip="formatPercent" />
       </div>
+      <div class="input-group">
+        <div class="tip">CALCULATER PRICE</div>
+        <section v-if="suggestPrice > 0">
+          <div class="large-price">US$ {{suggestPrice | usd}} /{{hashUnit}}/DAY 
+            <button v-on:click="applyPrice" class="price-button">Apply This Price</button>
+          </div>
+        </section>
+        <section v-else>
+          <div class="large-price">LOADING ...</div>
+        </section>
+      </div>
     </section>
-    <!-- <button v-on:click="applyPrice" class="price-button">Use Suggested Price</button> -->
  
 
    <div class="input-group">
       <div class="tip">1. pricing<span class="red">*</span></div>
       <div class="quantity">
         <span>ENTER YOUR PRICE<br />or APPLY SUGGESTED PRICE</span>
-        <input placeholder="Price" v-model="price" />
+        <input placeholder="Price" v-model="unitPrice" />
         <div class="long-unit">USD/{{hashUnit}}/DAY</div>
       </div>
     </div>
@@ -143,7 +143,6 @@
     <div class="input-group">
       <div class="tip">2. contract duration<span class="red">*</span></div>
       <select v-model="duration">
-        <option value="60">1 MIN</option>
         <option value="2592000" selected>30 DAYS</option>
         <option value="7776000">90 DAYS</option>
         <option value="15552000">180 DAYS</option>
@@ -163,7 +162,9 @@
         <div class="unit">{{hashUnit}}</div>
       </div>
     </div>
-    <div><div class="title">TOTAL PRICE</div><div class="large-price">USD {{price}}</div></div>
+    <div class="input-group">
+      <div class="large-price text-right">TOTAL PRICE: USD {{price}}</div></div>
+    </div>
     <div class="footer">
       <button v-on:click="lastStep" class="left">BACK</button>
       <button v-on:click="nextStep">NEXT</button>
@@ -277,7 +278,7 @@ export default {
       this.$data.collateralCurrency = floatingLegName;
       this.$data.collateralAddress = colAddress;
       this.$data.floatingLegAddress = floatingLegAddress;
-      this.$data.collateralAmount = colAmount * this.$data.totalSupply * this.$data.orderSize * 1.5 / 1e18;
+      this.$data.collateralAmount = colAmount * this.$data.totalSupply * 1.5 / 1e18;
     },
     async depositCollateral() {
       const { collateralAmount, collateralAddress, floatingLegAddress } = this.$data;
@@ -326,16 +327,17 @@ export default {
       this.$data.step = this.$data.step - 1;
     },
     applyPrice() {
-      this.$data.price = parseInt(this.suggestPrice / 1e12)/ 1e6;
+      this.$data.unitPrice = parseInt(this.suggestPrice / 1e12)/ 1e6;
     },
     async submit() {
       if (!web3.eth.accounts[0]) {
         this.$store.commit('showDialog', { name: 'login-dialog', show: true});
       }
-      const { contractAddress, duration, price, totalSupply, orderSize} = this.$data;
-      console.log(contractAddress)
+      const { contractAddress, duration, unitPrice, totalSupply, orderSize} = this.$data;
+      const orderPrice = unitPrice * orderSize * duration / 3600 / 24;
+      const orderQuantity = parseInt(totalSupply/orderSize);
       const swapContract = hashedgeContracts.swap721Tokens[contractAddress];
-      const recpt = await swapContract.mint(orderSize, duration, web3.toWei(price, 'ether'), totalSupply);
+      const recpt = await swapContract.mint(orderSize, duration, web3.toWei(orderPrice, 'ether'), orderQuantity);
       await web3.eth.getTransactionReceipt(recpt);
       this.$store.dispatch('getContractList');
       this.$store.commit('hideDialog');
@@ -360,7 +362,7 @@ export default {
       payoffCurrency: '',
       contractType: 'STD',
       pricingMethod: 'FIXED',
-      price: 0,
+      unitPrice: 0,
       diff: 0,
       exRate: 0,
       totalSupply: 1,
@@ -388,14 +390,16 @@ export default {
       if (!this.$data.contractAddress) {
         return 0;
       }
-      const { orderSize, duration, exRate, diff } = this.$data;
       const tokenInfo = _.chain(this.$store.state.erc20List)
         .map((token) => [token.code, token])
         .fromPairs()
         .value();
       const code = this.$store.state.swapInfos[this.$data.contractAddress].code;
-      const payoffUSD = tokenInfo[code].priceUSD;
-      return payoffUSD * orderSize * duration * (100 + exRate) * (100 - diff) / 3600 / 24 / 10000;
+      const usdPayoff = tokenInfo[code].usdPayoff;
+      return usdPayoff * (100 + this.$data.exRate) * (100 - this.$data.diff) / 10000;
+    },
+    price: function () {
+      return this.$data.unitPrice * this.$data.duration * this.$data.totalSupply / 3600 / 24;
     },
     show: function () {
       return (this.$store.state.dialog.name === 'create-dialog');
@@ -536,7 +540,6 @@ export default {
     float: right;
     display: inline-block;
     position: relative;
-    top: -55px;
   }
   .spacer {
     width: 100%;

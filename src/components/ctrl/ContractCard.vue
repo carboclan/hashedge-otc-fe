@@ -12,15 +12,15 @@
         </div>
         <div class="card-right">
           <div><div class="memo">{{contract.rating}}</div></div>
-          <div class="pad-top1"><div class="price">${{contract.priceUSD | usd}}</div>/{{contract.unit}}/DAY</div>
-          <div><div class="memo">{{contract.code}} {{contract.priceCOIN | btc}}/{{contract.unit}}/DAY</div></div>
+          <div class="pad-top1"><div class="price">${{contract.priceUSD / contract.contractSize * 3600 * 24 / contract.duration | usd}} </div>/{{contract.unit}}/DAY</div>
+          <div><div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize * 3600 * 24 / contract.duration | btc}} /{{contract.unit}}/DAY</div></div>
         </div>
       </div>
       <div class="spacer"></div>
       <div class="card-bottom">
-          <div><div class="shares">{{contract.shareSold}}{{contract.unit}} SOLD</div></div>
+          <div><div class="shares">{{contract.shareSold * contract.contractSize}} {{contract.unit}} SOLD</div></div>
           <div class="process"><div class="bar" v-bind:style="{width: contract.shareSold/contract.shareTotal*256 + 'px'}"></div></div>
-          <div><div class="shares">{{contract.shareTotal}}{{contract.unit}} TOTAL</div></div>
+          <div><div class="shares">{{contract.shareTotal * contract.contractSize}} {{contract.unit}} TOTAL</div></div>
       </div>
     </div>
   </div>
