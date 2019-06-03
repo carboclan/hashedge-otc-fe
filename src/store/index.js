@@ -6,103 +6,6 @@ import moment from 'moment';
 
 Vue.use(Vuex);
 
-const moke = [
-  {
-    "name": "Bitcoin",
-    "code": "BTC",
-    "hashType": "POW",
-    "usdPayoff": 285392231000000000,
-    "unit": "TH",
-    "coinPayoff": 33710000000000,
-    "profitRate": 0.147,
-    "dailyPerformance": 0.005,
-    "dailyNetGain": 0.002,
-    "monthlyPerformance": 0.16,
-    "monthlyNetGain": 0.08,
-    "exchangePrice": 8466.1,
-    "priceCOIN": 33710000000000,
-    "priceUSD": 285392231000000000
-  },
-  {
-    "name": "Ether",
-    "code": "ETH",
-    "hashType": "POW",
-    "usdPayoff": 18226203600000000,
-    "unit": "GH",
-    "coinPayoff": 70090000000000,
-    "profitRate": 1.767,
-    "dailyPerformance": 0.004,
-    "dailyNetGain": 0.003,
-    "monthlyPerformance": 0.19,
-    "monthlyNetGain": 0.05,
-    "exchangePrice": 260.04,
-    "priceCOIN": 70090000000000,
-    "priceUSD": 18226203600000000
-  },
-  {
-    "name": "ZCASH",
-    "code": "ZEC",
-    "hashType": "POW",
-    "usdPayoff": 7033919007500000000,
-    "unit": "KSOL",
-    "coinPayoff": 82028210000000000,
-    "profitRate": 4.357,
-    "dailyPerformance": -0.001,
-    "dailyNetGain": -0.002,
-    "monthlyPerformance": 0.04,
-    "monthlyNetGain": 0.03,
-    "exchangePrice": 85.75,
-    "priceCOIN": 82028210000000000,
-    "priceUSD": 7033919007500000000
-  },
-  {
-    "name": "LiteCoin",
-    "code": "LTC",
-    "hashType": "POW",
-    "usdPayoff": 3622819200000000000,
-    "unit": "GH",
-    "coinPayoff": 32480000000000000,
-    "profitRate": -0.204,
-    "dailyPerformance": 0.001,
-    "dailyNetGain": 0.0005,
-    "monthlyPerformance": 0.11,
-    "monthlyNetGain": 0.05,
-    "exchangePrice": 111.54,
-    "priceCOIN": 32480000000000000,
-    "priceUSD": 3622819200000000000
-  },
-  {
-    "name": "TEZOS",
-    "code": "XZT",
-    "hashType": "POS",
-    "usdPayoff": -2309351417000000,
-    "unit": "XZT",
-    "coinPayoff": -82028210000000000,
-    "profitRate": -0.513,
-    "dailyPerformance": -0.005,
-    "dailyNetGain": -0.002,
-    "monthlyPerformance": -0.01,
-    "monthlyNetGain": -0.01,
-    "priceCOIN": -82028210000000000,
-    "priceUSD": -2309351417000000
-  },
-  {
-    "name": "EOS",
-    "code": "EOS",
-    "hashType": "DPOS",
-    "usdPayoff": 199471522110000,
-    "unit": "EOS",
-    "coinPayoff": 27397300000000,
-    "profitRate": 15.258,
-    "dailyPerformance": 0.004,
-    "dailyNetGain": 0.003,
-    "monthlyPerformance": 0.17,
-    "monthlyNetGain": 0.1,
-    "exchangePrice": 7.2807,
-    "priceCOIN": 27397300000000,
-    "priceUSD": 199471522110000
-  }
-]
 export default new Vuex.Store({
   state: {
     metamaskState: 0,
@@ -156,8 +59,8 @@ export default new Vuex.Store({
     async getErc20List (ctx) {
       const query = `${config.apiConfig}erc20/info/`;
       const list = await fetch(query).then(response => { return response.json() });
-      // ctx.commit('setErc20List', list);
-      ctx.commit('setErc20List', moke);
+      ctx.commit('setErc20List', list);
+      // ctx.commit('setErc20List', moke);
     },
     async getContractList (ctx) {
       // Get chain info
