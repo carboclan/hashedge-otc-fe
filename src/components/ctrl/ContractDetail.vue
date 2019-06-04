@@ -56,7 +56,7 @@
       <div class="detail-footer">
           <div class="tip">OPTIONAL: Expected Payoff Calculator</div>
           <div class="large-price">${{contract.payoffUSD * contract.contractSize * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
-          <div class="memo">{{contract.code}} {{contract.payoff * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div> 
+          <div class="memo">{{contract.code}} {{contract.payoff * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div>
       </div>
     </div>
   </div>
@@ -87,11 +87,11 @@ export default {
         return;
       }
       const { address, priceUSD } = contract;
-      const totalPrice = priceUSD * quantity / contractSize;
+      const totalPrice = priceUSD * quantity / contract.contractSize;
       const swapContract =  hashedgeContracts.swap721Tokens[address];
       const fixLegAddr = await swapContract.fixLegToken();
       const fixLegContract = hashedgeContracts.erc20Tokens[fixLegAddr];
-      const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contractSize));
+      const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contract.contractSize));
       const recpt1 = await fixLegContract.approve(address, totalPrice);
       const recpt2 = await swapContract.initialBuy(tokens);
       await web3.eth.getTransactionReceipt(recpt2);
