@@ -4,9 +4,9 @@
     <div class="contract-detail">
       <div class="detail-header">
         <div>
-          <div class="tip">CONTRACT UNIT PRICE</div>
-          <div class="small-price">${{contract.priceUSD / contract.contractSize * 3600 * 24 / contract.duration | usd}}/{{contract.unit}}/DAY</div>
-          <div class="memo">{{contract.code}} {{contract.priceCOIN / contract.contractSize * 3600 * 24 / contract.duration | btc}}/{{contract.unit}}</div>
+          <div class="tip">Order Summary</div>
+          <div class="small-price">Price: ${{contract.priceUSD / contract.contractSize * 3600 * 24 / contract.duration | usd}}/{{contract.unit}}/DAY</div>
+          <div class="small-price">Contract Duration: {{contract.duration | duration}}</div>
         </div>
       </div>
       <div class="spacer"></div>
@@ -14,8 +14,10 @@
         <div class="quantity">
           <span>EnterQuantity</span>
           <input placeholder="Quantity" v-model="quantity"/>
-          <div class="unit">of {{(contract.shareTotal - contract.shareSold) * contract.contractSize}} {{contract.unit}}</div>
+          <div class="unit">{{contract.unit}}</div>
         </div>
+        <div class="small-price">{{(contract.shareTotal - contract.shareSold) * contract.contractSize}} {{contract.unit}} Available</div>
+        <div class="small-price">Quantity Increment: {{contract.contractSize}} {{contract.unit}}</div>
         <div class="tip">TOTAL PRICE</div>
         <div class="large-price">${{contract.priceUSD * quantity / contract.contractSize | usd}}</div>
         <div class="memo">{{contract.code}} {{contract.priceCOIN * quantity / contract.contractSize | btc}}</div>
@@ -108,7 +110,7 @@ export default {
 
 <style lang="scss">
 .right-panel {
-  position: absolute;
+  position: fixed;
   top: 200px;
   left: 820px;
   padding: 8px;

@@ -347,7 +347,7 @@ export default {
     return {
       showPool: false,
       showAlert: false,
-      showCal: false,
+      showCal: true,
       pool: {
         selected: 'POOL.IN',
         url: 'btc.ss.poolin.com:443',

@@ -12,16 +12,16 @@
           <div><div class="memo">{{token.code}} {{token.coinPayoff | eth}} /{{token.unit}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.dailyPerformance | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.dailyPerformance * 100 | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.dailyNetGain | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.dailyNetGain * 100 | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.monthlyPerformance | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.monthlyPerformance * 100 | percent}}</div></div>
         </div>
         <div class="card-right">
-          <div class="pad-top2"><div class="price">{{token.monthlyNetGain | percent}}</div></div>
+          <div class="pad-top2"><div class="price">{{token.monthlyNetGain * 100 | percent}}</div></div>
         </div>
       </div>
     </div>
