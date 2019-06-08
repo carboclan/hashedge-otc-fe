@@ -123,7 +123,7 @@ export default {
 
 <style lang="scss">
 .right-panel {
-  position: absolute;
+  position: fixed;
   top: 170px;
   left: 820px;
   padding: 8px;

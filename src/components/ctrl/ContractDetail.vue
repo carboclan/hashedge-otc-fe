@@ -55,8 +55,8 @@
       </div>
       <div class="detail-footer">
           <div class="tip">OPTIONAL: Expected Payoff Calculator</div>
-          <div class="large-price">${{contract.payoffUSD * contract.contractSize * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
-          <div class="memo">{{contract.code}} {{contract.payoff * contract.duration * contract.contractSize * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div>
+          <div class="large-price">${{contract.payoffUSD * contract.duration * (100 + exRate) * (100 - diff) * quantity / 3600 / 24 / 10000 | usd}}</div>
+          <div class="memo">{{contract.code}} {{contract.payoff * contract.duration * (100 + exRate) * (100 - diff) * quantity /3600 / 24 / 10000| btc}}</div>
       </div>
     </div>
   </div>
@@ -100,7 +100,7 @@ export default {
   },
   data() {
     return {
-      quantity: null,
+      quantity: this.$props.contract.contractSize,
       diff: 0,
       exRate: 0
     };

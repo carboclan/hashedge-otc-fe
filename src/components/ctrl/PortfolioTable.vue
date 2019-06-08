@@ -85,6 +85,10 @@ export default {
           return item.name == contractType
         });
       }
+      // 按照issue时间排序
+      returnData = returnData.sort(function (item1, item2) {
+        return (item2.startTime - item1.startTime)
+      })
       return returnData
     }
   }

@@ -116,7 +116,7 @@ export default {
         });
       }
       returnData = returnData.sort(function (item1, item2) {
-        return (item1.priceUSD - item2.priceUSD)
+        return (item1.priceUSD/item1.duration/item1.contractSize - item2.priceUSD/item2.duration/item1.contractSize)
       })
       return returnData
     }
