@@ -120,7 +120,7 @@
       <div class="input-group">
         <div class="tip">CALCULATER PRICE</div>
         <section v-if="suggestPrice > 0">
-          <div class="large-price">US$ {{suggestPrice | usd}} /{{hashUnit}}/DAY 
+          <div class="large-price">US$ {{suggestPrice | usd}} /{{hashUnit}}/DAY
             <button v-on:click="applyPrice" class="price-button">Apply This Price</button>
           </div>
         </section>
@@ -129,7 +129,6 @@
         </section>
       </div>
     </section>
- 
 
    <div class="input-group">
       <div class="tip">1. pricing<span class="red">*</span></div>
@@ -282,13 +281,21 @@ export default {
     },
     async depositCollateral() {
       const { collateralAmount, collateralAddress, floatingLegAddress } = this.$data;
-      const colContract = hashedgeContracts.collaterals[collateralAddress];
-      const tokenContract = hashedgeContracts.erc20Tokens[floatingLegAddress];
-      const batch = []
-      const recpt1 = await tokenContract.approve(collateralAddress, web3.toWei(collateralAmount, 'ether'));
-      const recpt2 = await colContract.deposit(web3.toWei(collateralAmount, 'ether'));
-      await web3.eth.getTransactionReceipt(recpt2);
-      this.$data.collateralStep = 2;
+      const colContract = this.$store.state.contracts.getContract(collateralAddress);
+      const tokenContract = this.$store.state.contracts.getContract(floatingLegAddress);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'approve',
+        args: [collateralAddress, web3.toWei(collateralAmount, 'ether')],
+        check: true
+      });
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: colContract, method: 'deposit',
+        args: [web3.toWei(collateralAmount, 'ether')],
+        check: false
+      });
+
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) this.$data.collateralStep = 2;
     },
     hide() {
       DialogEventBus.$emit('hide', this.$el);

@@ -107,6 +107,7 @@ export default {
         if (check) await contract[method].callAsync(...args);
 
         try {
+          while (!check && _.some(state.pendingTransactions, t => t.id !== id && t.state === 0)) await _.sleep(200);
           await contract[method].awaitTransactionSuccessAsync(...args, { from: state.account });
           commit('updatePendingTransaction', { id, msg: 'Success', state: 1 });
         } catch (e) {
