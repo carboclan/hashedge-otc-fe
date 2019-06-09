@@ -4,9 +4,14 @@ import config from '../config';
 import { web3, hashedgeContracts } from '../web3';
 import moment from 'moment';
 
+import contracts from './contracts';
+
 Vue.use(Vuex);
 
 export default new Vuex.Store({
+  modules: {
+    contracts
+  },
   state: {
     metamaskState: 0,
     erc20List: [],

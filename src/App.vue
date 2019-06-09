@@ -87,6 +87,7 @@ export default {
   name: 'App',
   components: { LoginDialog },
   mounted () {
+    this.$store.dispatch('contracts/init');
     if (!web3.eth.accounts[0]) {
       this.$store.commit('showDialog', { name: 'login-dialog', show: true});
     }

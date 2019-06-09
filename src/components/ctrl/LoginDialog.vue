@@ -1,35 +1,27 @@
 <template>
-<DialogContainer v-if="show" forced="true" extra-class="login-dialog">
+<DialogContainer :show="msg" forced="true" :cannotSkip="critical" extra-class="login-dialog">
   <div class="title">
-    Hashedge dApp needs Metamask login.
+    {{error && 'Error:' || 'Message:'}}
   </div>
   <div class="footer">
-    <button v-on:click="submit">Try Again</button>
+    {{msg}}
   </div>
 </DialogContainer>
 </template>
 
 <script>
-import { web3, hashedgeContracts } from '../../web3';
+import { mapState } from 'vuex';
 import DialogContainer from './DialogContainer';
 
 export default {
   name: 'LoginDialog',
   components: { DialogContainer },
-  methods: {
-    async submit() {
-      if (web3.eth.accounts[0]) {
-        this.$store.commit('hideDialog');
-      }
-    }
-  },
-  data() {
-    return {
-      amount: 0,
-    };
-  },
   computed: {
-    show: function() { return (this.$store.state.dialog.name === 'login-dialog') },
+    ...mapState({
+      msg: state => state.contracts.msg,
+      error: state => state.contracts.error,
+      critical: state => state.contracts.critical
+    })
   }
 }
 </script>
@@ -121,10 +113,10 @@ export default {
     border: 0.5px solid #263238;
   }
   .footer {
+    color: white;
     background: #263238;
     border-radius: 0px 0px 4px 4px;
     height: 36px;
-    text-align: right;
   }
 }
 </style>
