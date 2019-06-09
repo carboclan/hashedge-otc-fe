@@ -12,7 +12,7 @@
 <script>
 
 export default {
-  props: ['extraClass', 'forced', 'show', 'cannotSkip'],
+  props: ['extraClass', 'forced', 'show', 'cannotSkip', 'onClose'],
   name: 'DialogContainer',
   mounted() {
   },
@@ -34,7 +34,7 @@ export default {
       }
     },
     closeDialog() {
-      this.$store.commit('hideDialog');
+      (this.$props.onClose && this.$props.onClose()) || this.$store.commit('hideDialog');
     }
   },
   data() {

@@ -1,5 +1,5 @@
 <template>
-<DialogContainer :show="msg" forced="true" :cannotSkip="critical" extra-class="login-dialog">
+<DialogContainer :show="msg" forced="true" :cannotSkip="critical" extra-class="login-dialog" :onClose="close">
   <div class="title">
     {{error && 'Error:' || 'Message:'}}
   </div>
@@ -16,6 +16,11 @@ import DialogContainer from './DialogContainer';
 export default {
   name: 'LoginDialog',
   components: { DialogContainer },
+  methods: {
+    close() {
+      this.$store.commit('contracts/clearMessage');
+    }
+  },
   computed: {
     ...mapState({
       msg: state => state.contracts.msg,
@@ -116,7 +121,7 @@ export default {
     color: white;
     background: #263238;
     border-radius: 0px 0px 4px 4px;
-    height: 36px;
+    height: auto;
   }
 }
 </style>
