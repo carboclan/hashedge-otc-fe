@@ -13,6 +13,9 @@ export default {
     setContracts(state, contracts) {
       state.contracts = contracts;
     },
+    setWeb3Wrapper(state, web3Wrapper) {
+      state.web3Wrapper = web3Wrapper;
+    },
     setAccount(state, addr) {
       state.account = addr;
     },
@@ -49,6 +52,7 @@ export default {
 
         const accounts = await ethereum.enable();
         ctx.commit('setAccount', accounts[0]);
+        ctx.commit('setWeb3Wrapper', getWrappers(abi, web3Wrapper));
         ctx.commit('setContracts', getWrappers(abi, ethereum));
 
         ctx.commit('clearMessage');
