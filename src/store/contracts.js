@@ -13,7 +13,7 @@ export default {
       return cobj && cobj[addr];
     },
     async waitPendingTransactions() {
-      while (!_.every(this.pendingTransactions, t => t.state !== 0)) await _.sleep(200);
+      while (_.some(this.pendingTransactions, t => t.state === 0)) await _.sleep(200);
       return _.find(this.pendingTransactions, t => t.state < 0);
     },
     pendingTransactions: [],
@@ -39,6 +39,12 @@ export default {
         storeState.error = false;
         storeState.critical = false;
       }
+    },
+    clearPendingTransaction(state) {
+      state.pendingTransactions = [];
+      state.msg = '';
+      state.error = false;
+      state.critical = false;
     },
     setContracts(state, contracts) {
       state.contracts = contracts;
@@ -92,6 +98,9 @@ export default {
     },
 
     async pushTransaction({ commit, state }, { contract, method, args, check }) {
+      if (state.pendingTransactions.length > 0 && _.every(state.pendingTransactions, t => t.state !== 0)) commit('clearPendingTransaction');
+      if (state.pendingTransactions.length > 0) await _.sleep(500);
+
       const id = lastId++;
       try {
         commit('updatePendingTransaction', { id, contract: contract.constructor.name, method, msg: 'Pending', state: 0 });
