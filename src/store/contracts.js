@@ -41,24 +41,23 @@ export default {
 
       const { ethereum } = window;
 
-      if (!ethereum) return ctx.commit('setMessage', 'no metamask');
+      if (!ethereum) return ctx.commit('setError', { msg: 'No metamask...', critical: true });
 
       try {
+        const accounts = await ethereum.enable();
         const web3Wrapper = new Web3Wrapper(ethereum);
         const networkId = await web3Wrapper.getNetworkIdAsync();
-
         // ropsten
-        if (networkId !== 3) return ctx.commit('setMessage', 'Please switch to ropsten network');
+        if (networkId !== 3) return ctx.commit('setError', { msg: 'Please switch to ropsten network', critical: true });
 
-        const accounts = await ethereum.enable();
         ctx.commit('setAccount', accounts[0]);
-        ctx.commit('setWeb3Wrapper', getWrappers(abi, web3Wrapper));
+        ctx.commit('setWeb3Wrapper', web3Wrapper);
         ctx.commit('setContracts', getWrappers(abi, ethereum));
 
         ctx.commit('clearMessage');
       } catch (e) {
-        console.log(e);
-        ctx.commit('setMessage', e.message || e.toString());
+        console.error(e);
+        ctx.commit('setError', { msg: e.message || e.toString(), critical: true });
       }
     }
   }
