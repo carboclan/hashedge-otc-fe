@@ -1,15 +1,45 @@
+import _ from 'co-lodash';
 import { Web3Wrapper } from '@0x/web3-wrapper';
 import { getWrappers } from '@hashedge/contract-wrapper';
 import abi from '../web3/abi.json';
 
+let lastId = 1;
+
 export default {
   namespaced: true,
   state: {
+    getContract(addr) {
+      const cobj = _.find(this.contracts, c => c[addr]);
+      return cobj && cobj[addr];
+    },
+    async waitPendingTransactions() {
+      while (!_.every(this.pendingTransactions, t => t.state !== 0)) await _.sleep(200);
+      return _.find(this.pendingTransactions, t => t.state < 0);
+    },
+    pendingTransactions: [],
     msg: '',
     error: false,
     critical: false
   },
   mutations: {
+    updatePendingTransaction(storeState, { id, contract, method, state, msg }) {
+      const t = _.find(storeState.pendingTransactions, t => t.id === id);
+      if (t) {
+        Object.assign(t, { state, msg });
+      } else {
+        storeState.pendingTransactions.push({ id, contract, method, state, msg });
+      }
+
+      if (_.some(storeState.pendingTransactions, t => t.state !== 1)) {
+        storeState.msg = _.some(storeState.pendingTransactions, t => t.state === 0) ? 'Wait for transactions...' : 'Something wrong...';
+        storeState.error = _.some(storeState.pendingTransactions, t => t.state < 0);
+        storeState.critical = _.some(storeState.pendingTransactions, t => t.state === 0);
+      } else {
+        storeState.msg = '';
+        storeState.error = false;
+        storeState.critical = false;
+      }
+    },
     setContracts(state, contracts) {
       state.contracts = contracts;
     },
@@ -58,6 +88,24 @@ export default {
       } catch (e) {
         console.error(e);
         ctx.commit('setError', { msg: e.message || e.toString(), critical: true });
+      }
+    },
+
+    async pushTransaction({ commit, state }, { contract, method, args, check }) {
+      const id = lastId++;
+      try {
+        commit('updatePendingTransaction', { id, contract: contract.constructor.name, method, msg: 'Pending', state: 0 });
+        if (check) await contract[method].callAsync(...args);
+
+        try {
+          await contract[method].awaitTransactionSuccessAsync(...args, { from: state.account });
+          commit('updatePendingTransaction', { id, msg: 'Success', state: 1 });
+        } catch (e) {
+          await contract[method].callAsync(...args);
+          commit('updatePendingTransaction', { id, msg: e.message || e.toString(), state: -1 });
+        }
+      } catch (e) {
+        commit('updatePendingTransaction', { id, msg: e.message || e.toString(), state: -1 });
       }
     }
   }

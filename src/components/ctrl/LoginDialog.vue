@@ -5,6 +5,9 @@
   </div>
   <div class="footer">
     {{msg}}
+    <div v-for="t in pendingTransactions">
+      {{t.contract}}.{{t.method}}: {{t.msg}}
+    </div>
   </div>
 </DialogContainer>
 </template>
@@ -23,6 +26,7 @@ export default {
   },
   computed: {
     ...mapState({
+      pendingTransactions: state => state.contracts.pendingTransactions,
       msg: state => state.contracts.msg,
       error: state => state.contracts.error,
       critical: state => state.contracts.critical
@@ -33,6 +37,7 @@ export default {
 
 <style lang="scss">
 .login-dialog {
+  z-index: 9999!important;
   .dialog-container {
     width: 432px;
     background-color: #37474F;
