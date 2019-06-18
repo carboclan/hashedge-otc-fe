@@ -182,7 +182,8 @@
         <option value="DAI">DAI</option>
       </select> -->
       <div class="quantity">
-        <input placeholder="Amount" style="width: 100%;" v-model="collateralAmount" />
+        <input v-if="collateralAmount > 0" placeholder="Amount" style="width: 100%;" v-model="collateralAmount" />
+        <div v-else class="input-loading">Loading...</div>
       </div>
       <div class="foot-note">Your {{collateralCurrency}} will send to {{collateralAddress}}</div>
       <button v-on:click="depositCollateral" class="right">Deposit Collateral</button>
@@ -261,6 +262,8 @@ export default {
       }
     },
     async loadColInfo() {
+
+      this.$data.collateralAmount = 0;
       const swapContract = hashedgeContracts.swap721Tokens[this.$data.contractAddress];
       const colAddress = await swapContract.floatingLegCollateral();
       const colContract = hashedgeContracts.collaterals[colAddress];
@@ -436,6 +439,9 @@ export default {
       min-width: 49%;
       margin-bottom: 16px;
       color: #CFD8DC;
+    }
+    .input-loading {
+      width: 100%;
     }
     .date-input {
       font-size: 14px;
