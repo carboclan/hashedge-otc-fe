@@ -1,7 +1,7 @@
 <template>
-<div class="dialog-mask" v-bind:class="extraClass" v-on:click="triggerMask" v-bind:style="{ display: show ? 'flex' : 'none' }">
+<div class="dialog-mask" v-bind:class="extraClass" v-on:click="triggerMask" v-bind:style="{ display: showDialog ? 'flex' : 'none' }">
   <div ref="dialog" class="dialog-container">
-    <div class="close-mark" v-on:click="closeDialog">
+    <div class="close-mark" v-on:click="closeDialog" v-if="!cannotSkip">
       <i class="material-icons">clear</i>
     </div>
     <slot></slot>
@@ -12,13 +12,17 @@
 <script>
 
 export default {
-  props: ['extraClass', 'forced'],
+  props: ['extraClass', 'forced', 'show', 'cannotSkip', 'onClose'],
   name: 'DialogContainer',
   mounted() {
   },
   computed: {
-    show() {
-      return this.$store.state.dialog.show
+    showDialog() {
+      if (this.$props.show !== undefined) {
+        return this.$props.show;
+      } else {
+        return this.$store.state.dialog.show;
+      }
     }
   },
   methods: {
@@ -30,7 +34,7 @@ export default {
       }
     },
     closeDialog() {
-      this.$store.commit('hideDialog');
+      (this.$props.onClose && this.$props.onClose()) || this.$store.commit('hideDialog');
     }
   },
   data() {

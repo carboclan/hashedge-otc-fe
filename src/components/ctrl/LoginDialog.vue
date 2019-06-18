@@ -1,41 +1,43 @@
 <template>
-<DialogContainer v-if="show" forced="true" extra-class="login-dialog">
+<DialogContainer :show="msg" forced="true" :cannotSkip="critical" extra-class="login-dialog" :onClose="close">
   <div class="title">
-    Hashedge dApp needs Metamask login.
+    {{error && 'Error:' || 'Message:'}}
   </div>
   <div class="footer">
-    <button v-on:click="submit">Try Again</button>
+    {{msg}}
+    <div v-for="t in pendingTransactions">
+      {{t.contract}}.{{t.method}}: {{t.msg}}
+    </div>
   </div>
 </DialogContainer>
 </template>
 
 <script>
-import { web3, hashedgeContracts } from '../../web3';
+import { mapState } from 'vuex';
 import DialogContainer from './DialogContainer';
 
 export default {
   name: 'LoginDialog',
   components: { DialogContainer },
   methods: {
-    async submit() {
-      if (web3.eth.accounts[0]) {
-        this.$store.commit('hideDialog');
-      }
+    close() {
+      this.$store.commit('contracts/clearMessage');
     }
   },
-  data() {
-    return {
-      amount: 0,
-    };
-  },
   computed: {
-    show: function() { return (this.$store.state.dialog.name === 'login-dialog') },
+    ...mapState({
+      pendingTransactions: state => state.contracts.pendingTransactions,
+      msg: state => state.contracts.msg,
+      error: state => state.contracts.error,
+      critical: state => state.contracts.critical
+    })
   }
 }
 </script>
 
 <style lang="scss">
 .login-dialog {
+  z-index: 9999!important;
   .dialog-container {
     width: 432px;
     background-color: #37474F;
@@ -121,10 +123,10 @@ export default {
     border: 0.5px solid #263238;
   }
   .footer {
+    color: white;
     background: #263238;
     border-radius: 0px 0px 4px 4px;
-    height: 36px;
-    text-align: right;
+    height: auto;
   }
 }
 </style>
