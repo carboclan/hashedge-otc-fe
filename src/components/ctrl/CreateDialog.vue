@@ -346,11 +346,18 @@ export default {
       const { contractAddress, duration, unitPrice, totalSupply, orderSize} = this.$data;
       const orderPrice = unitPrice * orderSize * duration / 3600 / 24;
       const orderQuantity = parseInt(totalSupply/orderSize);
-      const swapContract = hashedgeContracts.swap721Tokens[contractAddress];
-      const recpt = await swapContract.mint(orderSize, duration, web3.toWei(orderPrice, 'ether'), orderQuantity);
+      const swapContract = this.$store.state.contracts.getContract(contractAddress);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'mint',
+        args: [orderSize, duration, web3.toWei(orderPrice, 'ether'), orderQuantity],
+        check: true
+      });
       await web3.eth.getTransactionReceipt(recpt);
-      this.$store.dispatch('getContractList');
-      this.$store.commit('hideDialog');
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) {
+        this.$store.dispatch('getContractList');
+        this.$store.commit('hideDialog');
+      }
     }
   },
   data() {

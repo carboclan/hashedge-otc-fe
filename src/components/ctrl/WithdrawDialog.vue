@@ -30,9 +30,15 @@ export default {
     async submit() {
       const { amount } = this.$data;
       const contractAddress = this.$store.state.dialog.params;
-      const colContract = hashedgeContracts.collaterals[contractAddress];
-      const recpt = await colContract.withdraw(web3.toWei(amount, 'ether'));
-      await web3.eth.getTransactionReceipt(recpt);
+      const colContract = this.$store.state.contracts.getContract(contractAddress);
+      const underlying = await colContract.underlying();
+      const tokenContract = this.$store.state.contracts.getContract(underlying);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'withdraw',
+        args: [web3.toWei(amount, 'ether')],
+        check: true
+      });
+      const error = await this.$store.state.contracts.waitPendingTransactions();
       this.$store.commit('hideDialog');
     }
   },

@@ -45,13 +45,23 @@ export default {
       this.$data.step = 1;
       const { amount } = this.$data;
       const contractAddress = this.$store.state.dialog.params;
-      const colContract = hashedgeContracts.collaterals[contractAddress];
+
+      const colContract = this.$store.state.contracts.getContract(contractAddress);
       const underlying = await colContract.underlying();
-      const tokenContract = hashedgeContracts.erc20Tokens[underlying];
-      const recpt1 = await tokenContract.approve(contractAddress, web3.toWei(amount, 'ether'));
-      const recpt2 = await colContract.deposit(web3.toWei(amount, 'ether'));
-      await web3.eth.getTransactionReceipt(recpt2);
-      this.$data.step = 0;
+      const tokenContract = this.$store.state.contracts.getContract(underlying);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'approve',
+        args: [collateralAddress, web3.toWei(amount, 'ether')],
+        check: true
+      });
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: colContract, method: 'deposit',
+        args: [web3.toWei(amount, 'ether')],
+        check: false
+      });
+
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) this.$data.steps = 0;
       this.$store.commit('hideDialog');
     }
   },

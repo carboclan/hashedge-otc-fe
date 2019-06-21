@@ -103,15 +103,24 @@ export default {
     },
     async cancel() {
       const { portfolio } = this.$props;
-      const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].cancel([portfolio.id]);
-      await web3.eth.getTransactionReceipt(recpt);
-      this.$store.dispatch('getPortfolioList');
+      const tokenContract = this.$store.state.contracts.getContract(portfolio.address);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'cancel',
+        args: [[portfolio.id]],
+        check: true
+      });
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) this.$store.dispatch('getPortfolioList');
     },
     async settle() {
-      const { portfolio } = this.$props;
-      const recpt = await hashedgeContracts.swap721Tokens[portfolio.address].settle([portfolio.id]);
-      await web3.eth.getTransactionReceipt(recpt);
-      this.$store.dispatch('getPortfolioList');
+      const tokenContract = this.$store.state.contracts.getContract(portfolio.address);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'settle',
+        args: [[portfolio.id]],
+        check: true
+      });
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) this.$store.dispatch('getPortfolioList');
     }
   },
   data() {

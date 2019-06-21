@@ -88,14 +88,23 @@ export default {
       }
       const { address, priceUSD } = contract;
       const totalPrice = priceUSD * quantity / contract.contractSize;
-      const swapContract =  hashedgeContracts.swap721Tokens[address];
-      const fixLegAddr = await swapContract.fixLegToken();
-      const fixLegContract = hashedgeContracts.erc20Tokens[fixLegAddr];
       const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contract.contractSize));
-      const recpt1 = await fixLegContract.approve(address, totalPrice);
-      const recpt2 = await swapContract.initialBuy(tokens);
-      await web3.eth.getTransactionReceipt(recpt2);
-      this.$store.dispatch('getContractList');
+      const swapContract = this.$store.state.contracts.getContract(address);
+      const fixLegAddr = await swapContract.fixLegToken();
+      const fixLegContract = this.$store.state.contracts.getContract(fixLegAddr);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: fixLegContract, method: 'approve',
+        args: [address, totalPrice],
+        check: true
+      });
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: swapContract, method: 'initialBuy',
+        args: [web3.toWei(tokens)],
+        check: false
+      });
+
+      const error = await this.$store.state.contracts.waitPendingTransactions();
+      if (!error) this.$store.dispatch('getContractList');
     }
   },
   data() {
