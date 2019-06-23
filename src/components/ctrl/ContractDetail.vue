@@ -90,7 +90,8 @@ export default {
       const totalPrice = priceUSD * quantity / contract.contractSize;
       const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contract.contractSize));
       const swapContract = this.$store.state.contracts.getContract(address);
-      const fixLegAddr = await swapContract.fixLegToken();
+      console.log(tokens);
+      const fixLegAddr = await swapContract.fixLegToken.callAsync();
       const fixLegContract = this.$store.state.contracts.getContract(fixLegAddr);
       this.$store.dispatch('contracts/pushTransaction', {
         contract: fixLegContract, method: 'approve',
@@ -99,7 +100,7 @@ export default {
       });
       this.$store.dispatch('contracts/pushTransaction', {
         contract: swapContract, method: 'initialBuy',
-        args: [web3.toWei(tokens)],
+        args: [tokens],
         check: false
       });
 

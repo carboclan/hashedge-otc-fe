@@ -47,11 +47,11 @@ export default {
       const contractAddress = this.$store.state.dialog.params;
 
       const colContract = this.$store.state.contracts.getContract(contractAddress);
-      const underlying = await colContract.underlying();
+      const underlying = await colContract.underlying.callAsync();
       const tokenContract = this.$store.state.contracts.getContract(underlying);
       this.$store.dispatch('contracts/pushTransaction', {
         contract: tokenContract, method: 'approve',
-        args: [collateralAddress, web3.toWei(amount, 'ether')],
+        args: [contractAddress, web3.toWei(amount, 'ether')],
         check: true
       });
       this.$store.dispatch('contracts/pushTransaction', {

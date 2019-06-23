@@ -38,6 +38,9 @@
     <div class="contract" v-show="filterContractList.length === 0">
       <div class="empty">No Contract Found</div>
     </div>
+    <div class="contract" v-show="contractListProps.total > contractListProps.loaded">
+      <button class="load-more" v-on:click="loadMoreContracts"> Load More</button>
+    </div>
   </div>
   <ContractDetail :contract="selectedContract" v-if="selectedContract != null" />
 </div>
@@ -64,6 +67,9 @@ export default {
     selectContract(contract) {
       this.$data.selectedContract = contract;
     },
+    loadMoreContracts() {
+      this.$store.dispatch('loadMoreContract');
+    }
   },
   data() {
     return {
@@ -81,6 +87,14 @@ export default {
       },
       set(val) {
         this.$store.commit('setCoinType', val);
+      }
+    },
+    contractListProps: {
+      get() {
+        return this.$store.state.contractListProps;
+      },
+      set(val) {
+        this.$store.commit('setContractListProps', val);
       }
     },
     filterContractList: function () {
@@ -172,6 +186,10 @@ export default {
   .empty {
     text-align: center;
     padding: 10px;
+  }
+  .load-more {
+    width: 448px;
+    margin: 0 8px 8px 8px;
   }
 }
 </style>

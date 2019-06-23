@@ -1,6 +1,6 @@
 <template>
   <div>
-    <div class="token-card">
+    <div class="token-card" :class="token.disabled ? 'token-card-disabled' : ''">
       <div class="card-top" v-on:click="goToMarket">
         <div class="card-left">
           <div><div class="tip">{{token.hashType}}</div></div>
@@ -36,6 +36,9 @@ export default {
   },
   methods: {
     goToMarket: function () {
+      if (this.$props.token.disabled) {
+        return;
+      }
       this.$store.commit('setCoinType', this.$props.token.code)
       this.$router.push({ path:'market' })
     }
@@ -54,6 +57,9 @@ export default {
   border-radius: 4px;
   font-size: 14px;
   margin: 8px;
+  &.token-card-disabled {
+    background: #37474F;
+  }
   .card-top {
     padding: 8px;
     display: flex;
