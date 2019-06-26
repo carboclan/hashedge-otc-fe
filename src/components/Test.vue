@@ -49,11 +49,21 @@ export default {
   },
   methods: {
     mint(tokenAddr, mintAddr, value) {
-      hashedgeContracts.erc20Tokens[tokenAddr].mint(mintAddr, value * 10 ** 18);
+      const tokenContract = this.$store.state.contracts.getContract(tokenAddr);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'mint',
+        args: [mintAddr, web3.toWei(value, 'ether')],
+        check: true
+      });
     },
 
     addWhitelisted(tokenAddr, whitelistAddr) {
-      hashedgeContracts.swap721Tokens[tokenAddr].addWhitelisted(whitelistAddr);
+      const tokenContract = this.$store.state.contracts.getContract(tokenAddr);
+      this.$store.dispatch('contracts/pushTransaction', {
+        contract: tokenContract, method: 'addWhitelisted',
+        args: [whitelistAddr],
+        check: true
+      });
     }
   },
   data() {
