@@ -1,11 +1,10 @@
 import Vue from 'vue';
 import Vuex from 'vuex';
+import _ from 'co-lodash';
 import config from '../config';
 import { web3, hashedgeContracts } from '../web3';
 import moment from 'moment';
-
 import contracts from './contracts';
-
 Vue.use(Vuex);
 
 export default new Vuex.Store({
@@ -252,10 +251,14 @@ export default new Vuex.Store({
     },
     async getSwapInfos (ctx) {
       let swapInfos = {}
-      await Promise.all(Object.values(hashedgeContracts.swap721Tokens).map(async (token) => {
-        const name = await token.name();
-        const unit = await token.contractUnit();
-        const type = await token.contractType();
+      if (!ctx.state.contracts.contracts) {
+        await _.sleep(3000);
+      }
+      await Promise.all(Object.values(ctx.state.contracts.contracts.swap721Tokens).map(async (token) => {
+        console.log(token);
+        const name = await token.name.callAsync();
+        const unit = await token.contractUnit.callAsync();
+        const type = await token.contractType.callAsync();
         const code = name.substr(0,3);
         swapInfos[token.address] = {
           address: token.address,
