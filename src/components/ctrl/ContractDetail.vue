@@ -80,15 +80,16 @@ export default {
       return (value ? (value > 0 ? '+ ' : ' ') + value.toFixed(2) + '%': '0');
     },
     async submit() {
-      const { quantity } = this.$data;
+      let { quantity } = this.$data;
       const { contract } = this.$props;
-      if (quantity < 1 || quantity > (contract.shareTotal - contract.shareSold) * contract.contractSize) {
+      const orders = parseInt(quantity / contract.contractSize)
+      if (orders < 1 || orders > (contract.shareTotal - contract.shareSold) * contract.contractSize) {
         alert('Invalid Amount!');
         return;
       }
       const { address, priceUSD } = contract;
-      const totalPrice = priceUSD * quantity / contract.contractSize;
-      const tokens = contract.avaliableShares.slice(0,parseInt(quantity / contract.contractSize));
+      const totalPrice = priceUSD * orders;
+      const tokens = contract.avaliableShares.slice(0,orders);
       const swapContract = this.$store.state.contracts.getContract(address);
       console.log(tokens);
       const fixLegAddr = await swapContract.fixLegToken.callAsync();

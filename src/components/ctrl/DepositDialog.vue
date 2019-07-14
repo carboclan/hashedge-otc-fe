@@ -57,7 +57,7 @@ export default {
       this.$store.dispatch('contracts/pushTransaction', {
         contract: colContract, method: 'deposit',
         args: [web3.toWei(amount, 'ether')],
-        check: false
+        check: true
       });
 
       const error = await this.$store.state.contracts.waitPendingTransactions();

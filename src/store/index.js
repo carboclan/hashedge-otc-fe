@@ -87,7 +87,7 @@ export default new Vuex.Store({
         .fromPairs()
         .value();
       // Get contract info
-      const query = `${config.apiConfig}swap721/list/`
+      const query = `${config.apiConfig}swap721/list/?agg=1`
       const list = await fetch(query).then(response => { return response.json() });
       const listProps = {
         total: list.total,
@@ -97,11 +97,11 @@ export default new Vuex.Store({
       const contractList = list.result.reduce((pre, next) => {
         const key = next.issueTx;
         if (pre[key]) {
-          pre[key].shareTotal += 1;
+          pre[key].shareTotal += next.ids.length;
           if (next.status === 0) {
-            pre[key].avaliableShares.push(next.id);
+            pre[key].avaliableShares = pre[key].avaliableShares.concat(next.ids);
           } else {
-            pre[key].shareSold += 1;
+            pre[key].shareSold += next.ids.length;
           }
         } else {
           const code = swapInfos[next.contractAddr].name.substr(0,3);
@@ -116,9 +116,9 @@ export default new Vuex.Store({
             pricingMethod: 'FIXED',
             rating: '☆☆☆☆☆',
             unit: swapInfos[next.contractAddr].unit,
-            shareSold: next.status === 0 ? 0 : 1,
-            avaliableShares: next.status === 0 ? [next.id] : [],
-            shareTotal: 1,
+            shareSold: next.status === 0 ? 0 : next.ids.length,
+            avaliableShares: next.status === 0 ? next.ids : [],
+            shareTotal: next.ids.length,
             contractSize: next.contractSize,
             priceUSD: next.price,
             priceCOIN: next.price / ctx.state.rateMap[code],
@@ -155,13 +155,15 @@ export default new Vuex.Store({
       }
       ctx.commit('setContractListProps', listProps);
       const contractList = list.result.reduce((pre, next) => {
+
+        
         const key = next.issueTx;
         if (pre[key]) {
-          pre[key].shareTotal += 1;
+          pre[key].shareTotal += next.ids.length;
           if (next.status === 0) {
-            pre[key].avaliableShares.push(next.id);
+            pre[key].avaliableShares = pre[key].avaliableShares.concat(next.ids);
           } else {
-            pre[key].shareSold += 1;
+            pre[key].shareSold += next.ids.length;
           }
         } else {
           const code = swapInfos[next.contractAddr].name.substr(0,3);
@@ -176,9 +178,9 @@ export default new Vuex.Store({
             pricingMethod: 'FIXED',
             rating: '☆☆☆☆☆',
             unit: swapInfos[next.contractAddr].unit,
-            shareSold: next.status === 0 ? 0 : 1,
-            avaliableShares: next.status === 0 ? [next.id] : [],
-            shareTotal: 1,
+            shareSold: next.status === 0 ? 0 : next.ids.length,
+            avaliableShares: next.status === 0 ? next.ids : [],
+            shareTotal: next.ids.length,
             contractSize: next.contractSize,
             priceUSD: next.price,
             priceCOIN: next.price / ctx.state.rateMap[code],
